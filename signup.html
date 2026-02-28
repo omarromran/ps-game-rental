@@ -3,58 +3,45 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<<<<<<< HEAD
-    <title>Sign up</title>
-</head>
-<body>
-    <h1>Sign up</h1>
-    <form action="/signup" method="post">
-        <label for="username">Username:</label>
-        <input type="text" id="username" name="username" required><br><br>
-        
-        <label for="email">Email:</label>
-        <input type="email" id="email" name="email" required><br><br>
-        
-        <label for="password">Password:</label>
-        <input type="password" id="password" name="password" required><br><br>
-        
-        <button type="submit">Sign Up</button>
-    </form>
-=======
     <title>Sign Up</title>
+    <link rel="stylesheet" href="login&signup.css">
+    <link rel="icon" href="photos/logo3.jpg">
 </head>
 <body>      
     <div class ="wrapper">
         <h1>Sign Up</h1>
-        <link rel="stylesheet" href="signup.css">
         <form>
-            <div>
-                <label for="name-input">
-                    <img src ="photos/person_icon.svg">
-                </label>
-                <input type="text" name="name" id="name-input" placeholder="name" required>
-            </div>
             <div>
                 <label for="email-input">
                     <img src ="photos/email_icon.svg">
                 </label>
                 <input type="email" name="email" id="email-input" placeholder="email" required>
             </div>
+
+            <div>
+                <label for="username-input">
+                    <img src ="photos/person_icon.svg">
+                </label>
+                <input type="text" name="username" id="username-input" placeholder="username" required>
+            </div>
+            
             <div>
                 <label for="password-input">
-                    <img src ="photos/password_icon.svg">
+                    <img src ="photos/lock_icon.svg">
+                </label>
                 <input type="password" name="password" id="password-input" placeholder="password" required>
             </div>
+            
             <div>
                 <label for="confirm-password-input">
-                    <img src ="photos/password_icon.svg">
+                    <img src ="photos/lock_icon.svg">
                 </label>
                 <input type="password" name="confirm-password" id="confirm-password-input" placeholder="confirm password" required>
             </div>
+            
             <button type="submit">Sign Up</button>
             <p>Already have an account? <a href="login.html">Log In</a></p>
         </form>
     </div>
->>>>>>> 44055e9ee735a3791514d2699c2da2abb9162ab8
 </body>
-</html>
+</html> 
