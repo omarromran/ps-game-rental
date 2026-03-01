@@ -10,7 +10,7 @@
 <body>      
     <div class ="wrapper">
         <h1>Sign Up</h1>
-        <form>
+        <form id="signup-form">
             <div>
                 <label for="email-input">
                     <img src ="photos/email_icon.svg">
@@ -43,5 +43,22 @@
             <p>Already have an account? <a href="login.html">Log In</a></p>
         </form>
     </div>
+
+<script>
+document.getElementById("signup-form").addEventListener("submit", function(event) {
+    event.preventDefault();
+
+    const password = document.getElementById("password-input").value;
+    const confirmPassword = document.getElementById("confirm-password-input").value;
+
+    if (password !== confirmPassword) {
+        alert("Passwords do not match!");
+        return;
+    }
+
+    alert("Form submitted successfully!");
+});
+</script>
+
 </body>
-</html> 
+</html>
