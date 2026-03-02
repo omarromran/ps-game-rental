@@ -10,7 +10,22 @@
 <body>      
     <div class ="wrapper">
         <h1>Sign Up</h1>
+
         <form id="signup-form">
+
+            <!-- Account Type -->
+            <div class="account-type">
+                <label>
+                    <input type="radio" name="account-type" value="customer" checked>
+                    Customer
+                </label>
+
+                <label>
+                    <input type="radio" name="account-type" value="business">
+                    Business
+                </label>
+            </div>
+
             <div>
                 <label for="email-input">
                     <img src ="photos/email_icon.svg">
@@ -41,6 +56,7 @@
             
             <button type="submit">Sign Up</button>
             <p>Already have an account? <a href="login.html">Log In</a></p>
+
         </form>
     </div>
 
@@ -56,7 +72,9 @@ document.getElementById("signup-form").addEventListener("submit", function(event
         return;
     }
 
-    alert("Form submitted successfully!");
+    const accountType = document.querySelector('input[name="account-type"]:checked').value;
+
+    alert("Form submitted successfully! Account type: " + accountType);
 });
 </script>
 
