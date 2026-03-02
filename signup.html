@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up</title>
+    <link rel="stylesheet" href="login&signup.css">
+    <link rel="icon" href="photos/logo3.jpg">
+</head>
+<body>      
+    <div class ="wrapper">
+        <h1>Sign Up</h1>
+        <form id="signup-form">
+            <div>
+                <label for="email-input">
+                    <img src ="photos/email_icon.svg">
+                </label>
+                <input type="email" name="email" id="email-input" placeholder="email" required>
+            </div>
+
+            <div>
+                <label for="username-input">
+                    <img src ="photos/person_icon.svg">
+                </label>
+                <input type="text" name="username" id="username-input" placeholder="username" required>
+            </div>
+            
+            <div>
+                <label for="password-input">
+                    <img src ="photos/lock_icon.svg">
+                </label>
+                <input type="password" name="password" id="password-input" placeholder="password" required>
+            </div>
+            
+            <div>
+                <label for="confirm-password-input">
+                    <img src ="photos/lock_icon.svg">
+                </label>
+                <input type="password" name="confirm-password" id="confirm-password-input" placeholder="confirm password" required>
+            </div>
+            
+            <button type="submit">Sign Up</button>
+            <p>Already have an account? <a href="login.html">Log In</a></p>
+        </form>
+    </div>
+
+<script>
+document.getElementById("signup-form").addEventListener("submit", function(event) {
+    event.preventDefault();
+
+    const password = document.getElementById("password-input").value;
+    const confirmPassword = document.getElementById("confirm-password-input").value;
+
+    if (password !== confirmPassword) {
+        alert("Passwords do not match!");
+        return;
+    }
+
+    alert("Form submitted successfully!");
+});
+</script>
+
+</body>
+</html>

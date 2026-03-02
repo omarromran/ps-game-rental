@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Log In</title>
+    <link rel="stylesheet" href="login&signup.css">
+    <link rel="icon" href="photos/logo3.jpg">
+</head>
+<body>      
+    <div class="wrapper">
+        <h1>Log In</h1>
+        <form id="login-form">
+            <div>
+                <label for="username-input">
+                    <img src ="photos/person_icon.svg">
+                </label>
+                <input type="text" name="username" id="username-input" placeholder="username" required>
+            </div>
+
+            <div>
+                <label for="password-input">
+                    <img src="photos/lock_icon.svg">
+                </label>
+                <input type="password" name="password" id="password-input" placeholder="password" required>
+            </div>
+            
+            <button type="submit">Log In</button>
+            <p>Don't have an account? <a href="signup.html">Sign Up</a></p>
+        </form>
+    </div>
+
+<script>
+document.getElementById("login-form").addEventListener("submit", function(event) {
+    event.preventDefault(); 
+    const username = document.getElementById("username-input").value;
+    const password = document.getElementById("password-input").value;
+
+    // Example validation (you can change this)
+    if (username === "admin" && password === "1234") {
+        alert("Login successful!");
+        // window.location.href = "home.html";  // redirect example
+    } else {
+        alert("Invalid username or password!");
+    }
+});
+</script>
+
+</body>
+</html>
