@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <link rel="icon" href="photos/images.png">
+    <link rel="stylesheet" href="dashboard.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script defer src="dashboard.js"></script>
+</head>
+
+<body>
+
+    <div class="dashboard-wrapper">
+        <aside class="sidebar">
+            <h2>Admin</h2>
+            <nav>
+                <button onclick="showSection('dashboard', this)" class="active">
+                    <i class="fas fa-tachometer-alt"></i> Dashboard
+                </button>
+                <button onclick="showSection('games', this)">
+                    <i class="fas fa-gamepad"></i> Games
+                </button>
+                <button onclick="showSection('users', this)">
+                    <i class="fas fa-users"></i> Users
+                </button>
+                <button onclick="showSection('addAdmin', this)">
+                    <i class="fas fa-user-plus"></i> Add Admin
+                </button>
+            </nav>
+            <button class="logout" onclick="logout()">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </button>
+        </aside>
+
+        <main>
+            <section id="dashboard">
+                <div class="card-container" id="dashboard-cards"></div>
+            </section>
+
+            <section id="games">
+                <h2>Manage Games</h2>
+                <button class="action-btn" onclick="showAddGameForm()">
+                    <i class="fas fa-plus"></i> Add Game
+                </button>
+                <table id="games-table"></table>
+            </section>
+
+            <section id="users">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                    <h2>Manage Users</h2>
+                    <select id="user-type-filter" onchange="renderUsersTable()"
+                        style="padding: 8px; border-radius: 5px; background: var(--input-background); color: white; border: 1px solid var(--secondary-color);">
+                        <option value="all">All User Types</option>
+                        <option value="admin">Admin</option>
+                        <option value="business">Business</option>
+                        <option value="costumer">Customer</option>
+                    </select>
+                </div>
+                <table id="users-table"></table>
+            </section>
+
+            <section id="addAdmin">
+                <h2>Add New Admin</h2>
+                <form id="add-admin-form">
+                    <div><input type="text" placeholder="Full Name" name="name" required></div>
+                    <div><input type="text" placeholder="Username" name="username" required></div>
+                    <div><input type="email" placeholder="Email" name="email" required></div>
+                    <div><input type="password" placeholder="Password" name="password" required></div>
+                    <div><input type="password" placeholder="Confirm Password" name="confirmPassword" required></div>
+                    <button type="submit" class="submit-btn"><i class="fas fa-user-plus"></i> Create Admin</button>
+                </form>
+            </section>
+        </main>
+    </div>
+
+    <div id="add-game-form-container" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeAddGameForm()">&times;</span>
+            <h2>Add New Game</h2>
+            <form id="add-game-form">
+                <div><input type="text" name="name" placeholder="Game Name" required></div>
+                <div><input type="text" name="platform" placeholder="Platform" required></div>
+                <div><input type="text" name="genre" placeholder="Genre" required></div>
+                <div><input type="text" name="gamevendor" placeholder="Vendor" required></div>
+                <div><textarea name="description" placeholder="Description"></textarea></div>
+                <button type="submit" class="submit-btn"><i class="fas fa-plus"></i> Add Game</button>
+            </form>
+        </div>
+    </div>
+
+</body>
+
+</html>
