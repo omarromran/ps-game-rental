@@ -302,3 +302,86 @@ textarea {
         font-size: 0.8rem;
     }
 }
+/* ================= Add Game Modal/Form ================= */
+#add-game-form-container .modal-content {
+    background-color: var(--primary-color);
+    padding: 25px 30px;
+    border-radius: 12px;
+    max-width: 450px;
+    width: 90%;
+    position: relative;
+    box-shadow: var(--shadow);
+}
+
+#add-game-form-container h2 {
+    margin-bottom: 1.5rem;
+    color: var(--secondary-color);
+    text-align: center;
+}
+
+#add-game-form-container form div {
+    margin-bottom: 1rem;
+}
+
+#add-game-form-container form input,
+#add-game-form-container form select,
+#add-game-form-container form textarea {
+    width: 100%;
+    padding: 10px 12px;
+    border-radius: 8px;
+    border: 1px solid var(--secondary-color);
+    background-color: var(--dark-color);
+    color: var(--white-color);
+    font-family: inherit;
+    outline: none;
+}
+
+#add-game-form-container form textarea {
+    min-height: 80px;
+    resize: vertical;
+}
+
+#add-game-form-container form label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 500;
+    color: var(--white-color);
+}
+
+#add-game-form-container form .submit-btn {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+}
+
+/* Modal close button */
+#add-game-form-container .close {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    font-size: 24px;
+    cursor: pointer;
+    opacity: 0.7;
+}
+
+#add-game-form-container .close:hover {
+    opacity: 1;
+}
+
+/* ================= Users Filter Dropdown ================= */
+#user-type-filter {
+    padding: 8px 10px;
+    border-radius: 6px;
+    background-color: var(--input-background);
+    color: var(--white-color);
+    border: 1px solid var(--secondary-color);
+    font-family: inherit;
+    cursor: pointer;
+}
+
+#user-type-filter option {
+    background-color: var(--dark-color);
+    color: var(--white-color);
+}

@@ -36,24 +36,32 @@ async function loadData() {
         refreshUI();
     } catch (err) {
         console.error("Data Load Error: Ensure you are running on a local server.", err);
+        alert("Failed to load data. Check console for details.");
     }
 }
 
+// ================= UI Refresh =================
 function refreshUI() {
     renderDashboardCards();
     renderUsersTable();
     renderGamesTable();
 }
 
-// ================= Dashboard Logic =================
+// ================= Dashboard Cards =================
 function renderDashboardCards() {
     const container = document.getElementById("dashboard-cards");
     if (!container) return;
 
+    const totalRevenue = games.reduce((sum, g) => sum + (g.price || 0), 0);
+
+    // Count games available for rent
+    const availableForRentCount = games.filter(g => g.Availability === "rent").length;
+
     const stats = [
         { title: "Total Users", value: users.length },
         { title: "Total Games", value: games.length },
-        { title: "Active Listings", value: games.filter(g => g.Availability === "rent").length + " Rentals" }
+        { title: "Available for Rent", value: availableForRentCount },
+        { title: "Total Price Value", value: totalRevenue + " EGP" }
     ];
 
     container.innerHTML = stats.map(stat => `
@@ -64,13 +72,12 @@ function renderDashboardCards() {
     `).join('');
 }
 
-// ================= Users Management (With Filter) =================
+// ================= Users Table =================
 function renderUsersTable() {
     const table = document.getElementById("users-table");
     const filterValue = document.getElementById("user-type-filter")?.value || "all";
     if (!table) return;
 
-    // Apply Filter Logic
     const filteredUsers = filterValue === "all"
         ? users
         : users.filter(u => u.type === filterValue);
@@ -82,10 +89,9 @@ function renderUsersTable() {
             </tr>
         </thead>
         <tbody>
-            ${filteredUsers.map((user) => {
-        // Finding actual index in global array to maintain correct edit/delete targeting
-        const globalIndex = users.findIndex(u => u.userID === user.userID);
-        return `
+            ${filteredUsers.map(user => {
+                const globalIndex = users.findIndex(u => u.userID === user.userID);
+                return `
                 <tr>
                     <td>${user.userID}</td>
                     <td>${user.name}</td>
@@ -97,15 +103,13 @@ function renderUsersTable() {
                         <button class="action-btn" onclick="deleteUser(${globalIndex})"><i class="fas fa-trash"></i></button>
                     </td>
                 </tr>`;
-    }).join('')}
+            }).join('')}
         </tbody>`;
 }
 
-
-
+// ================= Edit/Delete Users =================
 function editUser(index) {
     const user = users[index];
-
     const name = prompt("Full Name:", user.name);
     if (name === null) return;
     const username = prompt("Username:", user.username);
@@ -126,7 +130,7 @@ function deleteUser(index) {
     }
 }
 
-// ================= Games Management =================
+// ================= Games Table =================
 function renderGamesTable() {
     const table = document.getElementById("games-table");
     if (!table) return;
@@ -134,7 +138,7 @@ function renderGamesTable() {
     table.innerHTML = `
         <thead>
             <tr>
-                <th>ID</th><th>Name</th><th>Platform</th><th>Genre</th><th>Status</th><th>Vendor</th><th>Actions</th>
+                <th>ID</th><th>Name</th><th>Platform</th><th>Genre</th><th>Status</th><th>Vendor</th><th>Price (EGP)</th><th>Actions</th>
             </tr>
         </thead>
         <tbody>
@@ -146,6 +150,7 @@ function renderGamesTable() {
                     <td>${game.genre}</td>
                     <td>${game.Availability || "N/A"}</td>
                     <td>${game.vendor || "System"}</td>
+                    <td>${game.price || "-"}</td>
                     <td class="games-action">
                         <button class="action-btn" onclick="editGame(${index})"><i class="fas fa-edit"></i></button>
                         <button class="action-btn" onclick="deleteGame(${index})"><i class="fas fa-trash"></i></button>
@@ -155,21 +160,39 @@ function renderGamesTable() {
         </tbody>`;
 }
 
+// ================= Edit/Delete Games =================
 function editGame(index) {
     const game = games[index];
 
     const name = prompt("Game Name:", game.name);
     if (name === null) return;
+
     const platform = prompt("Platform:", game.platform);
     if (platform === null) return;
+
     const genre = prompt("Genre:", game.genre);
     if (genre === null) return;
-    const availability = prompt("Availability (buy/rent):", game.Availability);
+
+    // Status Dropdown prompt
+    let availability = prompt("Status (buy/rent):", game.Availability);
     if (availability === null) return;
+    availability = availability.toLowerCase() === "rent" ? "rent" : "buy";
+
     const vendor = prompt("Vendor:", game.vendor);
     if (vendor === null) return;
 
-    games[index] = { ...game, name, platform, genre, Availability: availability, vendor };
+    const price = prompt("Price (EGP):", game.price);
+    if (price === null) return;
+
+    games[index] = {
+        ...game,
+        name,
+        platform,
+        genre,
+        Availability: availability,
+        vendor,
+        price: Number(price)
+    };
     refreshUI();
 }
 
@@ -180,7 +203,7 @@ function deleteGame(index) {
     }
 }
 
-// ================= Form Handlers =================
+// ================= Add Admin Form =================
 const adminForm = document.getElementById("add-admin-form");
 if (adminForm) {
     adminForm.addEventListener("submit", (e) => {
@@ -206,6 +229,7 @@ if (adminForm) {
     });
 }
 
+// ================= Add Game Form =================
 function showAddGameForm() { document.getElementById("add-game-form-container").style.display = "block"; }
 function closeAddGameForm() { document.getElementById("add-game-form-container").style.display = "none"; }
 
@@ -221,7 +245,8 @@ if (gameForm) {
             genre: fd.get("genre"),
             Availability: "buy",
             vendor: fd.get("gamevendor"),
-            description: fd.get("description")
+            description: fd.get("description"),
+            price: Number(fd.get("price")) || 0
         });
         refreshUI();
         gameForm.reset();
@@ -229,6 +254,7 @@ if (gameForm) {
     });
 }
 
+// ================= Initialize =================
 document.addEventListener("DOMContentLoaded", () => {
     loadData();
     showSection('dashboard', document.querySelector(".sidebar nav button"));
