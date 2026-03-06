@@ -12,77 +12,79 @@
 <body>
     <div class="wrapper">
         <h1>Log In</h1>
+
         <form id="login-form">
+
             <div class="input-group">
                 <img src="photos/person_icon.svg" alt="User Icon">
-                <input type="text" name="username" id="username-input" placeholder="Username" required>
+                <input type="text" id="username-input" placeholder="Username" required>
             </div>
 
             <div class="input-group">
                 <img src="photos/lock_icon.svg" alt="Password Icon">
-                <input type="password" name="password" id="password-input" placeholder="Password" required>
+                <input type="password" id="password-input" placeholder="Password" required>
             </div>
 
             <button type="submit">Log In</button>
+
             <p>Don't have an account? <a href="signup.html">Sign Up</a></p>
+
         </form>
     </div>
 
-    <script>
-        document.getElementById("login-form").addEventListener("submit", async function (event) {
-            event.preventDefault();
+<script>
 
-            const usernameInput = document.getElementById("username-input").value.trim();
-            const passwordInput = document.getElementById("password-input").value;
+document.getElementById("login-form").addEventListener("submit", function(event){
 
-            try {
-                // 1. Check localStorage first (for newly signed-up users)
-                let users = JSON.parse(localStorage.getItem("users_db"));
+    event.preventDefault();
 
-                // 2. If localStorage is empty, fetch from the original JSON file
-                if (!users) {
-                    const response = await fetch("users.json");
-                    if (!response.ok) throw new Error("Could not load user data.");
-                    const data = await response.json();
-                    users = data.users;
+    const usernameInput = document.getElementById("username-input").value.trim();
+    const passwordInput = document.getElementById("password-input").value;
 
-                    // Optional: Sync JSON users to localStorage so they stay together
-                    localStorage.setItem("users_db", JSON.stringify(users));
-                }
+    // Get users from localStorage
+    let users = JSON.parse(localStorage.getItem("users_db")) || [];
 
-                // 3. Find the user in the combined list
-                const user = users.find(u => u.username === usernameInput && u.password === passwordInput);
+    if(users.length === 0){
+        alert("No users found. Please sign up first.");
+        return;
+    }
 
-                if (user) {
-                    // Store only the LOGGED IN user specifically for the dashboard to use
-                    localStorage.setItem("currentUser", JSON.stringify(user));
+    // Find matching user
+    const user = users.find(u => 
+        u.username === usernameInput && 
+        u.password === passwordInput
+    );
 
-                    alert(`Welcome, ${user.name}!`);
+    if(user){
 
-                    // 4. Redirect based on user type
-                    switch (user.type) {
-                        case "admin":
-                            window.location.href = "adminDashboard.html";
-                            break;
-                        case "business":
-                            window.location.href = "businessDashboard.html";
-                            break;
-                        case "costumer": // Matching your JSON typo
-                            window.location.href = "homePage.html";
-                            break;
-                        default:
-                            alert("User type not recognized.");
-                    }
-                } else {
-                    alert("Invalid username or password!");
-                }
+        // Save logged in user
+        localStorage.setItem("currentUser", JSON.stringify(user));
 
-            } catch (error) {
-                console.error("Login Error:", error);
-                alert("An error occurred. Make sure you are using a Live Server.");
-            }
-        });
-    </script>
+        alert("Welcome " + user.username + "!");
+
+        // Redirect depending on account type
+        if(user.type === "business"){
+            window.location.href = "businessDashboard.html";
+        }
+        else if(user.type === "customer"){
+            window.location.href = "homePage.html";
+        }
+        else if(user.type === "admin"){
+            window.location.href = "adminDashboard.html";
+        }
+        else{
+            window.location.href = "homePage.html";
+        }
+
+    }
+    else{
+        alert("Invalid username or password!");
+    }
+
+});
+
+</script>
+
 </body>
 
 </html>

@@ -1,235 +1,390 @@
-// ================= Global State =================
 let users = [];
 let games = [];
+let rentals = [];
 
-// ================= Sidebar Navigation =================
-function showSection(sectionId, btn) {
-    document.querySelectorAll("main > section").forEach(section => {
-        section.style.display = "none";
-    });
 
-    const activeSection = document.getElementById(sectionId);
-    if (activeSection) activeSection.style.display = "block";
+/* =========================
+   LOAD DATA
+========================= */
 
-    document.querySelectorAll(".sidebar nav button").forEach(b => b.classList.remove("active"));
-    if (btn) btn.classList.add("active");
-}
+document.addEventListener("DOMContentLoaded", async () => {
 
-// ================= Logout =================
-function logout() {
-    if (confirm("Are you sure you want to log out?")) {
-        window.location.href = "login.html";
-    }
-}
+    await loadData();
 
-// ================= Data Loading =================
-async function loadData() {
-    try {
-        const usersRes = await fetch("users.json");
-        const usersData = await usersRes.json();
-        users = usersData.users || [];
-
-        const gamesRes = await fetch("games.json");
-        const gamesData = await gamesRes.json();
-        games = gamesData.games || [];
-
-        refreshUI();
-    } catch (err) {
-        console.error("Data Load Error: Ensure you are running on a local server.", err);
-    }
-}
-
-function refreshUI() {
     renderDashboardCards();
-    renderUsersTable();
     renderGamesTable();
+    renderUsersTable();
+
+});
+
+
+async function loadData() {
+
+    // USERS
+    users = JSON.parse(localStorage.getItem("users_db")) || [];
+
+    // GAMES
+    const savedGames = localStorage.getItem("games_db");
+
+    if (savedGames) {
+
+        games = JSON.parse(savedGames);
+
+    } else {
+
+        const res = await fetch("games.json");
+        const data = await res.json();
+
+        games = data.games;
+
+        localStorage.setItem("games_db", JSON.stringify(games));
+
+    }
+
+
+    // RENTALS
+    rentals = JSON.parse(localStorage.getItem("rentals_db")) || [];
+
 }
 
-// ================= Dashboard Logic =================
+
+
+/* =========================
+   DASHBOARD STATS
+========================= */
+
 function renderDashboardCards() {
+
     const container = document.getElementById("dashboard-cards");
-    if (!container) return;
+
+    const activeRentals = rentals.filter(r => r.status === "active").length;
+
+    const totalRevenue = rentals
+        .filter(r => r.status === "active")
+        .reduce((sum, r) => sum + r.price, 0);
+
 
     const stats = [
-        { title: "Total Users", value: users.length },
-        { title: "Total Games", value: games.length },
-        { title: "Active Listings", value: games.filter(g => g.Availability === "rent").length + " Rentals" }
-    ];
 
-    container.innerHTML = stats.map(stat => `
-        <div class="card">
-            <h3>${stat.title}</h3>
-            <p>${stat.value}</p>
-        </div>
-    `).join('');
-}
+        {
+            title: "Total Users",
+            value: users.length,
+            icon: "fa-users"
+        },
 
-// ================= Users Management (With Filter) =================
-function renderUsersTable() {
-    const table = document.getElementById("users-table");
-    const filterValue = document.getElementById("user-type-filter")?.value || "all";
-    if (!table) return;
+        {
+            title: "Total Games",
+            value: games.length,
+            icon: "fa-gamepad"
+        },
 
-    // Apply Filter Logic
-    const filteredUsers = filterValue === "all"
-        ? users
-        : users.filter(u => u.type === filterValue);
+        {
+            title: "Active Rentals",
+            value: activeRentals,
+            icon: "fa-cart-shopping"
+        },
 
-    table.innerHTML = `
-        <thead>
-            <tr>
-                <th>ID</th><th>Name</th><th>Username</th><th>Email</th><th>Type</th><th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            ${filteredUsers.map((user) => {
-        // Finding actual index in global array to maintain correct edit/delete targeting
-        const globalIndex = users.findIndex(u => u.userID === user.userID);
-        return `
-                <tr>
-                    <td>${user.userID}</td>
-                    <td>${user.name}</td>
-                    <td>${user.username}</td>
-                    <td>${user.email}</td>
-                    <td><span class="badge ${user.type}">${user.type}</span></td>
-                    <td class="users-action">
-                        <button class="action-btn" onclick="editUser(${globalIndex})"><i class="fas fa-edit"></i></button>
-                        <button class="action-btn" onclick="deleteUser(${globalIndex})"><i class="fas fa-trash"></i></button>
-                    </td>
-                </tr>`;
-    }).join('')}
-        </tbody>`;
-}
-
-
-
-function editUser(index) {
-    const user = users[index];
-
-    const name = prompt("Full Name:", user.name);
-    if (name === null) return;
-    const username = prompt("Username:", user.username);
-    if (username === null) return;
-    const email = prompt("Email:", user.email);
-    if (email === null) return;
-    const type = prompt("Type (admin / business / costumer):", user.type);
-    if (type === null) return;
-
-    users[index] = { ...user, name, username, email, type };
-    refreshUI();
-}
-
-function deleteUser(index) {
-    if (confirm("Delete this user?")) {
-        users.splice(index, 1);
-        refreshUI();
-    }
-}
-
-// ================= Games Management =================
-function renderGamesTable() {
-    const table = document.getElementById("games-table");
-    if (!table) return;
-
-    table.innerHTML = `
-        <thead>
-            <tr>
-                <th>ID</th><th>Name</th><th>Platform</th><th>Genre</th><th>Status</th><th>Vendor</th><th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            ${games.map((game, index) => `
-                <tr>
-                    <td>${game.gameID}</td>
-                    <td>${game.name}</td>
-                    <td>${game.platform}</td>
-                    <td>${game.genre}</td>
-                    <td>${game.Availability || "N/A"}</td>
-                    <td>${game.vendor || "System"}</td>
-                    <td class="games-action">
-                        <button class="action-btn" onclick="editGame(${index})"><i class="fas fa-edit"></i></button>
-                        <button class="action-btn" onclick="deleteGame(${index})"><i class="fas fa-trash"></i></button>
-                    </td>
-                </tr>
-            `).join('')}
-        </tbody>`;
-}
-
-function editGame(index) {
-    const game = games[index];
-
-    const name = prompt("Game Name:", game.name);
-    if (name === null) return;
-    const platform = prompt("Platform:", game.platform);
-    if (platform === null) return;
-    const genre = prompt("Genre:", game.genre);
-    if (genre === null) return;
-    const availability = prompt("Availability (buy/rent):", game.Availability);
-    if (availability === null) return;
-    const vendor = prompt("Vendor:", game.vendor);
-    if (vendor === null) return;
-
-    games[index] = { ...game, name, platform, genre, Availability: availability, vendor };
-    refreshUI();
-}
-
-function deleteGame(index) {
-    if (confirm("Delete this game?")) {
-        games.splice(index, 1);
-        refreshUI();
-    }
-}
-
-// ================= Form Handlers =================
-const adminForm = document.getElementById("add-admin-form");
-if (adminForm) {
-    adminForm.addEventListener("submit", (e) => {
-        e.preventDefault();
-        const fd = new FormData(adminForm);
-
-        if (fd.get("password") !== fd.get("confirmPassword")) {
-            alert("Passwords do not match!");
-            return;
+        {
+            title: "Revenue (EGP)",
+            value: totalRevenue,
+            icon: "fa-money-bill"
         }
 
-        users.push({
-            userID: users.length > 0 ? Math.max(...users.map(u => u.userID)) + 1 : 1,
-            name: fd.get("name"),
-            username: fd.get("username"),
-            email: fd.get("email"),
-            password: fd.get("password"),
-            type: "admin"
-        });
-        refreshUI();
-        adminForm.reset();
-        alert("Admin added!");
+    ];
+
+
+    container.innerHTML = "";
+
+    stats.forEach(stat => {
+
+        container.innerHTML += `
+        
+        <div class="card">
+            <i class="fas ${stat.icon}"></i>
+            <h3>${stat.value}</h3>
+            <p>${stat.title}</p>
+        </div>
+        
+        `;
+
     });
+
 }
 
-function showAddGameForm() { document.getElementById("add-game-form-container").style.display = "block"; }
-function closeAddGameForm() { document.getElementById("add-game-form-container").style.display = "none"; }
 
-const gameForm = document.getElementById("add-game-form");
-if (gameForm) {
-    gameForm.addEventListener("submit", (e) => {
-        e.preventDefault();
-        const fd = new FormData(gameForm);
-        games.push({
-            gameID: String(games.length + 1).padStart(3, '0'),
-            name: fd.get("name"),
-            platform: fd.get("platform"),
-            genre: fd.get("genre"),
-            Availability: "buy",
-            vendor: fd.get("gamevendor"),
-            description: fd.get("description")
-        });
-        refreshUI();
-        gameForm.reset();
-        closeAddGameForm();
+
+/* =========================
+   GAMES TABLE
+========================= */
+
+function renderGamesTable() {
+
+    const table = document.getElementById("games-table");
+
+    table.innerHTML = `
+    
+    <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Platform</th>
+        <th>Genre</th>
+        <th>Vendor</th>
+        <th>Price (EGP)</th>
+        <th>Status</th>
+        <th>Actions</th>
+    </tr>
+    
+    `;
+
+
+    games.forEach(game => {
+
+        table.innerHTML += `
+
+        <tr>
+
+            <td>${game.gameID}</td>
+            <td>${game.name}</td>
+            <td>${game.platform}</td>
+            <td>${game.genre}</td>
+            <td>${game.vendor}</td>
+            <td>${game.price}</td>
+            <td>${game.availability}</td>
+
+            <td>
+
+                <button onclick="deleteGame(${game.gameID})">
+                    Delete
+                </button>
+
+            </td>
+
+        </tr>
+
+        `;
+
     });
+
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-    loadData();
-    showSection('dashboard', document.querySelector(".sidebar nav button"));
+
+
+/* =========================
+   ADD GAME
+========================= */
+
+function showAddGameForm() {
+
+    document.getElementById("add-game-modal").style.display = "flex";
+
+}
+
+function closeAddGameForm() {
+
+    document.getElementById("add-game-modal").style.display = "none";
+
+}
+
+
+
+document.getElementById("add-game-form").addEventListener("submit", function(e) {
+
+    e.preventDefault();
+
+    const form = new FormData(this);
+
+    const price = Number(form.get("price"));
+
+    if (price < 250 || price > 1000) {
+
+        alert("Price must be between 250 and 1000 EGP");
+        return;
+
+    }
+
+
+    const newGame = {
+
+        gameID: games.length + 1,
+        name: form.get("name"),
+        platform: form.get("platform"),
+        genre: form.get("genre"),
+        vendor: form.get("vendor"),
+        price: price,
+        availability: "available"
+
+    };
+
+
+    games.push(newGame);
+
+    localStorage.setItem("games_db", JSON.stringify(games));
+
+    renderGamesTable();
+    renderDashboardCards();
+
+    closeAddGameForm();
+
+    this.reset();
+
 });
+
+
+
+/* =========================
+   DELETE GAME
+========================= */
+
+function deleteGame(id) {
+
+    games = games.filter(g => g.gameID !== id);
+
+    localStorage.setItem("games_db", JSON.stringify(games));
+
+    renderGamesTable();
+    renderDashboardCards();
+
+}
+
+
+
+/* =========================
+   USERS TABLE
+========================= */
+
+function renderUsersTable() {
+
+    const table = document.getElementById("users-table");
+
+    const filter = document.getElementById("user-type-filter").value;
+
+    let filteredUsers = users;
+
+    if (filter !== "all") {
+
+        filteredUsers = users.filter(u => u.type === filter);
+
+    }
+
+
+    table.innerHTML = `
+    
+    <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Username</th>
+        <th>Email</th>
+        <th>Type</th>
+    </tr>
+    
+    `;
+
+
+    filteredUsers.forEach(user => {
+
+        table.innerHTML += `
+
+        <tr>
+
+            <td>${user.userID}</td>
+            <td>${user.name}</td>
+            <td>${user.username}</td>
+            <td>${user.email}</td>
+            <td>${user.type}</td>
+
+        </tr>
+
+        `;
+
+    });
+
+}
+
+
+
+/* =========================
+   ADD ADMIN
+========================= */
+
+document.getElementById("add-admin-form").addEventListener("submit", function(e){
+
+    e.preventDefault();
+
+    const form = new FormData(this);
+
+    const password = form.get("password");
+    const confirmPassword = form.get("confirmPassword");
+
+    if(password !== confirmPassword){
+
+        alert("Passwords do not match");
+        return;
+
+    }
+
+
+    const newAdmin = {
+
+        userID: users.length + 1,
+        name: form.get("name"),
+        username: form.get("username"),
+        email: form.get("email"),
+        password: password,
+        type: "admin"
+
+    };
+
+
+    users.push(newAdmin);
+
+    localStorage.setItem("users_db", JSON.stringify(users));
+
+    renderUsersTable();
+    renderDashboardCards();
+
+    alert("Admin created successfully");
+
+    this.reset();
+
+});
+
+
+
+/* =========================
+   NAVIGATION
+========================= */
+
+function showSection(sectionId, button){
+
+    document.querySelectorAll(".section").forEach(sec => {
+
+        sec.classList.remove("active-section");
+
+    });
+
+    document.getElementById(sectionId).classList.add("active-section");
+
+
+    document.querySelectorAll(".nav-btn").forEach(btn => {
+
+        btn.classList.remove("active");
+
+    });
+
+    button.classList.add("active");
+
+}
+
+
+
+/* =========================
+   LOGOUT
+========================= */
+
+function logout(){
+
+    localStorage.removeItem("loggedUser");
+
+    window.location.href = "login.html";
+
+}
