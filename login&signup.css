@@ -3,15 +3,13 @@
 :root {
   --primary-color: #182938;
   --secondary-color: #5c748e;
-  --dark-color: #121f29;
-  --black: #000102;
-  --input-background: rgba(28, 38, 51, 0.9);
-  --shadow: 0 10px 25px rgba(18, 31, 41, 0.6);
+  --glass-bg: rgba(18, 31, 41, 0.85);
+  --input-bg: rgba(255, 255, 255, 0.05);
+  --text-white: #ffffff;
+  --text-muted: #a0a8b0;
 }
 
-*,
-*::before,
-*::after {
+* {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
@@ -19,111 +17,133 @@
 
 body {
   font-family: 'Poppins', sans-serif;
-  font-size: 16px;
-  color: var(--black);
+  background: url("photos/background2.jpg") center/cover no-repeat fixed;
   min-height: 100vh;
-  background: url("photos/background2.jpg") center/cover no-repeat;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  display: grid;
+  place-items: center;
+  color: var(--text-white);
 }
 
 .wrapper {
   width: 100%;
-  max-width: 400px;
+  max-width: 420px;
   padding: 2.5rem;
-  border-radius: 12px;
-  background-color: rgba(18, 31, 41, 0.8);
-  box-shadow: 0 10px 25px rgba(18, 31, 41, 0.6);
-  text-align: center;
+  background: var(--glass-bg);
+  backdrop-filter: blur(10px);
+  border-radius: 16px;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.wrapper h1 {
-  font-size: 2rem;
-  margin-bottom: 1.5rem;
+h1 {
+  text-align: center;
+  margin-bottom: 2rem;
+  font-weight: 600;
   color: var(--secondary-color);
 }
 
-form div {
-  position: relative;
+/* Side-by-Side Label and Input */
+.input-group {
+  display: flex;
+  /* This aligns items horizontally */
+  flex-direction: row;
+  /* Forces label and input to stay in a row */
+  align-items: center;
+  background: var(--input-bg);
+  border: 1.5px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
   margin-bottom: 1.2rem;
+  transition: all 0.3s ease;
+  overflow: hidden;
+  /* Ensures the input doesn't break the border radius */
 }
 
-form label {
-  position: absolute;
-  top: 50%;
-  left: 12px;
-  transform: translateY(-50%);
-  pointer-events: none;
+.input-group:focus-within {
+  border-color: var(--secondary-color);
+  background: rgba(255, 255, 255, 0.08);
 }
 
-form label img {
+.input-group label {
+  padding: 0 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-right: 1px solid rgba(255, 255, 255, 0.1);
+  cursor: pointer;
+  min-width: 50px;
+  /* Keeps label size consistent */
+}
+
+.input-group label img {
   width: 20px;
   height: 20px;
   filter: brightness(0) invert(1);
+  opacity: 0.7;
 }
 
-form input {
-  width: 100%;
-  padding: 12px 12px 12px 42px;
-  border-radius: 8px;
-  border: 1px solid var(--secondary-color);
-  background-color: var(--input-background);
-  color: var(--black);
-  font-size: 1rem;
+.input-group input {
+  flex: 1;
+  /* Makes input fill the remaining space beside the label */
+  background: transparent;
+  border: none;
+  padding: 14px 15px;
+  color: var(--text-white);
+  font-size: 0.95rem;
   outline: none;
-  transition: 0.3s;
 }
 
-form input:focus {
-  border-color: var(--secondary-color);
-  box-shadow: 0 0 5px var(--secondary-color);
+/* Account Type Row */
+.account-type-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  font-size: 0.85rem;
+  color: var(--text-muted);
 }
 
-form input::placeholder {
-  color: #a0a8b0;
+.account-type-row label {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: var(--text-white);
+  cursor: pointer;
+  border: none;
+  /* Resetting border for radio labels */
+  padding: 0;
 }
 
 button {
   width: 100%;
-  padding: 12px;
-  margin-top: 0.5rem;
-  background-color: var(--secondary-color);
+  padding: 14px;
+  background: var(--secondary-color);
   color: white;
   border: none;
-  border-radius: 8px;
+  border-radius: 10px;
   font-size: 1rem;
   font-weight: 500;
   cursor: pointer;
   transition: 0.3s;
+  margin-bottom: 1rem;
 }
 
 button:hover {
-  background-color: var(--primary-color);
+  background: #7089a3;
+  transform: translateY(-2px);
 }
 
-form p {
-  margin-top: 1rem;
-  font-size: 0.9rem;
-  color: #c0c6cc;
+p {
+  text-align: center;
+  font-size: 0.85rem;
+  color: var(--text-muted);
 }
 
-form p a {
+p a {
   color: var(--secondary-color);
   text-decoration: none;
-  font-weight: 500;
+  font-weight: 600;
 }
 
-form p a:hover {
+p a:hover {
   text-decoration: underline;
-}
-
-@media (max-width: 450px) {
-  .wrapper {
-    padding: 2rem 1.5rem;
-  }
-
-  form input {
-    padding-left: 38px;
-  }
 }
