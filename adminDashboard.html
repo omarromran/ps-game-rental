@@ -14,6 +14,7 @@
 <body>
 
     <div class="dashboard-wrapper">
+        <!-- Sidebar -->
         <aside class="sidebar">
             <h2>Admin</h2>
             <nav>
@@ -35,11 +36,14 @@
             </button>
         </aside>
 
+        <!-- Main Content -->
         <main>
+            <!-- Dashboard -->
             <section id="dashboard">
                 <div class="card-container" id="dashboard-cards"></div>
             </section>
 
+            <!-- Manage Games -->
             <section id="games">
                 <h2>Manage Games</h2>
                 <button class="action-btn" onclick="showAddGameForm()">
@@ -48,11 +52,11 @@
                 <table id="games-table"></table>
             </section>
 
+            <!-- Manage Users -->
             <section id="users">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                <div class="users-header">
                     <h2>Manage Users</h2>
-                    <select id="user-type-filter" onchange="renderUsersTable()"
-                        style="padding: 8px; border-radius: 5px; background: var(--input-background); color: white; border: 1px solid var(--secondary-color);">
+                    <select id="user-type-filter" onchange="renderUsersTable()">
                         <option value="all">All User Types</option>
                         <option value="admin">Admin</option>
                         <option value="business">Business</option>
@@ -62,6 +66,7 @@
                 <table id="users-table"></table>
             </section>
 
+            <!-- Add Admin -->
             <section id="addAdmin">
                 <h2>Add New Admin</h2>
                 <form id="add-admin-form">
@@ -70,12 +75,15 @@
                     <div><input type="email" placeholder="Email" name="email" required></div>
                     <div><input type="password" placeholder="Password" name="password" required></div>
                     <div><input type="password" placeholder="Confirm Password" name="confirmPassword" required></div>
-                    <button type="submit" class="submit-btn"><i class="fas fa-user-plus"></i> Create Admin</button>
+                    <button type="submit" class="submit-btn">
+                        <i class="fas fa-user-plus"></i> Create Admin
+                    </button>
                 </form>
             </section>
         </main>
     </div>
 
+    <!-- Add Game Modal -->
     <div id="add-game-form-container" class="modal">
         <div class="modal-content">
             <span class="close" onclick="closeAddGameForm()">&times;</span>
@@ -84,9 +92,19 @@
                 <div><input type="text" name="name" placeholder="Game Name" required></div>
                 <div><input type="text" name="platform" placeholder="Platform" required></div>
                 <div><input type="text" name="genre" placeholder="Genre" required></div>
+                <div>
+                    <label>Status</label>
+                    <select name="availability" required>
+                        <option value="buy">Buy</option>
+                        <option value="rent">Rent</option>
+                    </select>
+                </div>
                 <div><input type="text" name="gamevendor" placeholder="Vendor" required></div>
+                <div><input type="number" name="price" placeholder="Price (EGP)" min="0" required></div>
                 <div><textarea name="description" placeholder="Description"></textarea></div>
-                <button type="submit" class="submit-btn"><i class="fas fa-plus"></i> Add Game</button>
+                <button type="submit" class="submit-btn">
+                    <i class="fas fa-plus"></i> Add Game
+                </button>
             </form>
         </div>
     </div>

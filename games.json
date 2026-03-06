@@ -2,27 +2,30 @@
     "games": [
         {
             "gameID": "001",
-            "name": "FIFA 25",
+            "name": "FIFA 24",
             "platform": "PS 5",
             "genre": "SPORT SIMULATION",
             "Availability": "buy",
-            "vendor": "etsh store"
+            "vendor": "etsh store",
+            "price": 1200
         },
         {
             "gameID": "002",
-            "name": "GTA 5 ",
+            "name": "GTA 5",
             "platform": "PS 5",
-            "genre": "Action ",
+            "genre": "Action",
             "Availability": "buy",
-            "vendor": "zeina store"
+            "vendor": "zeina store",
+            "price": 950
         },
         {
             "gameID": "003",
-            "name": "Uncharted 4: A Thief's End ",
+            "name": "Uncharted 4: A Thief's End",
             "platform": "PS 5",
-            "genre": "Action ",
+            "genre": "Action",
             "Availability": "rent",
-            "vendor": "etsh store"
+            "vendor": "etsh store",
+            "price": 150
         }
     ]
 }
