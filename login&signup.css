@@ -4,9 +4,12 @@
   --primary-color: #182938;
   --secondary-color: #5c748e;
   --dark-color: #121f29;
-  --black: #ffffff;
+  --black: #000000;
+  --white: #ffffff;
   --input-background: rgba(28, 38, 51, 0.9);
   --shadow: 0 10px 25px rgba(18, 31, 41, 0.6);
+  --text-white: #ffffff;
+  --text-muted: #c0c6cc;
 }
 
 * {
@@ -25,7 +28,6 @@ body {
 }
 
 /* ================= Wrapper ================= */
-
 .wrapper {
   width: 100%;
   max-width: 420px;
@@ -44,83 +46,49 @@ h1 {
 }
 
 /* ================= Input Fields ================= */
-
-form div {
+.input-group {
   position: relative;
   margin-bottom: 1.2rem;
-  transition: all 0.3s ease;
-  overflow: hidden;
-  /* Ensures the input doesn't break the border radius */
 }
 
-/* Only style icon labels inside input divs */
-form div > label {
+.input-group img {
   position: absolute;
   top: 50%;
   left: 12px;
   transform: translateY(-50%);
-  pointer-events: none;
-}
-
-form div > label img {
   width: 20px;
   height: 20px;
   filter: brightness(0) invert(1);
   opacity: 0.7;
+  pointer-events: none;
 }
 
-form input[type="email"],
-form input[type="text"],
-form input[type="password"] {
+.input-group input {
   width: 100%;
   padding: 12px 12px 12px 42px;
   border-radius: 8px;
   border: 1px solid var(--secondary-color);
   background-color: var(--input-background);
-  color: white;
+  color: var(--text-white);
   font-size: 1rem;
   outline: none;
 }
 
-/* Account Type Row */
-.account-type-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1.5rem;
-  font-size: 0.85rem;
-  color: var(--text-muted);
-}
-
-.account-type-row label {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  color: var(--text-white);
-  cursor: pointer;
-  border: none;
-  /* Resetting border for radio labels */
-  padding: 0;
-}
-
 /* ================= Account Type (Radio Buttons) ================= */
-
 .account-type {
   display: flex;
   justify-content: space-around;
   align-items: center;
-  margin: 1.2rem 0;
-  color: #c0c6cc;
+  margin: 1.5rem 0;
+  color: var(--text-muted);
   font-size: 0.95rem;
 }
 
 .account-type label {
-  position: static;          /* Remove absolute positioning */
   display: flex;
   align-items: center;
   gap: 6px;
   cursor: pointer;
-  pointer-events: auto;
 }
 
 .account-type input[type="radio"] {
@@ -129,12 +97,11 @@ form input[type="password"] {
 }
 
 /* ================= Button ================= */
-
 button {
   width: 100%;
   padding: 14px;
   background: var(--secondary-color);
-  color: white;
+  color: var(--white);
   border: none;
   border-radius: 10px;
   font-size: 1rem;
@@ -150,11 +117,10 @@ button:hover {
 }
 
 /* ================= Links ================= */
-
 form p {
   margin-top: 1rem;
   font-size: 0.9rem;
-  color: #c0c6cc;
+  color: var(--text-muted);
 }
 
 p a {
@@ -168,13 +134,12 @@ p a:hover {
 }
 
 /* ================= Responsive ================= */
-
 @media (max-width: 450px) {
   .wrapper {
     padding: 2rem 1.5rem;
   }
 
-  form input {
+  .input-group input {
     padding-left: 38px;
   }
 

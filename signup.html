@@ -15,12 +15,14 @@
 
         <form id="signup-form">
 
-            
-            <div>
-                <label for="email-input">
-                    <img src ="photos/email_icon.svg">
-                </label>
-                <input type="email" name="email" id="email-input" placeholder="email" required>
+            <div class="input-group">
+                <img src="photos/person_icon.svg" alt="Name">
+                <input type="text" id="name-input" placeholder="Full Name" required>
+            </div>
+
+            <div class="input-group">
+                <img src="photos/email_icon.svg" alt="Email">
+                <input type="email" name="email" id="email-input" placeholder="Email" required>
             </div>
 
             <div class="input-group">
@@ -37,7 +39,7 @@
                 <img src="photos/lock_icon.svg" alt="Confirm Password">
                 <input type="password" id="confirm-password-input" placeholder="Confirm Password" required>
             </div>
-            
+
             <!-- Account Type -->
             <div class="account-type">
                 <label>
@@ -52,10 +54,9 @@
             </div>
 
             <button type="submit">Sign Up</button>
+
             <p>Already have an account? <a href="login.html">Log In</a></p>
 
-            <button type="submit">Create Account</button>
-            <p>Already have an account? <a href="login.html">Log In</a></p>
         </form>
     </div>
 
@@ -76,8 +77,6 @@
             }
 
             try {
-                // 1. Get the list of users
-                // We check localStorage first. If empty, we fetch from the .json file.
                 let users = JSON.parse(localStorage.getItem("users_db"));
 
                 if (!users) {
@@ -86,13 +85,11 @@
                     users = data.users;
                 }
 
-                // 2. Check if username is already taken
                 if (users.some(u => u.username === username)) {
                     alert("Username already taken! Please choose another.");
                     return;
                 }
 
-                // 3. Create the New User Object
                 const newUser = {
                     userID: users.length > 0 ? Math.max(...users.map(u => u.userID)) + 1 : 1,
                     name: name,
@@ -102,11 +99,8 @@
                     type: type
                 };
 
-                // 4. Add to the list and SAVE to localStorage
                 users.push(newUser);
                 localStorage.setItem("users_db", JSON.stringify(users));
-
-                console.log("User saved to local database:", newUser);
 
                 alert("Registration Successful! You can now log in.");
                 window.location.href = "login.html";
