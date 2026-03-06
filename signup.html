@@ -14,22 +14,13 @@
         <h1>Sign Up</h1>
 
         <form id="signup-form">
-            <!-- Account Type -->
-            <div class="account-type">
-                <span>Account Type:</span>
-                <label><input type="radio" name="account-type" value="costumer" checked> Customer</label>
-                <label><input type="radio" name="account-type" value="business"> Business</label>
-            </div>
 
-            <!-- Input Fields -->
-            <div class="input-group">
-                <img src="photos/person_icon.svg" alt="Full Name">
-                <input type="text" id="name-input" placeholder="Full Name" required>
-            </div>
-
-            <div class="input-group">
-                <img src="photos/email_icon.svg" alt="Email">
-                <input type="email" id="email-input" placeholder="Email Address" required>
+            
+            <div>
+                <label for="email-input">
+                    <img src ="photos/email_icon.svg">
+                </label>
+                <input type="email" name="email" id="email-input" placeholder="email" required>
             </div>
 
             <div class="input-group">
@@ -46,6 +37,22 @@
                 <img src="photos/lock_icon.svg" alt="Confirm Password">
                 <input type="password" id="confirm-password-input" placeholder="Confirm Password" required>
             </div>
+            
+            <!-- Account Type -->
+            <div class="account-type">
+                <label>
+                    <input type="radio" name="account-type" value="customer" checked>
+                    Customer
+                </label>
+
+                <label>
+                    <input type="radio" name="account-type" value="business">
+                    Business
+                </label>
+            </div>
+
+            <button type="submit">Sign Up</button>
+            <p>Already have an account? <a href="login.html">Log In</a></p>
 
             <button type="submit">Create Account</button>
             <p>Already have an account? <a href="login.html">Log In</a></p>
