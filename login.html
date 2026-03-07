@@ -36,38 +36,31 @@
             const passwordInput = document.getElementById("password-input").value;
 
             try {
-                // 1. Check localStorage first (for newly signed-up users)
-                let users = JSON.parse(localStorage.getItem("users_db"));
-
-                // 2. If localStorage is empty, fetch from the original JSON file
+                let users = JSON.parse(localStorage.getItem("usersLocalStorage"));
                 if (!users) {
                     const response = await fetch("users.json");
                     if (!response.ok) throw new Error("Could not load user data.");
                     const data = await response.json();
                     users = data.users;
-
-                    // Optional: Sync JSON users to localStorage so they stay together
-                    localStorage.setItem("users_db", JSON.stringify(users));
+                    //lw userLocalStorage fady b fetch mn users.json
+                    localStorage.setItem("usersLocalStorage", JSON.stringify(users));
                 }
 
-                // 3. Find the user in the combined list
-                const user = users.find(u => u.username === usernameInput && u.password === passwordInput);
+                const LoginUser = users.find(user => user.username === usernameInput && user.password === passwordInput);
 
-                if (user) {
-                    // Store only the LOGGED IN user specifically for the dashboard to use
-                    localStorage.setItem("currentUser", JSON.stringify(user));
+                if (LoginUser) {
+                    localStorage.setItem("currentUser", JSON.stringify(LoginUser));
 
-                    alert(`Welcome, ${user.name}!`);
+                    alert(`Welcome, ${LoginUser.name}!`);
 
-                    // 4. Redirect based on user type
-                    switch (user.type) {
+                    switch (LoginUser.type) {
                         case "admin":
                             window.location.href = "adminDashboard.html";
                             break;
                         case "business":
                             window.location.href = "businessDashboard.html";
                             break;
-                        case "costumer": // Matching your JSON typo
+                        case "customer":
                             window.location.href = "homePage.html";
                             break;
                         default:
