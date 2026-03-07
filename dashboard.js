@@ -90,8 +90,8 @@ function renderUsersTable() {
         </thead>
         <tbody>
             ${filteredUsers.map(user => {
-                const globalIndex = users.findIndex(u => u.userID === user.userID);
-                return `
+        const globalIndex = users.findIndex(u => u.userID === user.userID);
+        return `
                 <tr>
                     <td>${user.userID}</td>
                     <td>${user.name}</td>
@@ -103,7 +103,7 @@ function renderUsersTable() {
                         <button class="action-btn" onclick="deleteUser(${globalIndex})"><i class="fas fa-trash"></i></button>
                     </td>
                 </tr>`;
-            }).join('')}
+    }).join('')}
         </tbody>`;
 }
 
