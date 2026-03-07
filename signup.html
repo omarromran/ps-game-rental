@@ -12,7 +12,6 @@
 <body>
     <div class="wrapper">
         <h1>Sign Up</h1>
-
         <form id="signup-form">
 
             <div class="input-group">
@@ -40,7 +39,6 @@
                 <input type="password" id="confirm-password-input" placeholder="Confirm Password" required>
             </div>
 
-            <!-- Account Type -->
             <div class="account-type">
                 <label>
                     <input type="radio" name="account-type" value="customer" checked>
@@ -56,7 +54,6 @@
             <button type="submit">Sign Up</button>
 
             <p>Already have an account? <a href="login.html">Log In</a></p>
-
         </form>
     </div>
 
@@ -77,21 +74,27 @@
             }
 
             try {
-                let users = JSON.parse(localStorage.getItem("users_db"));
+                let users = JSON.parse(localStorage.getItem("usersLocalStorage"));
 
                 if (!users) {
                     const response = await fetch("users.json");
                     const data = await response.json();
                     users = data.users;
                 }
-
+                //lw mafeesh users f local storage y load mn users.json w y7otha fi local storage 3ashan y login biha b3deen 
                 if (users.some(u => u.username === username)) {
                     alert("Username already taken! Please choose another.");
                     return;
                 }
 
+                let userID;
+                if (users.length > 0) {
+                    userID = users[users.length - 1].id + 1;
+                } else {
+                    userID = 1;
+                }
                 const newUser = {
-                    userID: users.length > 0 ? Math.max(...users.map(u => u.userID)) + 1 : 1,
+                    id: userID,
                     name: name,
                     username: username,
                     email: email,
@@ -100,9 +103,8 @@
                 };
 
                 users.push(newUser);
-                localStorage.setItem("users_db", JSON.stringify(users));
-
-                alert("Registration Successful! You can now log in.");
+                localStorage.setItem("usersLocalStorage", JSON.stringify(users));
+                alert("Account created successfully! You can now log in.");
                 window.location.href = "login.html";
 
             } catch (error) {

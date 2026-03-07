@@ -6,15 +6,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard</title>
     <link rel="icon" href="photos/images.png">
-    <link rel="stylesheet" href="dashboard.css">
+    <link rel="stylesheet" href="adminDashboard.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script defer src="dashboard.js"></script>
+    <script defer src="adminDashboard.js"></script>
 </head>
 
 <body>
 
     <div class="dashboard-wrapper">
-        <!-- Sidebar -->
         <aside class="sidebar">
             <h2>Admin</h2>
             <nav>
@@ -36,14 +35,10 @@
             </button>
         </aside>
 
-        <!-- Main Content -->
         <main>
-            <!-- Dashboard -->
             <section id="dashboard">
                 <div class="card-container" id="dashboard-cards"></div>
             </section>
-
-            <!-- Manage Games -->
             <section id="games">
                 <h2>Manage Games</h2>
                 <button class="action-btn" onclick="showAddGameForm()">
@@ -80,10 +75,10 @@
                     </button>
                 </form>
             </section>
+
         </main>
     </div>
 
-    <!-- Add Game Modal -->
     <div id="add-game-form-container" class="modal">
         <div class="modal-content">
             <span class="close" onclick="closeAddGameForm()">&times;</span>
@@ -106,6 +101,7 @@
                     <i class="fas fa-plus"></i> Add Game
                 </button>
             </form>
+
         </div>
     </div>
 
