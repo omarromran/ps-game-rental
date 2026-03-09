@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 document.addEventListener("DOMContentLoaded", function () {
 
      // ================= Section Navigation =================
@@ -23,11 +24,48 @@ document.addEventListener("DOMContentLoaded", function () {
      window.showSection = showSection;
 
      // Show first section by default
+=======
+
+document.addEventListener("DOMContentLoaded", function () {
+
+     const sections = document.querySelectorAll("main section");
+     const buttons = document.querySelectorAll(".sidebar nav button");
+
+     function showSection(sectionId, clickedButton) {
+
+          // Hide all sections
+          sections.forEach(function (section) {
+               section.style.display = "none";
+          });
+
+          // Remove active class from all buttons
+          buttons.forEach(function (button) {
+               button.classList.remove("active");
+          });
+
+          // Show selected section
+          const selectedSection = document.getElementById(sectionId);
+          if (selectedSection) {
+               selectedSection.style.display = "block";
+          }
+
+          // Highlight active button
+          if (clickedButton) {
+               clickedButton.classList.add("active");
+          }
+     }
+
+     // Make function available to HTML buttons
+     window.showSection = showSection;
+
+     // Show first section on page load
+>>>>>>> 11fdb1d (fixed gaming dashboard html and js and matching it to be with the same css file as the admin dashboard)
      if (sections.length > 0) {
           sections.forEach(section => section.style.display = "none");
           sections[0].style.display = "block";
      }
 
+<<<<<<< HEAD
      // ================= Leave Review Modal =================
      const reviewModal = document.getElementById("review-modal");
      const reviewGameName = document.getElementById("review-game-name");
@@ -109,5 +147,7 @@ document.addEventListener("DOMContentLoaded", function () {
           // Optionally, show a confirmation or save review to backend here
           alert(`Thank you for reviewing ${game}!`);
      });
-
+=======
 });
+>>>>>>> 11fdb1d (fixed gaming dashboard html and js and matching it to be with the same css file as the admin dashboard)
+
