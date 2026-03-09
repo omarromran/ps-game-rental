@@ -1,32 +1,41 @@
-document.addEventListener("DOMContentLoaded", function(){
 
-const active = document.getElementById("active-rentals");
-const pending = document.getElementById("pending-bookings");
-const completed = document.getElementById("completed-rentals");
+document.addEventListener("DOMContentLoaded", function () {
 
-const navActive = document.getElementById("active");
-const navPending = document.getElementById("pending");
-const navCompleted = document.getElementById("completed");
+     const sections = document.querySelectorAll("main section");
+     const buttons = document.querySelectorAll(".sidebar nav button");
 
-function hideAll(){
-     active.classList.add("hidden");
-     pending.classList.add("hidden");
-     completed.classList.add("hidden");
-}
+     function showSection(sectionId, clickedButton) {
 
-navActive.onclick = function(){
-hideAll();
-active.classList.remove("hidden");
-};
+          // Hide all sections
+          sections.forEach(function (section) {
+               section.style.display = "none";
+          });
 
-navPending.onclick = function(){
-hideAll();
-pending.classList.remove("hidden");
-};
+          // Remove active class from all buttons
+          buttons.forEach(function (button) {
+               button.classList.remove("active");
+          });
 
-navCompleted.onclick = function(){
-hideAll();
-completed.classList.remove("hidden");
-};
+          // Show selected section
+          const selectedSection = document.getElementById(sectionId);
+          if (selectedSection) {
+               selectedSection.style.display = "block";
+          }
+
+          // Highlight active button
+          if (clickedButton) {
+               clickedButton.classList.add("active");
+          }
+     }
+
+     // Make function available to HTML buttons
+     window.showSection = showSection;
+
+     // Show first section on page load
+     if (sections.length > 0) {
+          sections.forEach(section => section.style.display = "none");
+          sections[0].style.display = "block";
+     }
 
 });
+
