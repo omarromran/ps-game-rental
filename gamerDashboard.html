@@ -1,69 +1,72 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <title>Gamer Dashboard - GameLend</title>
   <link rel="stylesheet" href="gamerDashboard.css">
   <script src="gamerDashboard.js"></script>
 </head>
+
 <body>
 
-<div class="dashboard">
+  <div class="dashboard">
 
- 
-  <nav class="sidebar">
-  <div class="logo">Gamer Dashboard</div>
-  <ul>
-    <li><a href="#" id="active">Active Rentals</a></li>
-    <li><a href="#" id="pending">Pending Bookings</a></li>
-    <li><a href="#" id="completed">Completed Rentals</a></li>
-    <li><a href="#" id="profile">Profile</a></li>
-    <li><a href="#">Logout</a></li>
-  </ul>
-</nav>
 
-  
-  <main class="main-content">
+    <nav class="sidebar">
+      <div class="logo">Gamer Dashboard</div>
+      <ul>
+        <li><a href="#" id="active">Active Rentals</a></li>
+        <li><a href="#" id="pending">Pending Bookings</a></li>
+        <li><a href="#" id="completed">Completed Rentals</a></li>
+        <li><a href="#" id="profile">Profile</a></li>
+        <li><a href="login.html">Logout</a></li>
+      </ul>
+    </nav>
 
-    <h2>Welcome Back!</h2>
-<br>
-    
-    <div class="hidden" id="active-rentals">
-      <h2>Active Rentals</h2>
-      <div class="games-grid">
-        <div class="game-card">GTA  <br> Ends: March 10</div>
-        <div class="game-card">FIFA <br> Ends: March 12</div>
+
+    <main class="main-content">
+
+      <h2>Welcome Back!</h2>
+      <br>
+
+      <div class="hidden" id="active-rentals">
+        <h2>Active Rentals</h2>
+        <div class="games-grid">
+          <div class="game-card">GTA <br> Ends: March 10</div>
+          <div class="game-card">FIFA <br> Ends: March 12</div>
+        </div>
       </div>
-    </div>
 
-    
-    <div class="hidden" id="pending-bookings">
-      <h2>Pending Bookings</h2>
-      <div class="games-grid">
-        <div class="game-card">Call of duty <br> Waiting for approval</div>
+
+      <div class="hidden" id="pending-bookings">
+        <h2>Pending Bookings</h2>
+        <div class="games-grid">
+          <div class="game-card">Call of duty <br> Waiting for approval</div>
+        </div>
       </div>
-    </div>
 
-    
-    <div class="hidden" id="completed-rentals">
-      <h2>Completed Rentals</h2>
-      <div class="games-grid">
-        <div class="game-card">Fortnite 
+
+      <div class="hidden" id="completed-rentals">
+        <h2>Completed Rentals</h2>
+        <div class="games-grid">
+          <div class="game-card">Fortnite
             <br> <br>
-           <a href="review.html">
-                <button class="btn"> Leave Review</button>
+            <a href="review.html">
+              <button class="btn"> Leave Review</button>
             </a>
-            </div>
-             
+          </div>
+
+        </div>
+
+
       </div>
-      
-     
-    </div>
 
-  </main>
+    </main>
 
-</div>
+  </div>
 
-<script src="gamerDashboard.js"></script>
+  <script src="gamerDashboard.js"></script>
 </body>
+
 </html>
