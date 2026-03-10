@@ -2,126 +2,126 @@
 <html lang="en">
 
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Gamer Dashboard</title>
-  <link rel="icon" href="photos/images.png">
-  <link rel="stylesheet" href="dashboard.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <script defer src="gamerdashboard.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gamer Dashboard</title>
+    <link rel="icon" href="photos/images.png">
+    <link rel="stylesheet" href="dashboard.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script defer src="gamerdashboard.js"></script>
 </head>
 
 <body>
 
-  <div class="dashboard-wrapper">
-    <aside class="sidebar">
-      <h2>Gamer</h2>
-      <nav>
-        <button id="active" onclick="showSection('activeRentals', this)" class="active">
-          <i class="fas fa-gamepad"></i> Active Rentals
-          <button onclick="showSection('dashboard', this)" class="active">
-            <i class="fas fa-tachometer-alt"></i> Dashboard
-          </button>
-          <button onclick="showSection('active-rentals', this)">
-            <i class="fas fa-play"></i> Active Rentals
-          </button>
-          <button id="pending" onclick="showSection('pendingBookings', this)">
-            <i class="fas fa-clock"></i> Pending Bookings
-            <button onclick="showSection('pending-bookings', this)">
-              <i class="fas fa-hourglass-half"></i> Pending Bookings
+    <div class="dashboard-wrapper">
+        <aside class="sidebar">
+            <h2>Gamer</h2>
+            <nav>
+                <button id="active" onclick="showSection('activeRentals', this)" class="active">
+                    <i class="fas fa-gamepad"></i> Active Rentals
+                    <button onclick="showSection('dashboard', this)" class="active">
+                        <i class="fas fa-tachometer-alt"></i> Dashboard
+                    </button>
+                    <button onclick="showSection('active-rentals', this)">
+                        <i class="fas fa-play"></i> Active Rentals
+                    </button>
+                    <button id="pending" onclick="showSection('pendingBookings', this)">
+                        <i class="fas fa-clock"></i> Pending Bookings
+                        <button onclick="showSection('pending-bookings', this)">
+                            <i class="fas fa-hourglass-half"></i> Pending Bookings
+                        </button>
+                        <button onclick="showSection('completed-rentals', this)">
+                            <i class="fas fa-check"></i> Completed Rentals
+                        </button>
+                        <button onclick="showSection('profile', this)">
+                            <i class="fas fa-user"></i> Profile
+                        </button>
+            </nav>
+            <button class="logout" onclick="window.location.href='login.html'">
+                <i class="fas fa-sign-out-alt"></i> Logout
             </button>
-            <button onclick="showSection('completed-rentals', this)">
-              <i class="fas fa-check"></i> Completed Rentals
-            </button>
-            <button onclick="showSection('profile', this)">
-              <i class="fas fa-user"></i> Profile
-            </button>
-      </nav>
-      <button class="logout" onclick="window.location.href='login.html'">
-        <i class="fas fa-sign-out-alt"></i> Logout
-      </button>
-    </aside>
+        </aside>
 
-    <main>
-      <!-- Dashboard Section -->
-      <section id="dashboard">
-        <h2>Welcome Back!</h2>
-        <p>Here is your gamer dashboard overview.</p>
-      </section>
+        <main>
+            <!-- Dashboard Section -->
+            <section id="dashboard">
+                <h2>Welcome Back!</h2>
+                <p>Here is your gamer dashboard overview.</p>
+            </section>
 
-      <!-- Active Rentals -->
-      <section id="active-rentals">
-        <h2>Active Rentals</h2>
-        <div class="games-grid">
-          <div class="game-card">GTA <br> Ends: March 10</div>
-          <div class="game-card">FIFA <br> Ends: March 12</div>
-        </div>
-      </section>
+            <!-- Active Rentals -->
+            <section id="active-rentals">
+                <h2>Active Rentals</h2>
+                <div class="games-grid">
+                    <div class="game-card">GTA <br> Ends: March 10</div>
+                    <div class="game-card">FIFA <br> Ends: March 12</div>
+                </div>
+            </section>
 
-      <!-- Pending Bookings -->
-      <section id="pending-bookings">
-        <h2>Pending Bookings</h2>
-        <div class="games-grid">
-          <div class="game-card">Call of Duty <br> Waiting for approval</div>
-        </div>
-      </section>
+            <!-- Pending Bookings -->
+            <section id="pending-bookings">
+                <h2>Pending Bookings</h2>
+                <div class="games-grid">
+                    <div class="game-card">Call of Duty <br> Waiting for approval</div>
+                </div>
+            </section>
 
-      <!-- Completed Rentals -->
-      <section id="completed-rentals">
-        <h2>Completed Rentals</h2>
-        <div class="games-grid">
-          <div class="game-card">
-            Fortnite
-            <br><br>
-            <button class="action-btn" onclick="openReviewModal('Fortnite')">
-              <i class="fas fa-star"></i> Leave Review
-            </button>
-          </div>
-          <div class="game-card">
-            FIFA
-            <br><br>
-            <button class="action-btn" onclick="openReviewModal('FIFA')">
-              <i class="fas fa-star"></i> Leave Review
-            </button>
-          </div>
-        </div>
-      </section>
+            <!-- Completed Rentals -->
+            <section id="completed-rentals">
+                <h2>Completed Rentals</h2>
+                <div class="games-grid">
+                    <div class="game-card">
+                        Fortnite
+                        <br><br>
+                        <button class="action-btn" onclick="openReviewModal('Fortnite')">
+                            <i class="fas fa-star"></i> Leave Review
+                        </button>
+                    </div>
+                    <div class="game-card">
+                        FIFA
+                        <br><br>
+                        <button class="action-btn" onclick="openReviewModal('FIFA')">
+                            <i class="fas fa-star"></i> Leave Review
+                        </button>
+                    </div>
+                </div>
+            </section>
 
-      <!-- Profile Section -->
-      <section id="profile">
-        <h2>Your Profile</h2>
-        <p>Profile details go here.</p>
-      </section>
-    </main>
-  </div>
-
-  <!-- Leave Review Modal -->
-  <div id="review-modal" class="modal">
-    <div class="modal-content">
-      <span class="close" onclick="closeReviewModal()">&times;</span>
-      <h2>Leave a Review</h2>
-      <div class="game-title">
-        Game: <strong id="review-game-name"></strong>
-      </div>
-      <form id="review-form">
-        <div class="rating">
-          <label for="rating">Rating:</label>
-          <select id="rating" required>
-            <option value="1">★☆☆☆☆</option>
-            <option value="2">★★☆☆☆</option>
-            <option value="3">★★★☆☆</option>
-            <option value="4">★★★★☆</option>
-            <option value="5">★★★★★</option>
-          </select>
-        </div>
-        <div class="comment">
-          <label for="comment">Comment:</label>
-          <textarea id="comment" rows="5" placeholder="Write your review here..."></textarea>
-        </div>
-        <button type="submit" class="submit-btn"><i class="fas fa-star"></i> Submit Review</button>
-      </form>
+            <!-- Profile Section -->
+            <section id="profile">
+                <h2>Your Profile</h2>
+                <p>Profile details go here.</p>
+            </section>
+        </main>
     </div>
-  </div>
+
+    <!-- Leave Review Modal -->
+    <div id="review-modal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeReviewModal()">&times;</span>
+            <h2>Leave a Review</h2>
+            <div class="game-title">
+                Game: <strong id="review-game-name"></strong>
+            </div>
+            <form id="review-form">
+                <div class="rating">
+                    <label for="rating">Rating:</label>
+                    <select id="rating" required>
+                        <option value="1">★☆☆☆☆</option>
+                        <option value="2">★★☆☆☆</option>
+                        <option value="3">★★★☆☆</option>
+                        <option value="4">★★★★☆</option>
+                        <option value="5">★★★★★</option>
+                    </select>
+                </div>
+                <div class="comment">
+                    <label for="comment">Comment:</label>
+                    <textarea id="comment" rows="5" placeholder="Write your review here..."></textarea>
+                </div>
+                <button type="submit" class="submit-btn"><i class="fas fa-star"></i> Submit Review</button>
+            </form>
+        </div>
+    </div>
 
 </body>
 
