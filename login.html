@@ -36,43 +36,63 @@
             const passwordInput = document.getElementById("password-input").value;
 
             try {
-                let users = JSON.parse(localStorage.getItem("usersLocalStorage"));
-                if (!users) {
-                    const response = await fetch("users.json");
-                    if (!response.ok) throw new Error("Could not load user data.");
-                    const data = await response.json();
-                    users = data.users;
-                    //lw userLocalStorage fady b fetch mn users.json
-                    localStorage.setItem("usersLocalStorage", JSON.stringify(users));
+
+                // 1️⃣ Clear all old local storage
+                localStorage.clear();
+
+                // 2️⃣ Fetch users from JSON file
+                const response = await fetch("users.json");
+
+                if (!response.ok) {
+                    throw new Error("Could not load users.json");
                 }
 
-                const LoginUser = users.find(user => user.username === usernameInput && user.password === passwordInput);
+                const data = await response.json();
+                const users = data.users;
+
+                // 3️⃣ Save fresh users into localStorage
+                localStorage.setItem("usersLocalStorage", JSON.stringify(users));
+
+                // 4️⃣ Find the user
+                const LoginUser = users.find(user =>
+                    user.username === usernameInput &&
+                    user.password === passwordInput
+                );
 
                 if (LoginUser) {
+
+                    // Save logged in user
                     localStorage.setItem("currentUser", JSON.stringify(LoginUser));
 
                     alert(`Welcome, ${LoginUser.name}!`);
 
-                    switch (LoginUser.type) {
+                    const userType = LoginUser.type.trim().toLowerCase();
+
+                    switch (userType) {
+
                         case "admin":
                             window.location.href = "adminDashboard.html";
                             break;
+
                         case "business":
                             window.location.href = "businessDashboard.html";
                             break;
+
                         case "customer":
-                            window.location.href = "homePage.html";
+                            window.location.href = "gamerDashboard.html";
                             break;
+
                         default:
                             alert("User type not recognized.");
                     }
+
                 } else {
                     alert("Invalid username or password!");
                 }
 
             } catch (error) {
                 console.error("Login Error:", error);
-                alert("An error occurred. Make sure you are using a Live Server.");
+                alert("An error occurred. Make sure you are using Live Server.");
             }
         });
     </script>
