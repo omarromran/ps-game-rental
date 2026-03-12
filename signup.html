@@ -1,64 +1,118 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sign Up</title>
     <link rel="stylesheet" href="login&signup.css">
-    <link rel="icon" href="photos/logo3.jpg">
+    <link rel="icon" href="photos/images.png">
 </head>
-<body>      
-    <div class ="wrapper">
+
+<body>
+    <div class="wrapper">
         <h1>Sign Up</h1>
         <form id="signup-form">
-            <div>
-                <label for="email-input">
-                    <img src ="photos/email_icon.svg">
-                </label>
-                <input type="email" name="email" id="email-input" placeholder="email" required>
+
+            <div class="input-group">
+                <img src="photos/person_icon.svg" alt="Name">
+                <input type="text" id="name-input" placeholder="Full Name" required>
             </div>
 
-            <div>
-                <label for="username-input">
-                    <img src ="photos/person_icon.svg">
-                </label>
-                <input type="text" name="username" id="username-input" placeholder="username" required>
+            <div class="input-group">
+                <img src="photos/email_icon.svg" alt="Email">
+                <input type="email" name="email" id="email-input" placeholder="Email" required>
             </div>
-            
-            <div>
-                <label for="password-input">
-                    <img src ="photos/lock_icon.svg">
-                </label>
-                <input type="password" name="password" id="password-input" placeholder="password" required>
+
+            <div class="input-group">
+                <img src="photos/person_icon.svg" alt="Username">
+                <input type="text" id="username-input" placeholder="Username" required>
             </div>
-            
-            <div>
-                <label for="confirm-password-input">
-                    <img src ="photos/lock_icon.svg">
-                </label>
-                <input type="password" name="confirm-password" id="confirm-password-input" placeholder="confirm password" required>
+
+            <div class="input-group">
+                <img src="photos/lock_icon.svg" alt="Password">
+                <input type="password" id="password-input" placeholder="Password" required>
             </div>
-            
+
+            <div class="input-group">
+                <img src="photos/lock_icon.svg" alt="Confirm Password">
+                <input type="password" id="confirm-password-input" placeholder="Confirm Password" required>
+            </div>
+
+            <div class="account-type">
+                <label>
+                    <input type="radio" name="account-type" value="customer" checked>
+                    Customer
+                </label>
+
+                <label>
+                    <input type="radio" name="account-type" value="business">
+                    Business
+                </label>
+            </div>
+
             <button type="submit">Sign Up</button>
+
             <p>Already have an account? <a href="login.html">Log In</a></p>
         </form>
     </div>
 
-<script>
-document.getElementById("signup-form").addEventListener("submit", function(event) {
-    event.preventDefault();
+    <script>
+        document.getElementById("signup-form").addEventListener("submit", async function (event) {
+            event.preventDefault();
 
-    const password = document.getElementById("password-input").value;
-    const confirmPassword = document.getElementById("confirm-password-input").value;
+            const name = document.getElementById("name-input").value;
+            const email = document.getElementById("email-input").value;
+            const username = document.getElementById("username-input").value;
+            const password = document.getElementById("password-input").value;
+            const confirmPassword = document.getElementById("confirm-password-input").value;
+            const type = document.querySelector('input[name="account-type"]:checked').value;
 
-    if (password !== confirmPassword) {
-        alert("Passwords do not match!");
-        return;
-    }
+            if (password !== confirmPassword) {
+                alert("Passwords do not match!");
+                return;
+            }
 
-    alert("Form submitted successfully!");
-});
-</script>
+            try {
+                let users = JSON.parse(localStorage.getItem("usersLocalStorage"));
 
+                if (!users) {
+                    const response = await fetch("users.json");
+                    const data = await response.json();
+                    users = data.users;
+                }
+                //lw mafeesh users f local storage y load mn users.json w y7otha fi local storage 3ashan y login biha b3deen 
+                if (users.some(u => u.username === username)) {
+                    alert("Username already taken! Please choose another.");
+                    return;
+                }
+
+                let userID;
+                if (users.length > 0) {
+                    userID = users[users.length - 1].id + 1;
+                } else {
+                    userID = 1;
+                }
+                const newUser = {
+                    id: userID,
+                    name: name,
+                    username: username,
+                    email: email,
+                    password: password,
+                    type: type
+                };
+
+                users.push(newUser);
+                localStorage.setItem("usersLocalStorage", JSON.stringify(users));
+                alert("Account created successfully! You can now log in.");
+                window.location.href = "login.html";
+
+            } catch (error) {
+                console.error("Error during signup:", error);
+                alert("Error accessing user data. Make sure you are using a Live Server.");
+            }
+        });
+    </script>
 </body>
+
 </html>

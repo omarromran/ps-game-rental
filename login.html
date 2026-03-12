@@ -1,50 +1,101 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Log In</title>
     <link rel="stylesheet" href="login&signup.css">
-    <link rel="icon" href="photos/logo3.jpg">
+    <link rel="icon" href="photos/images.png">
 </head>
-<body>      
+
+<body>
     <div class="wrapper">
         <h1>Log In</h1>
         <form id="login-form">
-            <div>
-                <label for="username-input">
-                    <img src ="photos/person_icon.svg">
-                </label>
-                <input type="text" name="username" id="username-input" placeholder="username" required>
+            <div class="input-group">
+                <img src="photos/person_icon.svg" alt="User Icon">
+                <input type="text" name="username" id="username-input" placeholder="Username" required>
             </div>
 
-            <div>
-                <label for="password-input">
-                    <img src="photos/lock_icon.svg">
-                </label>
-                <input type="password" name="password" id="password-input" placeholder="password" required>
+            <div class="input-group">
+                <img src="photos/lock_icon.svg" alt="Password Icon">
+                <input type="password" name="password" id="password-input" placeholder="Password" required>
             </div>
-            
+
             <button type="submit">Log In</button>
             <p>Don't have an account? <a href="signup.html">Sign Up</a></p>
         </form>
     </div>
 
-<script>
-document.getElementById("login-form").addEventListener("submit", function(event) {
-    event.preventDefault(); 
-    const username = document.getElementById("username-input").value;
-    const password = document.getElementById("password-input").value;
+    <script>
+        document.getElementById("login-form").addEventListener("submit", async function (event) {
+            event.preventDefault();
 
-    // Example validation (you can change this)
-    if (username === "admin" && password === "1234") {
-        alert("Login successful!");
-        // window.location.href = "home.html";  // redirect example
-    } else {
-        alert("Invalid username or password!");
-    }
-});
-</script>
+            const usernameInput = document.getElementById("username-input").value.trim();
+            const passwordInput = document.getElementById("password-input").value;
 
+            try {
+
+                // 1️⃣ Clear all old local storage
+                localStorage.clear();
+
+                // 2️⃣ Fetch users from JSON file
+                const response = await fetch("users.json");
+
+                if (!response.ok) {
+                    throw new Error("Could not load users.json");
+                }
+
+                const data = await response.json();
+                const users = data.users;
+
+                // 3️⃣ Save fresh users into localStorage
+                localStorage.setItem("usersLocalStorage", JSON.stringify(users));
+
+                // 4️⃣ Find the user
+                const LoginUser = users.find(user =>
+                    user.username === usernameInput &&
+                    user.password === passwordInput
+                );
+
+                if (LoginUser) {
+
+                    // Save logged in user
+                    localStorage.setItem("currentUser", JSON.stringify(LoginUser));
+
+                    alert(`Welcome, ${LoginUser.name}!`);
+
+                    const userType = LoginUser.type.trim().toLowerCase();
+
+                    switch (userType) {
+
+                        case "admin":
+                            window.location.href = "adminDashboard.html";
+                            break;
+
+                        case "business":
+                            window.location.href = "businessDashboard.html";
+                            break;
+
+                        case "customer":
+                            window.location.href = "gamerDashboard.html";
+                            break;
+
+                        default:
+                            alert("User type not recognized.");
+                    }
+
+                } else {
+                    alert("Invalid username or password!");
+                }
+
+            } catch (error) {
+                console.error("Login Error:", error);
+                alert("An error occurred. Make sure you are using Live Server.");
+            }
+        });
+    </script>
 </body>
+
 </html>

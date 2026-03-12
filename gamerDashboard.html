@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gamer Dashboard</title>
+    <link rel="icon" href="photos/images.png">
+    <link rel="stylesheet" href="dashboard.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script defer src="gamerDashboard.js"></script>
+</head>
+
+<body>
+
+    <div class="dashboard-wrapper">
+
+        <aside class="sidebar">
+            <h2>user</h2>
+            <nav>
+                <button onclick="showSection('activeRentals', this)" class="active">
+                    <i class="fas fa-gamepad"></i> Active Rentals
+                </button>
+                <button onclick="showSection('pendingBookings', this)">
+                    <i class="fas fa-clock"></i> Pending Bookings
+                </button>
+                <button onclick="showSection('completedRentals', this)">
+                    <i class="fas fa-check-circle"></i> Completed Rentals
+                </button>
+                <button onclick="showSection('profile', this)">
+                    <i class="fas fa-user"></i> Profile
+                </button>
+            </nav>
+            <button class="logout" onclick="window.location.href='login.html'">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </button>
+        </aside>
+
+        <main>
+            <section id="activeRentals">
+                <h2>Active Rentals</h2>
+                <div class="card-container">
+                    <div class="card">
+                        <h3>GTA</h3>
+                        <p>Ends: March 10</p>
+                    </div>
+                    <div class="card">
+                        <h3>FIFA</h3>
+                        <p>Ends: March 12</p>
+                    </div>
+                </div>
+            </section>
+
+            <section id="pendingBookings">
+                <h2>Pending Bookings</h2>
+                <div class="card-container">
+                    <div class="card">
+                        <h3>Call of Duty</h3>
+                        <p>Waiting for approval</p>
+                    </div>
+                </div>
+            </section>
+
+            <section id="completedRentals">
+                <h2>Completed Rentals</h2>
+                <div class="card-container">
+                    <div class="card">
+                        <h3>Fortnite</h3>
+                        <button class="action-btn" onclick="openReviewModal('Fortnite')">
+                            <i class="fas fa-star"></i> Leave Review
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <section id="profile">
+                <h2>Your Profile</h2>
+                <form>
+                    <div>
+                        <input type="text" placeholder="Full Name">
+                    </div>
+                    <div>
+                        <input type="email" placeholder="Email">
+                    </div>
+                    <div>
+                        <input type="password" placeholder="New Password">
+                    </div>
+                    <button class="submit-btn">
+                        <i class="fas fa-save"></i> Update Profile
+                    </button>
+                </form>
+            </section>
+        </main>
+
+    </div>
+
+    <!-- ================= Review Modal ================= -->
+    <div id="review-modal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeReviewModal()">&times;</span>
+            <h2>Leave Review</h2>
+            <p id="review-game-name" style="font-weight: 600; color: var(--white-color); margin-bottom: 15px;"></p>
+            <form id="review-form">
+                <label for="rating">Rating</label>
+                <select name="rating" id="rating" required>
+                    <option value="" disabled selected>Select stars</option>
+                    <option value="1">★☆☆☆☆</option>
+                    <option value="2">★★☆☆☆</option>
+                    <option value="3">★★★☆☆</option>
+                    <option value="4">★★★★☆</option>
+                    <option value="5">★★★★★</option>
+                </select>
+                <label for="comment">Comment</label>
+                <textarea name="comment" id="comment" placeholder="Write your comment..."></textarea>
+                <button type="submit" class="submit-btn">
+                    <i class="fas fa-paper-plane"></i> Submit Review
+                </button>
+            </form>
+        </div>
+    </div>
+
+</body>
+
+</html>
