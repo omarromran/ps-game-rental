@@ -495,3 +495,29 @@ select {
         }
     }
 }
+
+/* Ensure all inputs in Add Game form have uniform styling */
+#add-game-form .input-group input,
+#add-game-form input[type="number"] {
+    width: 100%;
+    padding: 12px 15px;
+    border-radius: 8px;
+    border: 1px solid var(--secondary-color);
+    background-color: var(--dark-color);
+    color: var(--white-color);
+    font-family: inherit;
+    outline: none;
+    font-size: 1rem;
+}
+
+/* Remove default number input arrows */
+#add-game-form input[type="number"]::-webkit-outer-spin-button,
+#add-game-form input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+/* Placeholder color for consistency */
+#add-game-form input::placeholder {
+    color: rgba(255, 255, 255, 0.6);
+}
