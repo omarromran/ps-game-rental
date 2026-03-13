@@ -61,9 +61,9 @@
         document.getElementById("signup-form").addEventListener("submit", async function (event) {
             event.preventDefault();
 
-            const name = document.getElementById("name-input").value;
-            const email = document.getElementById("email-input").value;
-            const username = document.getElementById("username-input").value;
+            const name = document.getElementById("name-input").value.trim();
+            const email = document.getElementById("email-input").value.trim();
+            const username = document.getElementById("username-input").value.trim();
             const password = document.getElementById("password-input").value;
             const confirmPassword = document.getElementById("confirm-password-input").value;
             const type = document.querySelector('input[name="account-type"]:checked').value;
@@ -74,27 +74,31 @@
             }
 
             try {
-                let users = JSON.parse(localStorage.getItem("usersLocalStorage"));
-
-                if (!users) {
+                // 1️⃣ Load users from localStorage first
+                let users = [];
+                const storedUsers = localStorage.getItem("users");
+                if (storedUsers) {
+                    users = JSON.parse(storedUsers);
+                } else {
+                    // 2️⃣ Fallback: load from JSON if empty
                     const response = await fetch("users.json");
                     const data = await response.json();
-                    users = data.users;
+                    users = data.users || [];
+
+                    // Save loaded users to localStorage
+                    localStorage.setItem("users", JSON.stringify(users));
                 }
-                //lw mafeesh users f local storage y load mn users.json w y7otha fi local storage 3ashan y login biha b3deen 
+
+                // 3️⃣ Check if username already exists
                 if (users.some(u => u.username === username)) {
                     alert("Username already taken! Please choose another.");
                     return;
                 }
 
-                let userID;
-                if (users.length > 0) {
-                    userID = users[users.length - 1].id + 1;
-                } else {
-                    userID = 1;
-                }
+                // 4️⃣ Create new user
+                const userID = users.length > 0 ? Math.max(...users.map(u => u.userID)) + 1 : 1;
                 const newUser = {
-                    id: userID,
+                    userID: userID,
                     name: name,
                     username: username,
                     email: email,
@@ -103,13 +107,16 @@
                 };
 
                 users.push(newUser);
-                localStorage.setItem("usersLocalStorage", JSON.stringify(users));
+
+                // 5️⃣ Save back to localStorage
+                localStorage.setItem("users", JSON.stringify(users));
+
                 alert("Account created successfully! You can now log in.");
                 window.location.href = "login.html";
 
             } catch (error) {
                 console.error("Error during signup:", error);
-                alert("Error accessing user data. Make sure you are using a Live Server.");
+                alert("Error accessing user data. Make sure you are using Live Server.");
             }
         });
     </script>

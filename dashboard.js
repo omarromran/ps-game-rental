@@ -2,6 +2,15 @@
 let users = [];
 let games = [];
 
+// ================= LocalStorage Helpers =================
+function saveUsersToStorage() {
+    localStorage.setItem("users", JSON.stringify(users));
+}
+
+function saveGamesToStorage() {
+    localStorage.setItem("games", JSON.stringify(games));
+}
+
 // ================= Sidebar Navigation =================
 function showSection(sectionId, btn) {
     document.querySelectorAll("main > section").forEach(section => {
@@ -25,13 +34,22 @@ function logout() {
 // ================= Data Loading =================
 async function loadData() {
     try {
-        const usersRes = await fetch("users.json");
-        const usersData = await usersRes.json();
-        users = usersData.users || [];
+        // Load from localStorage first
+        const storedUsers = localStorage.getItem("users");
+        if (storedUsers) users = JSON.parse(storedUsers);
+        else if (users.length === 0) {
+            const usersRes = await fetch("users.json");
+            const usersData = await usersRes.json();
+            users = usersData.users || [];
+        }
 
-        const gamesRes = await fetch("games.json");
-        const gamesData = await gamesRes.json();
-        games = gamesData.games || [];
+        const storedGames = localStorage.getItem("games");
+        if (storedGames) games = JSON.parse(storedGames);
+        else if (games.length === 0) {
+            const gamesRes = await fetch("games.json");
+            const gamesData = await gamesRes.json();
+            games = gamesData.games || [];
+        }
 
         refreshUI();
     } catch (err) {
@@ -53,8 +71,6 @@ function renderDashboardCards() {
     if (!container) return;
 
     const totalRevenue = games.reduce((sum, g) => sum + (g.price || 0), 0);
-
-    // Count games available for rent
     const availableForRentCount = games.filter(g => g.Availability === "rent").length;
 
     const stats = [
@@ -102,8 +118,7 @@ function renderUsersTable() {
                         <button class="action-btn" onclick="editUser(${globalIndex})"><i class="fas fa-edit"></i></button>
                         <button class="action-btn" onclick="deleteUser(${globalIndex})"><i class="fas fa-trash"></i></button>
                     </td>
-                </tr>`;
-    }).join('')}
+                </tr>`}).join('')}
         </tbody>`;
 }
 
@@ -116,16 +131,18 @@ function editUser(index) {
     if (username === null) return;
     const email = prompt("Email:", user.email);
     if (email === null) return;
-    const type = prompt("Type (admin / business / costumer):", user.type);
+    const type = prompt("Type (admin / business / customer):", user.type);
     if (type === null) return;
 
     users[index] = { ...user, name, username, email, type };
+    saveUsersToStorage();
     refreshUI();
 }
 
 function deleteUser(index) {
     if (confirm("Delete this user?")) {
         users.splice(index, 1);
+        saveUsersToStorage();
         refreshUI();
     }
 }
@@ -155,8 +172,7 @@ function renderGamesTable() {
                         <button class="action-btn" onclick="editGame(${index})"><i class="fas fa-edit"></i></button>
                         <button class="action-btn" onclick="deleteGame(${index})"><i class="fas fa-trash"></i></button>
                     </td>
-                </tr>
-            `).join('')}
+                </tr>`).join('')}
         </tbody>`;
 }
 
@@ -173,7 +189,6 @@ function editGame(index) {
     const genre = prompt("Genre:", game.genre);
     if (genre === null) return;
 
-    // Status Dropdown prompt
     let availability = prompt("Status (buy/rent):", game.Availability);
     if (availability === null) return;
     availability = availability.toLowerCase() === "rent" ? "rent" : "buy";
@@ -193,12 +208,14 @@ function editGame(index) {
         vendor,
         price: Number(price)
     };
+    saveGamesToStorage();
     refreshUI();
 }
 
 function deleteGame(index) {
     if (confirm("Delete this game?")) {
         games.splice(index, 1);
+        saveGamesToStorage();
         refreshUI();
     }
 }
@@ -223,6 +240,7 @@ if (adminForm) {
             password: fd.get("password"),
             type: "admin"
         });
+        saveUsersToStorage();
         refreshUI();
         adminForm.reset();
         alert("Admin added!");
@@ -246,8 +264,9 @@ if (gameForm) {
             Availability: "buy",
             vendor: fd.get("gamevendor"),
             description: fd.get("description"),
-            price: Number(fd.get("price")) || 0
+            price: fd.get("price")
         });
+        saveGamesToStorage();
         refreshUI();
         gameForm.reset();
         closeAddGameForm();

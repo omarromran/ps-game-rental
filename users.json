@@ -14,7 +14,8 @@
             "username": "etsh store",
             "email": "ahmed@gmail.com",
             "password": "ahmed123",
-            "type": "business"
+            "type": "business",
+            "status": "pending"
         },
         {
             "userID": 3,
@@ -22,7 +23,8 @@
             "username": "zeina store",
             "email": "zeina@gmail.com",
             "password": "zeina123",
-            "type": "business"
+            "type": "business",
+            "status": "accepted"
         },
         {
             "userID": 4,
