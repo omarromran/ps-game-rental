@@ -36,29 +36,31 @@
             const passwordInput = document.getElementById("password-input").value;
 
             try {
-                // 1️⃣ Load users from localStorage first
                 let users = [];
                 const storedUsers = localStorage.getItem("users");
+
                 if (storedUsers) {
                     users = JSON.parse(storedUsers);
                 } else {
-                    // If empty, load from JSON file
                     const response = await fetch("users.json");
                     if (!response.ok) throw new Error("Could not load users.json");
+
                     const data = await response.json();
                     users = data.users || [];
-
-                    // Save them to localStorage for persistence
                     localStorage.setItem("users", JSON.stringify(users));
                 }
 
-                // 2️⃣ Find the user
                 const loginUser = users.find(user =>
                     user.username === usernameInput && user.password === passwordInput
                 );
 
                 if (loginUser) {
-                    // Save logged in user
+
+                    if (loginUser.status && loginUser.status.toLowerCase() === "pending") {
+                        alert("Your account is still pending approval.");
+                        return;
+                    }
+
                     localStorage.setItem("currentUser", JSON.stringify(loginUser));
                     alert(`Welcome, ${loginUser.name}!`);
 
@@ -77,6 +79,7 @@
                         default:
                             alert("User type not recognized.");
                     }
+
                 } else {
                     alert("Invalid username or password!");
                 }
