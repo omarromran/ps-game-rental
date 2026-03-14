@@ -28,19 +28,23 @@ function logout() {
 async function loadData() {
     try {
         const storedUsers = localStorage.getItem("users");
-        users = storedUsers ? JSON.parse(storedUsers) : [];
-        if (users.length === 0) {
+        if (storedUsers) {
+            users = JSON.parse(storedUsers);
+        } else {
             const res = await fetch("users.json");
             const data = await res.json();
             users = data.users || [];
+            saveUsersToStorage();
         }
 
         const storedGames = localStorage.getItem("games");
-        games = storedGames ? JSON.parse(storedGames) : [];
-        if (games.length === 0) {
+        if (storedGames) {
+            games = JSON.parse(storedGames);
+        } else {
             const res = await fetch("games.json");
             const data = await res.json();
             games = data.games || [];
+            saveGamesToStorage();
         }
 
         refreshUI();
@@ -63,7 +67,7 @@ function renderDashboardCards() {
     const totalUsers = users.length;
     const pendingUsers = users.filter(u => u.status === "pending").length;
     const totalGames = games.length;
-    const availableForRentCount = games.filter(g => g.Availability === "rent").length;
+    const availableForRentCount = games.filter(g => (g.Availability || "").toLowerCase() === "rent").length;
     const totalRevenue = games.reduce((sum, g) => sum + (Number(g.price) || 0), 0);
 
     const stats = [
@@ -219,7 +223,7 @@ if (adminForm) {
         }
 
         users.push({
-            userID: users.length > 0 ? Math.max(...users.map(u => u.userID)) + 1 : 1,
+            userID: users.length > 0 ? Math.max(...users.map(u => Number(u.userID) || 0)) + 1 : 1,
             name: fd.get("name"),
             username: fd.get("username"),
             email: fd.get("email"),
@@ -243,8 +247,9 @@ if (gameForm) {
     gameForm.addEventListener("submit", (e) => {
         e.preventDefault();
         const fd = new FormData(gameForm);
+        const nextId = games.length > 0 ? Math.max(...games.map(g => Number(g.gameID) || 0)) + 1 : 1;
         games.push({
-            gameID: String(games.length + 1).padStart(3, '0'),
+            gameID: String(nextId).padStart(3, '0'),
             name: fd.get("name"),
             platform: fd.get("platform"),
             genre: fd.get("genre"),
@@ -263,4 +268,10 @@ if (gameForm) {
 document.addEventListener("DOMContentLoaded", () => {
     loadData();
     showSection('dashboard', document.querySelector(".sidebar nav button"));
+    
+    // Add event listener to update user table when type filter changes
+    const userFilter = document.getElementById("user-type-filter");
+    if (userFilter) {
+        userFilter.addEventListener("change", renderUsersTable);
+    }
 });
