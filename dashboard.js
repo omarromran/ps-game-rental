@@ -61,12 +61,16 @@ function renderDashboardCards() {
     const container = document.getElementById("dashboard-cards");
     if (!container) return;
 
-    const totalRevenue = games.reduce((sum, g) => sum + (g.price || 0), 0);
+    const totalUsers = users.length;
+    const pendingUsers = users.filter(u => u.status === "pending").length;
+    const totalGames = games.length;
     const availableForRentCount = games.filter(g => g.Availability === "rent").length;
+    const totalRevenue = games.reduce((sum, g) => sum + (g.price || 0), 0);
 
     const stats = [
-        { title: "Total Users", value: users.length },
-        { title: "Total Games", value: games.length },
+        { title: "Total Users", value: totalUsers },
+        { title: "Pending Users", value: pendingUsers },
+        { title: "Total Games", value: totalGames },
         { title: "Available for Rent", value: availableForRentCount },
         { title: "Total Price Value", value: totalRevenue + " EGP" }
     ];
@@ -84,9 +88,11 @@ function renderUsersTable() {
     const filterValue = document.getElementById("user-type-filter")?.value || "all";
     if (!table) return;
 
+    const approvedUsers = users.filter(u => u.status !== "pending");
+
     const filteredUsers = filterValue === "all"
-        ? users
-        : users.filter(u => u.type === filterValue);
+        ? approvedUsers
+        : approvedUsers.filter(u => u.type === filterValue);
 
     table.innerHTML = `
         <thead>
