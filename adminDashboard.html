@@ -38,8 +38,10 @@
 
         <main>
             <section id="dashboard">
-                <div class="card-container" id="dashboard-cards"></div>
+                <div class="card-container" id="dashboard-cards">
+                </div>
             </section>
+
             <section id="games">
                 <h2>Manage Games</h2>
                 <button class="action-btn" onclick="showAddGameForm()">
@@ -48,6 +50,7 @@
                 <table id="games-table"></table>
             </section>
 
+
             <section id="users">
                 <div class="users-header">
                     <h2>Manage Users</h2>
@@ -55,13 +58,10 @@
                         <option value="all">All User Types</option>
                         <option value="admin">Admin</option>
                         <option value="business">Business</option>
-                        <option value="costumer">Customer</option>
+                        <option value="customer">Customer</option>
                     </select>
                 </div>
                 <table id="users-table"></table>
-                <button onclick="window.location.href='approveLenders.html'">
-                    <i class="fas fa-user-check"></i> Approve Lenders
-                </button>
             </section>
 
             <section id="addAdmin">
@@ -77,7 +77,6 @@
                     </button>
                 </form>
             </section>
-
         </main>
     </div>
 
@@ -103,7 +102,6 @@
                     <i class="fas fa-plus"></i> Add Game
                 </button>
             </form>
-
         </div>
     </div>
 
