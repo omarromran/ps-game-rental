@@ -10,40 +10,40 @@
 </head>
 
 <body>
-    <div class="table-container">
-        <h2>Pending Lender Approvals</h2>
-        <table class="admin-table">
-            <th>
-                <tr>
-                    <th>ID</th>
-                    <th>Store Name</th>
-                    <th>Owner</th>
-                    <th>Email</th>
-                    <th>Status</th>
-                    <th>Actions</th>
-                </tr>
-            </th>
-            <tbody id="lender-table-body">
-            </tbody>
-        </table>
-    </div>
+<div class="table-container">
+     <h2>Pending Lender Approvals</h2>
+     <table class="admin-table">
+         <th>
+            <tr>
+                <th>ID</th>
+                 <th>Store Name</th>
+                 <th>Owner</th>
+                 <th>Email</th>
+                 <th>Status</th>
+                 <th>Actions</th>
+             </tr>
+         </th>
+        <tbody id="lender-table-body">
+        </tbody>
+    </table>
+ </div>
 
-    <script>
+ <script>
 
-        const pendingLenders = [
-            { id: "001", store: "H store", owner: "ahmed", email: "ahmed@gmail.com" },
-            { id: "002", store: "zeina store", owner: "zeina", email: "zeina@gmail.com" },
-            { id: "003", store: "omran games", owner: "omar", email: "omar@gmail.com" },
-            { id: "004", store: "H el 2adim", owner: "H", email: "H@gmail.com" }
-        ];
+ const pendingLenders = [
+     { id: "001", store: "H store", owner: "ahmed", email: "ahmed@gmail.com" },
+    { id: "002", store: "zeina store", owner: "zeina", email: "zeina@gmail.com" },
+    { id: "003", store: "omran games", owner: "omar", email: "omar@gmail.com" },
+    { id: "004", store: "H el 2adim",owner: "H", email: "H@gmail.com" }
+ ];
 
-        const tableBody = document.getElementById('lender-table-body');
+const tableBody = document.getElementById('lender-table-body');
 
-        function renderTable() {
-            tableBody.innerHTML = "";
+function renderTable() {
+     tableBody.innerHTML = "";
 
-            pendingLenders.forEach(lender => {
-                const row = `
+     pendingLenders.forEach(lender => {
+        const row = `
             <tr id="row-${lender.id}">
                 <td>${lender.id}</td>
                 <td><strong>${lender.store}</strong></td>
@@ -61,26 +61,26 @@
             </tr>
         `;
 
-                tableBody.innerHTML += row;
-            });
-        }
+        tableBody.innerHTML += row;
+     });
+ }
 
 
-        function handleApproval(id, action) {
-            alert(`Lender ${id} has been ${action}`);
-            const row = document.getElementById(`row-${id}`);
-            row.style.background = action == 'Approved' ? "rgba(46, 204, 113, 0.2)" : "rgba(231, 76, 60, 0.2)";
+function handleApproval(id, action) {
+    alert(`Lender ${id} has been ${action}`);
+     const row = document.getElementById(`row-${id}`);
+     row.style.background = action == 'Approved' ? "rgba(46, 204, 113, 0.2)" : "rgba(231, 76, 60, 0.2)";
 
 
-            setTimeout(() => {
-                row.remove();
-            }, 500);
-        }
+     setTimeout(() => {
+        row.remove();
+    }, 500);
+}
 
-        renderTable();
+renderTable();
 
 
-    </script>
+</script>
 
 </body>
 
