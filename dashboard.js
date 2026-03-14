@@ -1,8 +1,7 @@
-// ================= Global State =================
+
 let users = [];
 let games = [];
 
-// ================= LocalStorage Helpers =================
 function saveUsersToStorage() {
     localStorage.setItem("users", JSON.stringify(users));
 }
@@ -11,7 +10,6 @@ function saveGamesToStorage() {
     localStorage.setItem("games", JSON.stringify(games));
 }
 
-// ================= Sidebar Navigation =================
 function showSection(sectionId, btn) {
     document.querySelectorAll("main > section").forEach(section => {
         section.style.display = "none";
@@ -24,17 +22,13 @@ function showSection(sectionId, btn) {
     if (btn) btn.classList.add("active");
 }
 
-// ================= Logout =================
 function logout() {
     if (confirm("Are you sure you want to log out?")) {
         window.location.href = "login.html";
     }
 }
-
-// ================= Data Loading =================
 async function loadData() {
     try {
-        // Load from localStorage first
         const storedUsers = localStorage.getItem("users");
         if (storedUsers) users = JSON.parse(storedUsers);
         else if (users.length === 0) {
@@ -58,14 +52,11 @@ async function loadData() {
     }
 }
 
-// ================= UI Refresh =================
 function refreshUI() {
     renderDashboardCards();
     renderUsersTable();
     renderGamesTable();
 }
-
-// ================= Dashboard Cards =================
 function renderDashboardCards() {
     const container = document.getElementById("dashboard-cards");
     if (!container) return;
@@ -88,7 +79,6 @@ function renderDashboardCards() {
     `).join('');
 }
 
-// ================= Users Table =================
 function renderUsersTable() {
     const table = document.getElementById("users-table");
     const filterValue = document.getElementById("user-type-filter")?.value || "all";
@@ -122,7 +112,6 @@ function renderUsersTable() {
         </tbody>`;
 }
 
-// ================= Edit/Delete Users =================
 function editUser(index) {
     const user = users[index];
     const name = prompt("Full Name:", user.name);
@@ -147,7 +136,6 @@ function deleteUser(index) {
     }
 }
 
-// ================= Games Table =================
 function renderGamesTable() {
     const table = document.getElementById("games-table");
     if (!table) return;
@@ -176,7 +164,6 @@ function renderGamesTable() {
         </tbody>`;
 }
 
-// ================= Edit/Delete Games =================
 function editGame(index) {
     const game = games[index];
 
@@ -220,7 +207,6 @@ function deleteGame(index) {
     }
 }
 
-// ================= Add Admin Form =================
 const adminForm = document.getElementById("add-admin-form");
 if (adminForm) {
     adminForm.addEventListener("submit", (e) => {
@@ -247,7 +233,6 @@ if (adminForm) {
     });
 }
 
-// ================= Add Game Form =================
 function showAddGameForm() { document.getElementById("add-game-form-container").style.display = "block"; }
 function closeAddGameForm() { document.getElementById("add-game-form-container").style.display = "none"; }
 
@@ -273,7 +258,6 @@ if (gameForm) {
     });
 }
 
-// ================= Initialize =================
 document.addEventListener("DOMContentLoaded", () => {
     loadData();
     showSection('dashboard', document.querySelector(".sidebar nav button"));
