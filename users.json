@@ -15,7 +15,7 @@
             "email": "ahmed@gmail.com",
             "password": "ahmed123",
             "type": "business",
-            "status": "pending"
+            "status": "accepted"
         },
         {
             "userID": 3,
