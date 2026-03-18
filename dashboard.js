@@ -1,4 +1,3 @@
-
 let users = [];
 let games = [];
 
@@ -11,9 +10,7 @@ function saveGamesToStorage() {
 }
 
 function showSection(sectionId, btn) {
-    document.querySelectorAll("main > section").forEach(section => {
-        section.style.display = "none";
-    });
+    document.querySelectorAll("main > section").forEach(section => section.style.display = "none");
 
     const activeSection = document.getElementById(sectionId);
     if (activeSection) activeSection.style.display = "block";
@@ -27,27 +24,32 @@ function logout() {
         window.location.href = "login.html";
     }
 }
+
 async function loadData() {
     try {
         const storedUsers = localStorage.getItem("users");
-        if (storedUsers) users = JSON.parse(storedUsers);
-        else if (users.length === 0) {
-            const usersRes = await fetch("users.json");
-            const usersData = await usersRes.json();
-            users = usersData.users || [];
+        if (storedUsers) {
+            users = JSON.parse(storedUsers);
+        } else {
+            const res = await fetch("users.json");
+            const data = await res.json();
+            users = data.users || [];
+            saveUsersToStorage();
         }
 
         const storedGames = localStorage.getItem("games");
-        if (storedGames) games = JSON.parse(storedGames);
-        else if (games.length === 0) {
-            const gamesRes = await fetch("games.json");
-            const gamesData = await gamesRes.json();
-            games = gamesData.games || [];
+        if (storedGames) {
+            games = JSON.parse(storedGames);
+        } else {
+            const res = await fetch("games.json");
+            const data = await res.json();
+            games = data.games || [];
+            saveGamesToStorage();
         }
 
         refreshUI();
     } catch (err) {
-        console.error("Data Load Error: Ensure you are running on a local server.", err);
+        console.error("Data Load Error:", err);
         alert("Failed to load data. Check console for details.");
     }
 }
@@ -57,6 +59,7 @@ function refreshUI() {
     renderUsersTable();
     renderGamesTable();
 }
+
 function renderDashboardCards() {
     const container = document.getElementById("dashboard-cards");
     if (!container) return;
@@ -64,30 +67,33 @@ function renderDashboardCards() {
     const totalUsers = users.length;
     const pendingUsers = users.filter(u => u.status === "pending").length;
     const totalGames = games.length;
-    const availableForRentCount = games.filter(g => g.Availability === "rent").length;
-    const totalRevenue = games.reduce((sum, g) => sum + (g.price || 0), 0);
+    const availableForRentCount = games.filter(g => (g.Availability || "").toLowerCase() === "rent").length;
+    const totalRevenue = games.reduce((sum, g) => sum + (Number(g.price) || 0), 0);
 
     const stats = [
         { title: "Total Users", value: totalUsers },
-        { title: "Pending Users", value: pendingUsers },
+        { title: "Pending Users", value: pendingUsers, link: "approveLenders.html" },
         { title: "Total Games", value: totalGames },
         { title: "Available for Rent", value: availableForRentCount },
         { title: "Total Price Value", value: totalRevenue + " EGP" }
     ];
 
     container.innerHTML = stats.map(stat => `
-        <div class="card">
+        <div class="card" ${stat.link ? `onclick="window.location.href='${stat.link}'"` : ""} style="cursor:${stat.link ? "pointer" : "default"}">
             <h3>${stat.title}</h3>
             <p>${stat.value}</p>
         </div>
     `).join('');
 }
 
+// USERS
 function renderUsersTable() {
     const table = document.getElementById("users-table");
-    const filterValue = document.getElementById("user-type-filter")?.value || "all";
     if (!table) return;
 
+    const filterValue = document.getElementById("user-type-filter")?.value || "all";
+
+    // Only approved users
     const approvedUsers = users.filter(u => u.status !== "pending");
 
     const filteredUsers = filterValue === "all"
@@ -101,20 +107,21 @@ function renderUsersTable() {
             </tr>
         </thead>
         <tbody>
-            ${filteredUsers.map(user => {
-        const globalIndex = users.findIndex(u => u.userID === user.userID);
+            ${filteredUsers.map(u => {
+        const idx = users.findIndex(user => user.userID === u.userID);
         return `
-                <tr>
-                    <td>${user.userID}</td>
-                    <td>${user.name}</td>
-                    <td>${user.username}</td>
-                    <td>${user.email}</td>
-                    <td><span class="badge ${user.type}">${user.type}</span></td>
-                    <td class="users-action">
-                        <button class="action-btn" onclick="editUser(${globalIndex})"><i class="fas fa-edit"></i></button>
-                        <button class="action-btn" onclick="deleteUser(${globalIndex})"><i class="fas fa-trash"></i></button>
-                    </td>
-                </tr>`}).join('')}
+                    <tr>
+                        <td>${u.userID}</td>
+                        <td>${u.name}</td>
+                        <td>${u.username}</td>
+                        <td>${u.email}</td>
+                        <td><span class="badge ${u.type}">${u.type}</span></td>
+                        <td class="users-action">
+                            <button class="action-btn" onclick="editUser(${idx})"><i class="fas fa-edit"></i></button>
+                            <button class="action-btn" onclick="deleteUser(${idx})"><i class="fas fa-trash"></i></button>
+                        </td>
+                    </tr>`;
+    }).join('')}
         </tbody>`;
 }
 
@@ -142,6 +149,7 @@ function deleteUser(index) {
     }
 }
 
+// GAMES
 function renderGamesTable() {
     const table = document.getElementById("games-table");
     if (!table) return;
@@ -153,18 +161,18 @@ function renderGamesTable() {
             </tr>
         </thead>
         <tbody>
-            ${games.map((game, index) => `
+            ${games.map((g, i) => `
                 <tr>
-                    <td>${game.gameID}</td>
-                    <td>${game.name}</td>
-                    <td>${game.platform}</td>
-                    <td>${game.genre}</td>
-                    <td>${game.Availability || "N/A"}</td>
-                    <td>${game.vendor || "System"}</td>
-                    <td>${game.price || "-"}</td>
+                    <td>${g.gameID}</td>
+                    <td>${g.name}</td>
+                    <td>${g.platform}</td>
+                    <td>${g.genre}</td>
+                    <td>${g.Availability || "N/A"}</td>
+                    <td>${g.vendor || "System"}</td>
+                    <td>${g.price || "-"}</td>
                     <td class="games-action">
-                        <button class="action-btn" onclick="editGame(${index})"><i class="fas fa-edit"></i></button>
-                        <button class="action-btn" onclick="deleteGame(${index})"><i class="fas fa-trash"></i></button>
+                        <button class="action-btn" onclick="editGame(${i})"><i class="fas fa-edit"></i></button>
+                        <button class="action-btn" onclick="deleteGame(${i})"><i class="fas fa-trash"></i></button>
                     </td>
                 </tr>`).join('')}
         </tbody>`;
@@ -175,10 +183,8 @@ function editGame(index) {
 
     const name = prompt("Game Name:", game.name);
     if (name === null) return;
-
     const platform = prompt("Platform:", game.platform);
     if (platform === null) return;
-
     const genre = prompt("Genre:", game.genre);
     if (genre === null) return;
 
@@ -192,15 +198,7 @@ function editGame(index) {
     const price = prompt("Price (EGP):", game.price);
     if (price === null) return;
 
-    games[index] = {
-        ...game,
-        name,
-        platform,
-        genre,
-        Availability: availability,
-        vendor,
-        price: Number(price)
-    };
+    games[index] = { ...game, name, platform, genre, Availability: availability, vendor, price: Number(price) };
     saveGamesToStorage();
     refreshUI();
 }
@@ -213,25 +211,26 @@ function deleteGame(index) {
     }
 }
 
+// ADD ADMIN FORM
 const adminForm = document.getElementById("add-admin-form");
 if (adminForm) {
     adminForm.addEventListener("submit", (e) => {
         e.preventDefault();
         const fd = new FormData(adminForm);
-
         if (fd.get("password") !== fd.get("confirmPassword")) {
             alert("Passwords do not match!");
             return;
         }
 
         users.push({
-            userID: users.length > 0 ? Math.max(...users.map(u => u.userID)) + 1 : 1,
+            userID: users.length > 0 ? Math.max(...users.map(u => Number(u.userID) || 0)) + 1 : 1,
             name: fd.get("name"),
             username: fd.get("username"),
             email: fd.get("email"),
             password: fd.get("password"),
             type: "admin"
         });
+
         saveUsersToStorage();
         refreshUI();
         adminForm.reset();
@@ -239,6 +238,7 @@ if (adminForm) {
     });
 }
 
+// ADD GAME FORM
 function showAddGameForm() { document.getElementById("add-game-form-container").style.display = "block"; }
 function closeAddGameForm() { document.getElementById("add-game-form-container").style.display = "none"; }
 
@@ -247,15 +247,16 @@ if (gameForm) {
     gameForm.addEventListener("submit", (e) => {
         e.preventDefault();
         const fd = new FormData(gameForm);
+        const nextId = games.length > 0 ? Math.max(...games.map(g => Number(g.gameID) || 0)) + 1 : 1;
         games.push({
-            gameID: String(games.length + 1).padStart(3, '0'),
+            gameID: String(nextId).padStart(3, '0'),
             name: fd.get("name"),
             platform: fd.get("platform"),
             genre: fd.get("genre"),
             Availability: "buy",
             vendor: fd.get("gamevendor"),
             description: fd.get("description"),
-            price: fd.get("price")
+            price: Number(fd.get("price"))
         });
         saveGamesToStorage();
         refreshUI();
@@ -267,4 +268,10 @@ if (gameForm) {
 document.addEventListener("DOMContentLoaded", () => {
     loadData();
     showSection('dashboard', document.querySelector(".sidebar nav button"));
+
+    // Add event listener to update user table when type filter changes
+    const userFilter = document.getElementById("user-type-filter");
+    if (userFilter) {
+        userFilter.addEventListener("change", renderUsersTable);
+    }
 });
