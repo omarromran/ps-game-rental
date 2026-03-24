@@ -1,18 +1,17 @@
-
 .review-container {
-  max-width: 600px;     
-  height: 400px ;       
-  margin: 50px auto;            
+  max-width: 600px;
+  height: 400px;
+  margin: 50px auto;
   padding: 20px;
   border: 1px solid #ccc;
   border-radius: 10px;
   background-color: #5c748e;
   font-family: Arial, sans-serif;
-  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
 }
 
 body {
-  background-color: #121f29; 
+  background-color: #121f29;
   color: #fff;
 }
 
@@ -52,14 +51,14 @@ textarea {
   padding: 8px;
   border-radius: 5px;
   border: 1px solid #ccc;
-  resize: vertical; 
+  resize: vertical;
   font-family: Arial, sans-serif;
   font-size: 14px;
 }
 
 
 .buttons {
-  text-align: center;  
+  text-align: center;
 }
 
 
