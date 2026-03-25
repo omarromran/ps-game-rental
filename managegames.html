@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Inventory - PS Rental Hub</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="dashboard-wrapper">
+        <aside class="sidebar">
+            <h2 class="logo">PS HUB</h2>
+            <nav>
+                <a href="dashboard.html">Store Dashboard</a>
+                <a href="add-game.html">Add New Game</a>
+                <a href="manage-games.html" class="active">Manage Games</a>
+                <a href="rental-requests.html">Rental Requests</a>
+            </nav>
+            <button class="logout" id="logoutBtn">Logout</button>
+        </aside>
+
+        <main class="main-content">
+            <header>
+                <h1>Manage Your Games</h1>
+                <p>View, edit, or remove games from your active listings.</p>
+            </header>
+
+            <div style="margin-top: 2rem;">
+                <table id="gamesTable">
+                    <thead>
+                        <tr>
+                            <th>Game Title</th>
+                            <th>Platform</th>
+                            <th>Genre</th>
+                            <th>Daily Price</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="gamesList">
+                        </tbody>
+                </table>
+                <div id="noGamesMessage" style="display: none; text-align: center; padding: 2rem; color: var(--secondary-color);">
+                    You haven't added any games yet.
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="navigation.js"></script>
+    <script src="manage-games.js"></script>
+</body>
+</html>
