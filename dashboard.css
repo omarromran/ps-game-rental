@@ -237,4 +237,138 @@ select {
         flex-wrap: wrap;
         justify-content: center;
     }
+
+    .sidebar button,
+    .sidebar nav a {
+        width: auto;
+        font-size: 0.8rem;
+    }
+
+
+    /* Review Modal */
+    #reviewModal {
+        display: none;
+        /* Hidden by default, controlled by JS */
+        position: fixed;
+        inset: 0;
+        background-color: rgba(18, 31, 41, 0.85);
+        /* darker overlay matching dashboard */
+        backdrop-filter: blur(5px);
+        z-index: 1000;
+        justify-content: center;
+        align-items: center;
+    }
+
+    #reviewModal .modal-content {
+        background-color: var(--input-background);
+        /* matches cards */
+        margin: auto;
+        padding: 30px 25px;
+        border-radius: 12px;
+        width: 90%;
+        max-width: 450px;
+        box-shadow: var(--shadow);
+        position: relative;
+        text-align: center;
+    }
+
+    #reviewModal h2 {
+        color: var(--secondary-color);
+        margin-bottom: 20px;
+        font-weight: 600;
+        text-transform: uppercase;
+    }
+
+    #reviewModal .game-title {
+        font-size: 1rem;
+        color: var(--white-color);
+        margin-bottom: 12px;
+        font-weight: 500;
+    }
+
+    #reviewModal label {
+        display: block;
+        text-align: left;
+        font-size: 0.85rem;
+        color: var(--secondary-color);
+        margin-bottom: 5px;
+    }
+
+    #reviewModal select,
+    #reviewModal textarea {
+        width: 100%;
+        padding: 12px 15px;
+        border-radius: 8px;
+        border: 1px solid var(--secondary-color);
+        background-color: var(--dark-color);
+        color: var(--white-color);
+        font-family: inherit;
+        outline: none;
+        margin-bottom: 15px;
+    }
+
+    #reviewModal textarea {
+        resize: vertical;
+        min-height: 80px;
+    }
+
+    #reviewModal .buttons {
+        display: flex;
+        justify-content: space-between;
+        gap: 10px;
+    }
+
+    #reviewModal .buttons button {
+        flex: 1;
+        background-color: var(--secondary-color);
+        color: var(--white-color);
+        border: none;
+        padding: 10px 15px;
+        border-radius: 8px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: 0.3s;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+    }
+
+    #reviewModal .buttons button:hover {
+        background-color: var(--btn-hover);
+        transform: translateY(-1px);
+    }
+
+    /* Close button */
+    #reviewModal .close {
+        position: absolute;
+        top: 15px;
+        right: 20px;
+        font-size: 24px;
+        cursor: pointer;
+        color: var(--secondary-color);
+        opacity: 0.8;
+        transition: 0.2s;
+    }
+
+    #reviewModal .close:hover {
+        opacity: 1;
+    }
+
+    /* Responsive for mobile */
+    @media (max-width: 500px) {
+        #reviewModal .modal-content {
+            padding: 20px 15px;
+        }
+
+        #reviewModal .buttons {
+            flex-direction: column;
+        }
+
+        #reviewModal .buttons button {
+            width: 100%;
+        }
+    }
+    
+
 }
