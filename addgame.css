@@ -24,13 +24,14 @@ label {
 }
 
 /* Input Styling */
-input, 
-select, 
+input,
+select,
 textarea {
     width: 100%;
     padding: 12px;
     border-radius: 6px;
-    border: 1px solid rgba(92, 116, 142, 0.3); /* Using secondary color with transparency */
+    border: 1px solid rgba(92, 116, 142, 0.3);
+    /* Using secondary color with transparency */
     background-color: var(--dark-color);
     color: var(--white-color);
     font-family: 'Poppins', sans-serif;
@@ -38,8 +39,8 @@ textarea {
     transition: border-color 0.3s ease;
 }
 
-input:focus, 
-select:focus, 
+input:focus,
+select:focus,
 textarea:focus {
     outline: none;
     border-color: var(--secondary-color);
