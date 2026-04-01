@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Log In</title>
+    <link rel="stylesheet" href="login&signup.css">
+    <link rel="icon" href="photos/images.png">
+</head>
+
+<body>
+    <div class="wrapper">
+        <h1>Log In</h1>
+        <form id="login-form">
+            <div class="input-group">
+                <img src="photos/person_icon.svg" alt="User Icon">
+                <input type="text" name="username" id="username-input" placeholder="Username" required>
+            </div>
+
+            <div class="input-group">
+                <img src="photos/lock_icon.svg" alt="Password Icon">
+                <input type="password" name="password" id="password-input" placeholder="Password" required>
+            </div>
+
+            <button type="submit">Log In</button>
+            <p>Don't have an account? <a href="signup.html">Sign Up</a></p>
+        </form>
+    </div>
+
+    <script>
+        document.getElementById("login-form").addEventListener("submit", async function (event) {
+            event.preventDefault();
+
+            const usernameInput = document.getElementById("username-input").value.trim();
+            const passwordInput = document.getElementById("password-input").value;
+
+            try {
+                let users = [];
+                const storedUsers = localStorage.getItem("users");
+
+                if (storedUsers) {
+                    users = JSON.parse(storedUsers);
+                } else {
+                    const response = await fetch("users.json");
+                    if (!response.ok) throw new Error("Could not load users.json");
+
+                    const data = await response.json();
+                    users = data.users || [];
+                    localStorage.setItem("users", JSON.stringify(users));
+                }
+
+                const loginUser = users.find(user =>
+                    user.username === usernameInput && user.password === passwordInput
+                );
+
+                if (loginUser) {
+
+                    if (loginUser.status && loginUser.status.toLowerCase() === "pending") {
+                        alert("Your account is still pending approval.");
+                        return;
+                    }
+
+                    localStorage.setItem("currentUser", JSON.stringify(loginUser));
+                    alert(`Welcome, ${loginUser.name}!`);
+
+                    const userType = loginUser.type.trim().toLowerCase();
+
+                    switch (userType) {
+                        case "admin":
+                            window.location.href = "adminDashboard.html";
+                            break;
+                        case "business":
+                            window.location.href = "businessDashboard.html";
+                            break;
+                        case "customer":
+                            window.location.href = "gamerDashboard.html";
+                            break;
+                        default:
+                            alert("User type not recognized.");
+                    }
+
+                } else {
+                    alert("Invalid username or password!");
+                }
+
+            } catch (error) {
+                console.error("Login Error:", error);
+                alert("An error occurred. Make sure you are using Live Server.");
+            }
+        });
+    </script>
+</body>
+
+</html>

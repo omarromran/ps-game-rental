@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gamer Dashboard - GameLend</title>
+    <link rel="icon" href="photos/images.png">
+    <link rel="stylesheet" href="dashboard.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script defer src="gamerDashboard.js"></script>
+</head>
+
+<body>
+
+    <div class="dashboard-wrapper">
+        <aside class="sidebar">
+            <h2>Gamer</h2>
+            <nav>
+                <button onclick="showSection('active-rentals', this)" class="active">
+                    <i class="fas fa-gamepad"></i> Active Rentals
+                </button>
+                <button onclick="showSection('pending-bookings', this)">
+                    <i class="fas fa-clock"></i> Pending Bookings
+                </button>
+                <button onclick="showSection('completed-rentals', this)">
+                    <i class="fas fa-check-circle"></i> Completed Rentals
+                </button>
+                <button onclick="showSection('profile', this)">
+                    <i class="fas fa-user"></i> Profile
+                </button>
+            </nav>
+            <button class="logout" onclick="logout()">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </button>
+        </aside>
+
+        <main>
+            <section id="active-rentals">
+                <h2>Active Rentals</h2>
+                <div class="games-grid">
+                    <div class="game-card">GTA <br> Ends: March 10</div>
+                    <div class="game-card">FIFA <br> Ends: March 12</div>
+                </div>
+            </section>
+
+            <section id="pending-bookings">
+                <h2>Pending Bookings</h2>
+                <div class="games-grid">
+                    <div class="game-card">Call of Duty <br> Waiting for approval</div>
+                </div>
+            </section>
+
+            <section id="completed-rentals">
+                <h2>Completed Rentals</h2>
+                <div class="games-grid">
+                    <div class="game-card">
+                        Fortnite
+                        <br><br>
+                        <a href="review.html">
+                            <button class="action-btn">
+                                <i class="fas fa-star"></i> Leave Review
+                            </button>
+                        </a>
+                    </div>
+                </div>
+            </section>
+
+           <section id="profile">
+    <h2>Profile</h2>
+
+    <div class="profile-container">
+
+        <div class="profile-top">
+            <div class="profile-avatar">ZA</div>
+            <div>
+                <h3>Zeina Ahmed</h3>
+                <p>zeina@gmail.com</p>
+            </div>
+        </div>
+
+        <div class="profile-item">
+            <span class="profile-dot"></span>
+            <span class="profile-key">Username</span>
+            <span class="profile-val">zeinaahmed</span>
+        </div>
+
+        <div class="profile-item">
+            <span class="profile-dot"></span>
+            <span class="profile-key">Phone</span>
+            <span class="profile-val">+20 123 456 7890</span>
+        </div>
+
+        <div class="profile-item">
+            <span class="profile-dot"></span>
+            <span class="profile-key">Member Since</span>
+            <span class="profile-val">March 2024</span>
+        </div>
+
+        <div class="profile-item">
+            <span class="profile-dot"></span>
+            <span class="profile-key">Total Rentals</span>
+            <span class="profile-val">3 Games</span>
+        </div>
+
+    </div>
+</section>
+        </main>
+    </div>
+
+</body>
+
+</html>

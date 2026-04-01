@@ -1,0 +1,38 @@
+{
+    "users": [
+        {
+            "userID": 1,
+            "name": "omar omran",
+            "username": "omarromran",
+            "email": "omar@gmail.com",
+            "password": "omar123",
+            "type": "admin"
+        },
+        {
+            "userID": 2,
+            "name": "ahmed hisham",
+            "username": "etsh store",
+            "email": "ahmed@gmail.com",
+            "password": "ahmed123",
+            "type": "business",
+            "status": "accepted"
+        },
+        {
+            "userID": 3,
+            "name": "zeina ahmed ",
+            "username": "zeina store",
+            "email": "zeina@gmail.com",
+            "password": "zeina123",
+            "type": "business",
+            "status": "accepted"
+        },
+        {
+            "userID": 4,
+            "name": "basmala",
+            "username": "basmala",
+            "email": "basmala@gmail.com",
+            "password": "basmala123",
+            "type": "customer"
+        }
+    ]
+}
