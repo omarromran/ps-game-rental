@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up</title>
+    <link rel="stylesheet" href="login&signup.css">
+    <link rel="icon" href="photos/images.png">
+</head>
+
+<body>
+    <div class="wrapper">
+        <h1>Sign Up</h1>
+        <form id="signup-form">
+
+            <div class="input-group">
+                <img src="photos/person_icon.svg" alt="Name">
+                <input type="text" id="name-input" placeholder="Full Name" required>
+            </div>
+
+            <div class="input-group">
+                <img src="photos/email_icon.svg" alt="Email">
+                <input type="email" name="email" id="email-input" placeholder="Email" required>
+            </div>
+
+            <div class="input-group">
+                <img src="photos/person_icon.svg" alt="Username">
+                <input type="text" id="username-input" placeholder="Username" required>
+            </div>
+
+            <div class="input-group">
+                <img src="photos/lock_icon.svg" alt="Password">
+                <input type="password" id="password-input" placeholder="Password" required>
+            </div>
+
+            <div class="input-group">
+                <img src="photos/lock_icon.svg" alt="Confirm Password">
+                <input type="password" id="confirm-password-input" placeholder="Confirm Password" required>
+            </div>
+
+            <div class="account-type">
+                <label>
+                    <input type="radio" name="account-type" value="customer" checked>
+                    Customer
+                </label>
+
+                <label>
+                    <input type="radio" name="account-type" value="business">
+                    Business
+                </label>
+            </div>
+
+            <button type="submit">Sign Up</button>
+
+            <p>Already have an account? <a href="login.html">Log In</a></p>
+        </form>
+    </div>
+
+    <script>
+        document.getElementById("signup-form").addEventListener("submit", async function (event) {
+            event.preventDefault();
+
+            const name = document.getElementById("name-input").value.trim();
+            const email = document.getElementById("email-input").value.trim();
+            const username = document.getElementById("username-input").value.trim();
+            const password = document.getElementById("password-input").value;
+            const confirmPassword = document.getElementById("confirm-password-input").value;
+            const type = document.querySelector('input[name="account-type"]:checked').value;
+
+            if (password !== confirmPassword) {
+                alert("Passwords do not match!");
+                return;
+            }
+
+            try {
+                let users = [];
+                const storedUsers = localStorage.getItem("users");
+
+                if (storedUsers) {
+                    users = JSON.parse(storedUsers);
+                } else {
+                    const response = await fetch("users.json");
+                    const data = await response.json();
+                    users = data.users || [];
+                    localStorage.setItem("users", JSON.stringify(users));
+                }
+
+                if (users.some(u => u.username === username)) {
+                    alert("Username already taken! Please choose another.");
+                    return;
+                }
+
+                const userID = users.length > 0 ? Math.max(...users.map(u => u.userID)) + 1 : 1;
+
+                let status = "active";
+                if (type === "business") {
+                    status = "pending";
+                }
+
+                const newUser = {
+                    userID: userID,
+                    name: name,
+                    username: username,
+                    email: email,
+                    password: password,
+                    type: type,
+                    status: status
+                };
+
+                users.push(newUser);
+                localStorage.setItem("users", JSON.stringify(users));
+
+                alert("Account created successfully! You can now log in.");
+                window.location.href = "login.html";
+
+            } catch (error) {
+                console.error("Error during signup:", error);
+                alert("Error accessing user data. Make sure you are using Live Server.");
+            }
+        });
+    </script>
+</body>
+
+</html>
