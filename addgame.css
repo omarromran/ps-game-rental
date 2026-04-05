@@ -1,65 +1,180 @@
-/* Forms Container */
+/* Import font */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+/* Variables */
+:root {
+  --primary-color: #182938;
+  --secondary-color: #5c748e;
+  --dark-color: #121f29;
+  --black: #000102;
+  --white: #ffffff;
+  --input-background: rgba(28, 38, 51, 0.9);
+  --shadow: 0 10px 25px rgba(18, 31, 41, 0.6);
+  --btn-hover: #3e556e;
+  --accent-red: #c0392b;
+  --accent-red-hover: #e74c3c;
+}
+
+/* Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Body */
+body {
+  font-family: 'Poppins', sans-serif;
+  background-color: var(--dark-color);
+  color: var(--white);
+  min-height: 100vh;
+}
+
+/* Layout */
+.dashboard-wrapper {
+  display: flex;
+  min-height: 100vh;
+}
+
+/* Sidebar */
+.sidebar {
+  width: 240px;
+  background-color: var(--primary-color);
+  padding: 2rem 1rem;
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  height: 100vh;
+}
+
+.sidebar .logo {
+  text-align: center;
+  margin-bottom: 2rem;
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+/* Navigation */
+.sidebar nav {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.sidebar a {
+  text-decoration: none;
+  color: var(--secondary-color);
+  padding: 12px;
+  border-radius: 6px;
+  transition: 0.3s;
+}
+
+/* Active + hover */
+.sidebar a:hover,
+.sidebar a.active {
+  background-color: var(--secondary-color);
+  color: var(--white);
+}
+
+/* Logout button */
+.sidebar .logout {
+  margin-top: auto;
+  background-color: var(--accent-red);
+  color: var(--white);
+  border: none;
+  padding: 12px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.sidebar .logout:hover {
+  background-color: var(--accent-red-hover);
+}
+
+/* Main content */
+.main-content {
+  margin-left: 240px;
+  padding: 2rem;
+  width: calc(100% - 240px);
+}
+
+/* Header */
+header h1 {
+  margin-bottom: 0.5rem;
+}
+
+header p {
+  color: var(--secondary-color);
+}
+
+/* Form */
 form {
-    background-color: var(--input-background);
-    padding: 30px;
-    border-radius: 12px;
-    max-width: 600px;
-    margin-top: 2rem;
-    box-shadow: var(--shadow);
+  background-color: var(--input-background);
+  padding: 30px;
+  border-radius: 12px;
+  max-width: 600px;
+  margin-top: 2rem;
+  box-shadow: var(--shadow);
 }
 
-/* Grouping Label and Input */
+/* Form group */
 .form-group {
-    margin-bottom: 1.5rem;
-    display: flex;
-    flex-direction: column;
+  margin-bottom: 1.5rem;
 }
 
+/* Labels */
 label {
-    display: block;
-    margin-bottom: 8px;
-    font-size: 0.9rem;
-    color: var(--secondary-color);
-    font-weight: 500;
+  display: block;
+  margin-bottom: 8px;
+  font-size: 0.9rem;
 }
 
-/* Input Styling */
+/* Inputs */
 input,
 select,
 textarea {
-    width: 100%;
-    padding: 12px;
-    border-radius: 6px;
-    border: 1px solid rgba(92, 116, 142, 0.3);
-    /* Using secondary color with transparency */
-    background-color: var(--dark-color);
-    color: var(--white-color);
-    font-family: 'Poppins', sans-serif;
-    font-size: 1rem;
-    transition: border-color 0.3s ease;
+  width: 100%;
+  padding: 12px;
+  border-radius: 6px;
+  border: 1px solid var(--secondary-color);
+  background-color: var(--dark-color);
+  color: var(--white);
+  font-family: 'Poppins', sans-serif;
 }
 
-input:focus,
-select:focus,
-textarea:focus {
-    outline: none;
-    border-color: var(--secondary-color);
-}
-
-/* Submit Button */
+/* Button */
 .submit-btn {
-    background-color: var(--secondary-color);
-    color: var(--white-color);
-    border: none;
-    padding: 14px 25px;
-    border-radius: 6px;
-    cursor: pointer;
-    font-weight: 600;
-    font-size: 1rem;
-    width: 100%;
-    transition: background 0.3s ease;
+  background-color: var(--secondary-color);
+  color: var(--white);
+  border: none;
+  padding: 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  width: 100%;
+  transition: 0.3s;
 }
 
 .submit-btn:hover {
-    background-color: var(--btn-hover);
+  background-color: var(--btn-hover);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .sidebar {
+    width: 100%;
+    height: auto;
+    position: relative;
+  }
+
+  .main-content {
+    margin-left: 0;
+    width: 100%;
+  }
+
+  .sidebar nav {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
 }
