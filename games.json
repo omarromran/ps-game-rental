@@ -6,7 +6,7 @@
             "platform": "PS 5",
             "genre": "SPORT SIMULATION",
             "Availability": "buy",
-            "vendor": "etsh store",
+            "vendorID": 2,
             "price": 1200
         },
         {
@@ -15,7 +15,7 @@
             "platform": "PS 5",
             "genre": "Action",
             "Availability": "buy",
-            "vendor": "zeina store",
+            "vendorID": 3,
             "price": 950
         },
         {
@@ -24,7 +24,7 @@
             "platform": "PS 5",
             "genre": "Action",
             "Availability": "rent",
-            "vendor": "etsh store",
+            "vendorID": 2,
             "price": 150
         }
     ]
