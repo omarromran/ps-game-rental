@@ -68,6 +68,24 @@
             const confirmPassword = document.getElementById("confirm-password-input").value;
             const type = document.querySelector('input[name="account-type"]:checked').value;
 
+            // Bug fix 1: Validate name is not empty after trimming
+            if (!name) {
+                alert("Full name cannot be empty.");
+                return;
+            }
+
+            // Bug fix 2: Validate username has no spaces
+            if (/\s/.test(username)) {
+                alert("Username cannot contain spaces.");
+                return;
+            }
+
+            // Bug fix 3: Enforce minimum password length
+            if (password.length < 6) {
+                alert("Password must be at least 6 characters.");
+                return;
+            }
+
             if (password !== confirmPassword) {
                 alert("Passwords do not match!");
                 return;
@@ -86,8 +104,15 @@
                     localStorage.setItem("users", JSON.stringify(users));
                 }
 
+                // Username duplicate check
                 if (users.some(u => u.username === username)) {
                     alert("Username already taken! Please choose another.");
+                    return;
+                }
+
+                // Bug fix 4: Email duplicate check
+                if (users.some(u => u.email.toLowerCase() === email.toLowerCase())) {
+                    alert("An account with this email already exists.");
                     return;
                 }
 

@@ -36,19 +36,12 @@
             const passwordInput = document.getElementById("password-input").value;
 
             try {
-                let users = [];
-                const storedUsers = localStorage.getItem("users");
+                // Always fetch directly from users.json — no localStorage cache
+                const response = await fetch("users.json");
+                if (!response.ok) throw new Error("Could not load users.json");
 
-                if (storedUsers) {
-                    users = JSON.parse(storedUsers);
-                } else {
-                    const response = await fetch("users.json");
-                    if (!response.ok) throw new Error("Could not load users.json");
-
-                    const data = await response.json();
-                    users = data.users || [];
-                    localStorage.setItem("users", JSON.stringify(users));
-                }
+                const data = await response.json();
+                const users = data.users || [];
 
                 const loginUser = users.find(user =>
                     user.username === usernameInput && user.password === passwordInput
@@ -61,6 +54,7 @@
                         return;
                     }
 
+                    // Only store the session user — not the full users list
                     localStorage.setItem("currentUser", JSON.stringify(loginUser));
                     alert(`Welcome, ${loginUser.name}!`);
 
@@ -71,7 +65,7 @@
                             window.location.href = "adminDashboard.html";
                             break;
                         case "business":
-                            window.location.href = "businessDashboard.html";
+                            window.location.href = "storedashboard.html";
                             break;
                         case "customer":
                             window.location.href = "gamerDashboard.html";

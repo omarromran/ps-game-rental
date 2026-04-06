@@ -1,19 +1,11 @@
-let users = [];
-let games = [];
-
-function saveUsersToStorage() {
-    localStorage.setItem("users", JSON.stringify(users));
-}
-
-function saveGamesToStorage() {
-    localStorage.setItem("games", JSON.stringify(games));
-}
+// ─────────────────────────────────────────────
+//  NAVIGATION
+// ─────────────────────────────────────────────
 
 function showSection(sectionId, btn) {
-    document.querySelectorAll("main > section").forEach(section => section.style.display = "none");
-
-    const activeSection = document.getElementById(sectionId);
-    if (activeSection) activeSection.style.display = "block";
+    document.querySelectorAll("main > section").forEach(s => s.style.display = "none");
+    const section = document.getElementById(sectionId);
+    if (section) section.style.display = "block";
 
     document.querySelectorAll(".sidebar nav button").forEach(b => b.classList.remove("active"));
     if (btn) btn.classList.add("active");
@@ -25,143 +17,140 @@ function logout() {
     }
 }
 
-async function loadData() {
-    try {
-        const storedUsers = localStorage.getItem("users");
-        if (storedUsers) {
-            users = JSON.parse(storedUsers);
-        } else {
-            const res = await fetch("users.json");
-            const data = await res.json();
-            users = data.users || [];
-            saveUsersToStorage();
-        }
+// ─────────────────────────────────────────────
+//  DASHBOARD CARDS  (fetches both JSON files)
+// ─────────────────────────────────────────────
 
-        const storedGames = localStorage.getItem("games");
-        if (storedGames) {
-            games = JSON.parse(storedGames);
-        } else {
-            const res = await fetch("games.json");
-            const data = await res.json();
-            games = data.games || [];
-            saveGamesToStorage();
-        }
-
-        refreshUI();
-    } catch (err) {
-        console.error("Data Load Error:", err);
-        alert("Failed to load data. Check console for details.");
-    }
-}
-
-function refreshUI() {
-    renderDashboardCards();
-    renderUsersTable();
-    renderGamesTable();
-}
-
-function renderDashboardCards() {
+async function renderDashboardCards() {
     const container = document.getElementById("dashboard-cards");
     if (!container) return;
 
-    const totalUsers = users.length;
-    const pendingUsers = users.filter(u => u.status === "pending").length;
-    const totalGames = games.length;
-    const availableForRentCount = games.filter(g => (g.Availability || "").toLowerCase() === "rent").length;
-    const totalRevenue = games.reduce((sum, g) => sum + (Number(g.price) || 0), 0);
+    try {
+        const [usersRes, gamesRes] = await Promise.all([
+            fetch("users.json"),
+            fetch("games.json")
+        ]);
 
-    const stats = [
-        { title: "Total Users", value: totalUsers },
-        { title: "Pending Users", value: pendingUsers, link: "approveLenders.html" },
-        { title: "Total Games", value: totalGames },
-        { title: "Available for Rent", value: availableForRentCount },
-        { title: "Total Price Value", value: totalRevenue + " EGP" }
-    ];
+        if (!usersRes.ok) throw new Error("Could not load users.json");
+        if (!gamesRes.ok) throw new Error("Could not load games.json");
 
-    container.innerHTML = stats.map(stat => `
-        <div class="card" ${stat.link ? `onclick="window.location.href='${stat.link}'"` : ""} style="cursor:${stat.link ? "pointer" : "default"}">
-            <h3>${stat.title}</h3>
-            <p>${stat.value}</p>
-        </div>
-    `).join('');
+        const { users } = await usersRes.json();
+        const { games } = await gamesRes.json();
+
+        const totalUsers      = users.length;
+        const pendingUsers    = users.filter(u => u.status === "pending").length;
+        const totalGames      = games.length;
+        const rentableGames   = games.filter(g => (g.Availability || "").toLowerCase() === "rent").length;
+        const totalPriceValue = games.reduce((sum, g) => sum + (Number(g.price) || 0), 0);
+
+        container.innerHTML = [
+            { title: "Total Users",        value: totalUsers       },
+            { title: "Pending Approvals",  value: pendingUsers,    link: "approveLenders.html" },
+            { title: "Total Games",        value: totalGames       },
+            { title: "Available for Rent", value: rentableGames    },
+            { title: "Total Price Value",  value: totalPriceValue + " EGP" }
+        ].map(stat => `
+            <div class="card"
+                 ${stat.link ? `onclick="window.location.href='${stat.link}'"` : ""}
+                 style="cursor:${stat.link ? "pointer" : "default"}">
+                <h3>${stat.title}</h3>
+                <p>${stat.value}</p>
+            </div>
+        `).join("");
+
+    } catch (err) {
+        console.error("Dashboard cards error:", err);
+        container.innerHTML = `<p style="color:red;">Failed to load dashboard data.</p>`;
+    }
 }
 
-// USERS
-function renderUsersTable() {
+// ─────────────────────────────────────────────
+//  USERS TABLE  (fetches users.json directly)
+// ─────────────────────────────────────────────
+
+async function renderUsersTable() {
     const table = document.getElementById("users-table");
     if (!table) return;
 
     const filterValue = document.getElementById("user-type-filter")?.value || "all";
 
-    // Only approved users
-    const approvedUsers = users.filter(u => u.status !== "pending");
+    try {
+        const res = await fetch("users.json");
+        if (!res.ok) throw new Error("Could not load users.json");
+        const { users } = await res.json();
 
-    const filteredUsers = filterValue === "all"
-        ? approvedUsers
-        : approvedUsers.filter(u => u.type === filterValue);
+        // Exclude pending users
+        const visible = users.filter(u => u.status !== "pending");
+        const filtered = filterValue === "all"
+            ? visible
+            : visible.filter(u => u.type === filterValue);
 
-    table.innerHTML = `
-        <thead>
-            <tr>
-                <th>ID</th><th>Name</th><th>Username</th><th>Email</th><th>Type</th><th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            ${filteredUsers.map(u => {
-        const idx = users.findIndex(user => user.userID === u.userID);
-        return `
-                    <tr>
-                        <td>${u.userID}</td>
-                        <td>${u.name}</td>
-                        <td>${u.username}</td>
-                        <td>${u.email}</td>
-                        <td><span class="badge ${u.type}">${u.type}</span></td>
-                        <td class="users-action">
-                            <button class="action-btn" onclick="editUser(${idx})"><i class="fas fa-edit"></i></button>
-                            <button class="action-btn" onclick="deleteUser(${idx})"><i class="fas fa-trash"></i></button>
-                        </td>
-                    </tr>`;
-    }).join('')}
-        </tbody>`;
-}
+        if (filtered.length === 0) {
+            table.innerHTML = `
+                <thead><tr>
+                    <th>ID</th><th>Name</th><th>Username</th><th>Email</th><th>Type</th>
+                </tr></thead>
+                <tbody><tr>
+                    <td colspan="5" style="text-align:center;padding:1.5rem;">No users found.</td>
+                </tr></tbody>`;
+            return;
+        }
 
-function editUser(index) {
-    const user = users[index];
-    const name = prompt("Full Name:", user.name);
-    if (name === null) return;
-    const username = prompt("Username:", user.username);
-    if (username === null) return;
-    const email = prompt("Email:", user.email);
-    if (email === null) return;
-    const type = prompt("Type (admin / business / customer):", user.type);
-    if (type === null) return;
+        table.innerHTML = `
+            <thead>
+                <tr>
+                    <th>ID</th><th>Name</th><th>Username</th><th>Email</th><th>Type</th>
+                </tr>
+            </thead>
+            <tbody>
+                ${filtered.map(u => `
+                <tr>
+                    <td>${u.userID}</td>
+                    <td>${u.name}</td>
+                    <td>${u.username}</td>
+                    <td>${u.email}</td>
+                    <td><span class="badge ${u.type}">${u.type}</span></td>
+                </tr>`).join("")}
+            </tbody>`;
 
-    users[index] = { ...user, name, username, email, type };
-    saveUsersToStorage();
-    refreshUI();
-}
-
-function deleteUser(index) {
-    if (confirm("Delete this user?")) {
-        users.splice(index, 1);
-        saveUsersToStorage();
-        refreshUI();
+    } catch (err) {
+        console.error("Users table error:", err);
+        table.innerHTML = `<tbody><tr><td style="color:red;">Failed to load users.</td></tr></tbody>`;
     }
 }
 
-// GAMES
-function renderGamesTable() {
+// ─────────────────────────────────────────────
+//  GAMES TABLE  (fetches games.json directly)
+// ─────────────────────────────────────────────
+
+async function renderGamesTable() {
     const table = document.getElementById("games-table");
     if (!table) return;
 
-    table.innerHTML = `
-        <thead>
-            <tr>
-                <th>ID</th><th>Name</th><th>Platform</th><th>Genre</th><th>Status</th><th>Vendor</th><th>Price (EGP)</th><th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            ${games.map((g, i) => `
+    try {
+        const res = await fetch("games.json");
+        if (!res.ok) throw new Error("Could not load games.json");
+        const { games } = await res.json();
+
+        if (games.length === 0) {
+            table.innerHTML = `
+                <thead><tr>
+                    <th>ID</th><th>Name</th><th>Platform</th><th>Genre</th><th>Status</th><th>Vendor</th><th>Price (EGP)</th>
+                </tr></thead>
+                <tbody><tr>
+                    <td colspan="7" style="text-align:center;padding:1.5rem;">No games found.</td>
+                </tr></tbody>`;
+            return;
+        }
+
+        table.innerHTML = `
+            <thead>
+                <tr>
+                    <th>ID</th><th>Name</th><th>Platform</th><th>Genre</th><th>Status</th><th>Vendor</th><th>Price (EGP)</th>
+                </tr>
+            </thead>
+            <tbody>
+                ${games.map(g => `
                 <tr>
                     <td>${g.gameID}</td>
                     <td>${g.name}</td>
@@ -169,109 +158,43 @@ function renderGamesTable() {
                     <td>${g.genre}</td>
                     <td>${g.Availability || "N/A"}</td>
                     <td>${g.vendor || "System"}</td>
-                    <td>${g.price || "-"}</td>
-                    <td class="games-action">
-                        <button class="action-btn" onclick="editGame(${i})"><i class="fas fa-edit"></i></button>
-                        <button class="action-btn" onclick="deleteGame(${i})"><i class="fas fa-trash"></i></button>
-                    </td>
-                </tr>`).join('')}
-        </tbody>`;
-}
+                    <td>${g.price ?? "-"}</td>
+                </tr>`).join("")}
+            </tbody>`;
 
-function editGame(index) {
-    const game = games[index];
-
-    const name = prompt("Game Name:", game.name);
-    if (name === null) return;
-    const platform = prompt("Platform:", game.platform);
-    if (platform === null) return;
-    const genre = prompt("Genre:", game.genre);
-    if (genre === null) return;
-
-    let availability = prompt("Status (buy/rent):", game.Availability);
-    if (availability === null) return;
-    availability = availability.toLowerCase() === "rent" ? "rent" : "buy";
-
-    const vendor = prompt("Vendor:", game.vendor);
-    if (vendor === null) return;
-
-    const price = prompt("Price (EGP):", game.price);
-    if (price === null) return;
-
-    games[index] = { ...game, name, platform, genre, Availability: availability, vendor, price: Number(price) };
-    saveGamesToStorage();
-    refreshUI();
-}
-
-function deleteGame(index) {
-    if (confirm("Delete this game?")) {
-        games.splice(index, 1);
-        saveGamesToStorage();
-        refreshUI();
+    } catch (err) {
+        console.error("Games table error:", err);
+        table.innerHTML = `<tbody><tr><td style="color:red;">Failed to load games.</td></tr></tbody>`;
     }
 }
 
-// ADD ADMIN FORM
-const adminForm = document.getElementById("add-admin-form");
-if (adminForm) {
-    adminForm.addEventListener("submit", (e) => {
-        e.preventDefault();
-        const fd = new FormData(adminForm);
-        if (fd.get("password") !== fd.get("confirmPassword")) {
-            alert("Passwords do not match!");
-            return;
-        }
-
-        users.push({
-            userID: users.length > 0 ? Math.max(...users.map(u => Number(u.userID) || 0)) + 1 : 1,
-            name: fd.get("name"),
-            username: fd.get("username"),
-            email: fd.get("email"),
-            password: fd.get("password"),
-            type: "admin"
-        });
-
-        saveUsersToStorage();
-        refreshUI();
-        adminForm.reset();
-        alert("Admin added!");
-    });
-}
-
-// ADD GAME FORM
-function showAddGameForm() { document.getElementById("add-game-form-container").style.display = "block"; }
-function closeAddGameForm() { document.getElementById("add-game-form-container").style.display = "none"; }
-
-const gameForm = document.getElementById("add-game-form");
-if (gameForm) {
-    gameForm.addEventListener("submit", (e) => {
-        e.preventDefault();
-        const fd = new FormData(gameForm);
-        const nextId = games.length > 0 ? Math.max(...games.map(g => Number(g.gameID) || 0)) + 1 : 1;
-        games.push({
-            gameID: String(nextId).padStart(3, '0'),
-            name: fd.get("name"),
-            platform: fd.get("platform"),
-            genre: fd.get("genre"),
-            Availability: "buy",
-            vendor: fd.get("gamevendor"),
-            description: fd.get("description"),
-            price: Number(fd.get("price"))
-        });
-        saveGamesToStorage();
-        refreshUI();
-        gameForm.reset();
-        closeAddGameForm();
-    });
-}
+// ─────────────────────────────────────────────
+//  BOOT
+// ─────────────────────────────────────────────
 
 document.addEventListener("DOMContentLoaded", () => {
-    loadData();
-    showSection('dashboard', document.querySelector(".sidebar nav button"));
-    
-    // Add event listener to update user table when type filter changes
-    const userFilter = document.getElementById("user-type-filter");
-    if (userFilter) {
-        userFilter.addEventListener("change", renderUsersTable);
+    // Auth guard — only logged-in admins may access this page
+    const currentUser = JSON.parse(localStorage.getItem("currentUser") || "null");
+    if (!currentUser) {
+        alert("You must be logged in to access this page.");
+        window.location.href = "login.html";
+        return;
     }
+    if (currentUser.type !== "admin") {
+        alert("Access denied. Admins only.");
+        window.location.href = "login.html";
+        return;
+    }
+
+    // Show dashboard section first
+    showSection("dashboard", document.querySelector(".sidebar nav button"));
+
+    // Render all sections from JSON files
+    renderDashboardCards();
+    renderUsersTable();
+    renderGamesTable();
+
+    // Re-render users table when filter changes
+    const userFilter = document.getElementById("user-type-filter");
+    if (userFilter) userFilter.addEventListener("change", renderUsersTable);
 });
