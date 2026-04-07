@@ -165,3 +165,101 @@ function deleteGame(index) {
 
     loadGames();
 }
+const sampleRequests = [
+    {
+        customer: "Gamer_99",
+        game: "Spider-Man 2",
+        startDate: "Nov 1, 2023",
+        endDate: "Nov 4, 2023",
+        totalPrice: "$15.00",
+        status: "Pending"
+    },
+    {
+        customer: "Alex_Pro",
+        game: "God of War",
+        startDate: "Nov 2, 2023",
+        endDate: "Nov 5, 2023",
+        totalPrice: "$12.00",
+        status: "Pending"
+    },
+    {
+        customer: "PlayKing",
+        game: "Elden Ring",
+        startDate: "Nov 3, 2023",
+        endDate: "Nov 6, 2023",
+        totalPrice: "$9.00",
+        status: "Pending"
+    }
+];
+
+function loadRequests() {
+    const tbody = document.getElementById("requestsList");
+    const noMsg = document.getElementById("noRequestsMessage");
+
+    if (!tbody) return;
+
+    // Read current data from localStorage (do NOT reset here)
+    let requests = JSON.parse(localStorage.getItem("rentalRequests")) || [];
+
+    tbody.innerHTML = "";
+
+    const visible = requests.filter(r => r.status === "Pending" || r.status === "Approved");
+
+    if (visible.length === 0) {
+        noMsg.style.display = "block";
+        return;
+    }
+
+    noMsg.style.display = "none";
+
+    requests.forEach((req, index) => {
+        if (req.status !== "Pending" && req.status !== "Approved") return;
+
+        const row = document.createElement("tr");
+
+        row.innerHTML = `
+            <td>${req.customer}</td>
+            <td>${req.game}</td>
+            <td>${req.startDate} → ${req.endDate}</td>
+            <td>${req.totalPrice}</td>
+            <td>${req.status}</td>
+            <td>
+                ${req.status === "Pending" ? `
+                    <button onclick="approveRequest(${index})" style="background:#5c748e; color:#fff; border:none; padding:6px 12px; border-radius:5px; cursor:pointer; margin-right:5px;">Approve</button>
+                    <button onclick="rejectRequest(${index})" style="background:#c0392b; color:#fff; border:none; padding:6px 12px; border-radius:5px; cursor:pointer;">Reject</button>
+                ` : `
+                    <button onclick="markReturned(${index})" style="background:#27ae60; color:#fff; border:none; padding:6px 12px; border-radius:5px; cursor:pointer;">Mark Returned</button>
+                `}
+            </td>
+        `;
+
+        tbody.appendChild(row);
+    });
+}
+
+function approveRequest(index) {
+    let requests = JSON.parse(localStorage.getItem("rentalRequests"));
+    requests[index].status = "Approved";
+    localStorage.setItem("rentalRequests", JSON.stringify(requests));
+    loadRequests();
+}
+
+function rejectRequest(index) {
+    let requests = JSON.parse(localStorage.getItem("rentalRequests"));
+    requests[index].status = "Rejected";
+    localStorage.setItem("rentalRequests", JSON.stringify(requests));
+    loadRequests();
+}
+
+function markReturned(index) {
+    let requests = JSON.parse(localStorage.getItem("rentalRequests"));
+    requests[index].status = "Returned";
+    localStorage.setItem("rentalRequests", JSON.stringify(requests));
+    loadRequests();
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    // Reset to sample data ONLY on page load
+    localStorage.setItem("rentalRequests", JSON.stringify(sampleRequests));
+    loadRequests();
+});
