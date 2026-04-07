@@ -4,8 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gamer Dashboard - GameLend</title>
-    <link rel="icon" href="photos/images.png">
+    <title>GameLend Dashboard</title>
     <link rel="stylesheet" href="dashboard.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script defer src="gamerDashboard.js"></script>
@@ -13,101 +12,214 @@
 
 <body>
 
-    <div class="dashboard-wrapper">
-        <aside class="sidebar">
-            <h2>Gamer</h2>
-            <nav>
-                <button onclick="showSection('active-rentals', this)" class="active">
-                    <i class="fas fa-gamepad"></i> Active Rentals
-                </button>
-                <button onclick="showSection('pending-bookings', this)">
-                    <i class="fas fa-clock"></i> Pending Bookings
-                </button>
-                <button onclick="showSection('completed-rentals', this)">
-                    <i class="fas fa-check-circle"></i> Completed Rentals
-                </button>
-                <button onclick="showSection('profile', this)">
-                    <i class="fas fa-user"></i> Profile
-                </button>
-            </nav>
-            <button class="logout" onclick="logout()">
-                <i class="fas fa-sign-out-alt"></i> Logout
+<div class="dashboard-wrapper">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+        <h2>GAMER</h2>
+        <nav>
+            <button onclick="showSection('dashboard', this)" class="active">
+                <i class="fas fa-home"></i> Dashboard
             </button>
-        </aside>
+            <button onclick="showSection('my-rentals', this)">
+                <i class="fas fa-gamepad"></i> My Rentals
+            </button>
+            <button onclick="showSection('wishlist', this)">
+                <i class="fas fa-heart"></i> Wishlist
+            </button>
+            <button onclick="showSection('profile', this)">
+                <i class="fas fa-user"></i> Profile
+            </button>
+        </nav>
+        <button class="logout" onclick="logout()">
+            <i class="fas fa-sign-out-alt"></i> Logout
+        </button>
+    </aside>
 
-        <main>
-            <section id="active-rentals">
-                <h2>Active Rentals</h2>
-                <div class="games-grid">
-                    <div class="game-card">GTA <br> Ends: March 10</div>
-                    <div class="game-card">FIFA <br> Ends: March 12</div>
+    <!-- MAIN -->
+    <main>
+
+        <!-- DASHBOARD -->
+        <section id="dashboard">
+            <div class="card-container" id="dashboard-cards">
+
+                <div class="card">
+                    <h3>Active Rentals</h3>
+                    <p>2</p>
                 </div>
-            </section>
 
-            <section id="pending-bookings">
-                <h2>Pending Bookings</h2>
-                <div class="games-grid">
-                    <div class="game-card">Call of Duty <br> Waiting for approval</div>
+                <div class="card">
+                    <h3>Pending</h3>
+                    <p>1</p>
                 </div>
-            </section>
 
-            <section id="completed-rentals">
-                <h2>Completed Rentals</h2>
-                <div class="games-grid">
-                    <div class="game-card">
-                        Fortnite
-                        <br><br>
-                        <a href="review.html">
-                            <button class="action-btn">
-                                <i class="fas fa-star"></i> Leave Review
-                            </button>
-                        </a>
+                <div class="card">
+                    <h3>Wishlist</h3>
+                    <p>3</p>
+                </div>
+
+            </div>
+
+            <h2 style="margin-top: 30px;">Recent Activity</h2>
+            <table>
+                <tr><td>🎮 You rented GTA V</td></tr>
+                <tr><td>⭐ You reviewed FIFA 24</td></tr>
+                <tr><td>❤️ Added Cyberpunk 2077 to wishlist</td></tr>
+            </table>
+        </section>
+
+        <!-- MY RENTALS -->
+        <section id="my-rentals" style="display:none;">
+            <h2>My Rentals</h2>
+
+            <p>Active</p>
+            <div class="games-grid">
+                <div class="game-card">
+                    <h3>GTA V</h3>
+                    <p>John Doe</p>
+                    <p>Mar 1 - Mar 10</p>
+                    <span class="status active">Active</span>
+                </div>
+            </div>
+
+            <p>Pending</p>
+            <div class="games-grid">
+                <div class="game-card">
+                    <h3>Call of Duty</h3>
+                    <p>Mike Johnson</p>
+                    <p>Mar 5 - Mar 14</p>
+                    <span class="status pending">Pending</span>
+                </div>
+            </div>
+
+            <p>Completed</p>
+            <div class="games-grid">
+                <div class="game-card">
+                    <h3>FIFA 24</h3>
+                    <p>Jane Smith</p>
+                    <p>Mar 3 - Mar 12</p>
+                    <span class="status completed"></span>
+                    <button onclick="openReview('FIFA 24')">⭐ Leave Review</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- WISHLIST -->
+        <section id="wishlist" style="display:none;">
+            <h2>Wishlist</h2>
+            <div class="wishlist-grid">
+                <div class="wishlist-card">
+                    <div class="game-cover">⚔️</div>
+                    <h3>Elden Ring</h3>
+                    <p>Action RPG • FromSoftware</p>
+                    <button onclick="openRent('Elden Ring')">Rent Now</button>
+                </div>
+                <div class="wishlist-card">
+                    <div class="game-cover">🌆</div>
+                    <h3>Cyberpunk 2077</h3>
+                    <p>Open World RPG • CD Projekt Red</p>
+                    <button onclick="openRent('Cyberpunk 2077')">Rent Now</button>
+                </div>
+                <div class="wishlist-card">
+                    <div class="game-cover">🕷️</div>
+                    <h3>Spider-Man 2</h3>
+                    <p>Action Adventure • Insomniac</p>
+                    <button onclick="openRent('Spider-Man 2')">Rent Now</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- PROFILE -->
+        <section id="profile" style="display:none;">
+            <h2 class="page-title">Profile</h2>
+            <div class="profile-container compact">
+
+                <div class="profile-top">
+                    <div class="profile-avatar" id="avatar">ZA</div>
+                    <div class="profile-info">
+                        <h3 id="nameText">Zeina Ahmed</h3>
+                        <input id="nameInput" type="text" value="Zeina Ahmed" style="display:none;">
+                        <p id="emailText">zeina@gmail.com</p>
+                        <input id="emailInput" type="email" value="zeina@gmail.com" style="display:none;">
                     </div>
                 </div>
-            </section>
 
-           <section id="profile">
-    <h2>Profile</h2>
+                <div class="profile-item">
+                    <span class="profile-key">Username</span>
+                    <span class="profile-val" id="usernameText">zeinaahmed</span>
+                    <input id="usernameInput" type="text" value="zeinaahmed" style="display:none;">
+                </div>
 
-    <div class="profile-container">
+                <div class="profile-item">
+                    <span class="profile-key">Phone</span>
+                    <span class="profile-val" id="phoneText">+20 123 456 7890</span>
+                    <input id="phoneInput" type="text" value="+20 123 456 7890" style="display:none;">
+                </div>
 
-        <div class="profile-top">
-            <div class="profile-avatar">ZA</div>
-            <div>
-                <h3>Zeina Ahmed</h3>
-                <p>zeina@gmail.com</p>
+                <div class="profile-item">
+                    <span class="profile-key">Member Since</span>
+                    <span class="profile-val">March 2024</span>
+                </div>
+
+                <div class="profile-item">
+                    <span class="profile-key">Total Rentals</span>
+                    <span class="profile-val">3 Games</span>
+                </div>
+
+                <div style="margin-top:15px;">
+                    <button onclick="editProfile()" id="editBtn">Edit Profile</button>
+                    <button onclick="saveProfile()" id="saveBtn" style="display:none;">Save</button>
+                </div>
+
             </div>
-        </div>
+        </section>
 
-        <div class="profile-item">
-            <span class="profile-dot"></span>
-            <span class="profile-key">Username</span>
-            <span class="profile-val">zeinaahmed</span>
-        </div>
+    </main>
+</div>
 
-        <div class="profile-item">
-            <span class="profile-dot"></span>
-            <span class="profile-key">Phone</span>
-            <span class="profile-val">+20 123 456 7890</span>
-        </div>
 
-        <div class="profile-item">
-            <span class="profile-dot"></span>
-            <span class="profile-key">Member Since</span>
-            <span class="profile-val">March 2024</span>
-        </div>
+<!-- MODALS -->
 
-        <div class="profile-item">
-            <span class="profile-dot"></span>
-            <span class="profile-key">Total Rentals</span>
-            <span class="profile-val">3 Games</span>
-        </div>
+<!-- REVIEW MODAL -->
+<div id="review-modal" class="modal-overlay">
+    <div class="modal-box">
+        <span class="close" onclick="closeModal('review-modal')">&times;</span>
 
+        <h3>Leave Review</h3>
+        <p id="review-game-name"></p>
+
+        <form id="review-form">
+            <select id="rating" required>
+                <option disabled selected>Rating</option>
+                <option value="1">★☆☆☆☆</option>
+                <option value="2">★★☆☆☆</option>
+                <option value="3">★★★☆☆</option>
+                <option value="4">★★★★☆</option>
+                <option value="5">★★★★★</option>
+            </select>
+
+            <textarea id="comment" placeholder="Write comment"></textarea>
+
+            <button type="submit">Submit</button>
+        </form>
     </div>
-</section>
-        </main>
+</div>
+
+<!-- RENT MODAL -->
+<div id="rent-modal" class="modal-overlay">
+    <div class="modal-box">
+        <span class="close" onclick="closeModal('rent-modal')">&times;</span>
+
+        <h3 id="rent-game-title"></h3>
+
+        <input type="date" id="rent-start">
+        <input type="date" id="rent-end">
+
+        <button onclick="submitRent()">Confirm</button>
     </div>
+</div>
+
+<div class="toast" id="toast"></div>
 
 </body>
-
 </html>
