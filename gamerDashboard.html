@@ -38,36 +38,6 @@
 
     <!-- MAIN -->
     <main>
-<<<<<<< HEAD
-
-        <!-- DASHBOARD -->
-        <section id="dashboard">
-            <div class="card-container" id="dashboard-cards">
-
-                <div class="card">
-                    <h3>Active Rentals</h3>
-                    <p>2</p>
-                </div>
-
-                <div class="card">
-                    <h3>Pending</h3>
-                    <p>1</p>
-                </div>
-
-                <div class="card">
-                    <h3>Wishlist</h3>
-                    <p>3</p>
-                </div>
-
-            </div>
-
-            <h2 style="margin-top: 30px;">Recent Activity</h2>
-            <table>
-                <tr><td>🎮 You rented GTA V</td></tr>
-                <tr><td>⭐ You reviewed FIFA 24</td></tr>
-                <tr><td>❤️ Added Cyberpunk 2077 to wishlist</td></tr>
-            </table>
-=======
 
         <!-- DASHBOARD -->
         <section id="dashboard">
@@ -77,7 +47,6 @@
             <h2 style="margin-top: 30px;">Recent Activity</h2>
             <!-- Rendered by JS -->
             <table id="activity-table"></table>
->>>>>>> 554891a87d9d9a691cad0998c1982b9b6427cfe6
         </section>
 
         <!-- MY RENTALS -->
@@ -85,74 +54,19 @@
             <h2>My Rentals</h2>
 
             <p>Active</p>
-<<<<<<< HEAD
-            <div class="games-grid">
-                <div class="game-card">
-                    <h3>GTA V</h3>
-                    <p>John Doe</p>
-                    <p>Mar 1 - Mar 10</p>
-                    <span class="status active">Active</span>
-                </div>
-            </div>
-
-            <p>Pending</p>
-            <div class="games-grid">
-                <div class="game-card">
-                    <h3>Call of Duty</h3>
-                    <p>Mike Johnson</p>
-                    <p>Mar 5 - Mar 14</p>
-                    <span class="status pending">Pending</span>
-                </div>
-            </div>
-
-            <p>Completed</p>
-            <div class="games-grid">
-                <div class="game-card">
-                    <h3>FIFA 24</h3>
-                    <p>Jane Smith</p>
-                    <p>Mar 3 - Mar 12</p>
-                    <span class="status completed"></span>
-                    <button onclick="openReview('FIFA 24')">⭐ Leave Review</button>
-                </div>
-            </div>
-=======
             <div class="games-grid" id="active-rentals"></div>
 
             
 
             <p>Completed</p>
             <div class="games-grid" id="completed-rentals"></div>
->>>>>>> 554891a87d9d9a691cad0998c1982b9b6427cfe6
         </section>
 
         <!-- WISHLIST -->
         <section id="wishlist" style="display:none;">
             <h2>Wishlist</h2>
-<<<<<<< HEAD
-            <div class="wishlist-grid">
-                <div class="wishlist-card">
-                    <div class="game-cover">⚔️</div>
-                    <h3>Elden Ring</h3>
-                    <p>Action RPG • FromSoftware</p>
-                    <button onclick="openRent('Elden Ring')">Rent Now</button>
-                </div>
-                <div class="wishlist-card">
-                    <div class="game-cover">🌆</div>
-                    <h3>Cyberpunk 2077</h3>
-                    <p>Open World RPG • CD Projekt Red</p>
-                    <button onclick="openRent('Cyberpunk 2077')">Rent Now</button>
-                </div>
-                <div class="wishlist-card">
-                    <div class="game-cover">🕷️</div>
-                    <h3>Spider-Man 2</h3>
-                    <p>Action Adventure • Insomniac</p>
-                    <button onclick="openRent('Spider-Man 2')">Rent Now</button>
-                </div>
-            </div>
-=======
             <!-- Rendered by JS -->
             <div class="wishlist-grid" id="wishlist-container"></div>
->>>>>>> 554891a87d9d9a691cad0998c1982b9b6427cfe6
         </section>
 
         <!-- PROFILE -->
@@ -161,62 +75,35 @@
             <div class="profile-container compact">
 
                 <div class="profile-top">
-<<<<<<< HEAD
-                    <div class="profile-avatar" id="avatar">ZA</div>
-                    <div class="profile-info">
-                        <h3 id="nameText">Zeina Ahmed</h3>
-                        <input id="nameInput" type="text" value="Zeina Ahmed" style="display:none;">
-                        <p id="emailText">zeina@gmail.com</p>
-                        <input id="emailInput" type="email" value="zeina@gmail.com" style="display:none;">
-=======
                     <div class="profile-avatar" id="avatar"></div>
                     <div class="profile-info">
                         <h3 id="nameText"></h3>
                         <input id="nameInput" type="text" style="display:none;">
                         <p id="emailText"></p>
                         <input id="emailInput" type="email" style="display:none;">
->>>>>>> 554891a87d9d9a691cad0998c1982b9b6427cfe6
                     </div>
                 </div>
 
                 <div class="profile-item">
                     <span class="profile-key">Username</span>
-<<<<<<< HEAD
-                    <span class="profile-val" id="usernameText">zeinaahmed</span>
-                    <input id="usernameInput" type="text" value="zeinaahmed" style="display:none;">
-=======
                     <span class="profile-val" id="usernameText"></span>
                     <input id="usernameInput" type="text" style="display:none;">
->>>>>>> 554891a87d9d9a691cad0998c1982b9b6427cfe6
                 </div>
 
                 <div class="profile-item">
                     <span class="profile-key">Phone</span>
-<<<<<<< HEAD
-                    <span class="profile-val" id="phoneText">+20 123 456 7890</span>
-                    <input id="phoneInput" type="text" value="+20 123 456 7890" style="display:none;">
-=======
                     <span class="profile-val" id="phoneText"></span>
                     <input id="phoneInput" type="text" style="display:none;">
->>>>>>> 554891a87d9d9a691cad0998c1982b9b6427cfe6
                 </div>
 
                 <div class="profile-item">
                     <span class="profile-key">Member Since</span>
-<<<<<<< HEAD
-                    <span class="profile-val">March 2024</span>
-=======
                     <span class="profile-val" id="memberSince">-</span>
->>>>>>> 554891a87d9d9a691cad0998c1982b9b6427cfe6
                 </div>
 
                 <div class="profile-item">
                     <span class="profile-key">Total Rentals</span>
-<<<<<<< HEAD
-                    <span class="profile-val">3 Games</span>
-=======
                     <span class="profile-val" id="totalRentals">0 Games</span>
->>>>>>> 554891a87d9d9a691cad0998c1982b9b6427cfe6
                 </div>
 
                 <div style="margin-top:15px;">
@@ -234,47 +121,6 @@
 <!-- MODALS -->
 
 <!-- REVIEW MODAL -->
-<<<<<<< HEAD
-<div id="review-modal" class="modal-overlay">
-    <div class="modal-box">
-        <span class="close" onclick="closeModal('review-modal')">&times;</span>
-
-        <h3>Leave Review</h3>
-        <p id="review-game-name"></p>
-
-        <form id="review-form">
-            <select id="rating" required>
-                <option disabled selected>Rating</option>
-                <option value="1">★☆☆☆☆</option>
-                <option value="2">★★☆☆☆</option>
-                <option value="3">★★★☆☆</option>
-                <option value="4">★★★★☆</option>
-                <option value="5">★★★★★</option>
-            </select>
-
-            <textarea id="comment" placeholder="Write comment"></textarea>
-
-            <button type="submit">Submit</button>
-        </form>
-    </div>
-</div>
-
-<!-- RENT MODAL -->
-<div id="rent-modal" class="modal-overlay">
-    <div class="modal-box">
-        <span class="close" onclick="closeModal('rent-modal')">&times;</span>
-
-        <h3 id="rent-game-title"></h3>
-
-        <input type="date" id="rent-start">
-        <input type="date" id="rent-end">
-
-        <button onclick="submitRent()">Confirm</button>
-    </div>
-</div>
-
-<div class="toast" id="toast"></div>
-=======
 <div id="review-modal" class="modal-overlay" style="display:none;">
     <div class="modal-box">
         <span class="close" onclick="closeModal('review-modal')">&times;</span>
@@ -294,7 +140,6 @@
         </div>
     </div>
 </div>
->>>>>>> 554891a87d9d9a691cad0998c1982b9b6427cfe6
 
 <!-- RENT MODAL -->
 <div id="rent-modal" class="modal-overlay" style="display:none;">

@@ -493,8 +493,6 @@ input, select, textarea {
 
 .modal-box button {
     margin-top: 10px;
-<<<<<<< HEAD
-=======
 }
 
 .reset-btn {
@@ -525,5 +523,4 @@ input, select, textarea {
 
 .star-rating span.active {
     color: gold;
->>>>>>> 554891a87d9d9a691cad0998c1982b9b6427cfe6
 }
