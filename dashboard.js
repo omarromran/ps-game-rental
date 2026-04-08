@@ -25,6 +25,14 @@ function logout() {
     }
 }
 
+function resetAllData() {
+    if (confirm("Are you sure you want to reset all data to defaults?")) {
+        localStorage.removeItem("users");
+        localStorage.removeItem("games");
+        loadData();
+    }
+}
+
 async function loadData() {
     try {
         const storedUsers = localStorage.getItem("users");
@@ -268,7 +276,7 @@ if (gameForm) {
 document.addEventListener("DOMContentLoaded", () => {
     loadData();
     showSection('dashboard', document.querySelector(".sidebar nav button"));
-    
+
     // Add event listener to update user table when type filter changes
     const userFilter = document.getElementById("user-type-filter");
     if (userFilter) {
