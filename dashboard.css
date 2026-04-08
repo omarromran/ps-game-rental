@@ -319,3 +319,178 @@ input, select, textarea {
     font-weight: 600;
     width: 100%;
 }
+
+/*///////////////////////////////////////////////////////*/
+
+/* ================= PROFILE ================= */
+
+.profile-container {
+    background-color: var(--input-background);
+    padding: 40px;
+    border-radius: 16px;
+    max-width: 800px;
+    width: 100%;
+    margin: auto;
+    box-shadow: var(--shadow);
+}
+
+/* TOP */
+.profile-top {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 25px;
+}
+
+.profile-avatar {
+    width: 80px;
+    height: 80px;
+    background-color: var(--secondary-color);
+    color: var(--white-color);
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    font-size: 18px;
+}
+
+/* ITEMS */
+.profile-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+
+.profile-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.profile-dot {
+    width: 8px;
+    height: 8px;
+    background-color: var(--secondary-color);
+    border-radius: 50%;
+}
+
+.profile-key {
+    font-size: 0.9rem;
+    color: var(--secondary-color);
+}
+
+/* VALUES */
+.profile-val {
+    color: var(--white-color);
+    font-size: 0.9rem;
+}
+
+/* INPUTS (important for clean look) */
+.profile-input {
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid rgba(255,255,255,0.2);
+    color: var(--white-color);
+    text-align: left;
+    outline: none;
+    font-size: 0.9rem;
+    width: 180px;
+}
+
+/* name + email styling */
+.profile-input.name {
+    font-size: 1.1rem;
+    font-weight: 600;
+    border: none;
+    text-align: left;
+}
+
+.profile-input.email {
+    font-size: 0.85rem;
+    color: var(--secondary-color);
+    border: none;
+    text-align: left;
+}
+
+/* SAVE BUTTON */
+.save-btn {
+    margin-top: 20px;
+    width: 100%;
+    padding: 12px;
+    background-color: var(--secondary-color);
+    border: none;
+    border-radius: 8px;
+    color: var(--white-color);
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.save-btn:hover {
+    background-color: var(--btn-hover);
+}
+
+/* Wishlist grid spacing */
+.wishlist-grid {
+    margin-top: 1.5rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px; /* THIS is the missing spacing */
+}
+
+/* Card = same style as your .card */
+.wishlist-card {
+    background-color: var(--input-background);
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+}
+
+/* Emoji size */
+.game-cover {
+    font-size: 2rem;
+    margin-bottom: 10px;
+}
+
+/* Meta text */
+.meta {
+    font-size: 0.85rem;
+    color: var(--secondary-color);
+    margin-bottom: 10px;
+}
+
+/* Button spacing */
+.rent-btn {
+    margin-top: 10px;
+    width: 100%;
+}
+
+/* MODAL OVERLAY */
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.7);
+
+    display: none;
+    align-items: center;
+    justify-content: center;
+
+    z-index: 9999; 
+}
+
+.modal-box {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;          /* clean spacing */
+}
+
+.modal-box h3 {
+    margin-bottom: 5px;
+}
+
+.modal-box button {
+    margin-top: 10px;
+}

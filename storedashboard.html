@@ -151,6 +151,33 @@
     </div>
 
 </section>
+<section id="rentalRequests" style="display:none; margin-top:2rem;">
+    <header>
+        <h1>Rental Requests</h1>
+        <p>Review and manage incoming rental requests from customers.</p>
+    </header>
+
+    <div style="margin-top: 2rem;">
+        <table id="requestsTable">
+            <thead>
+                <tr>
+                    <th>Customer</th>
+                    <th>Game</th>
+                    <th>Rental Period</th>
+                    <th>Total Price</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="requestsList">
+            </tbody>
+        </table>
+
+        <div id="noRequestsMessage" style="display:none; text-align:center; padding:2rem; color:var(--secondary-color);">
+            No rental requests at the moment.
+        </div>
+    </div>
+</section>
 
         </main>
     </div>
