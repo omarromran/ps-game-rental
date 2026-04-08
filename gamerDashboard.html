@@ -38,6 +38,7 @@
 
     <!-- MAIN -->
     <main>
+<<<<<<< HEAD
 
         <!-- DASHBOARD -->
         <section id="dashboard">
@@ -66,6 +67,17 @@
                 <tr><td>⭐ You reviewed FIFA 24</td></tr>
                 <tr><td>❤️ Added Cyberpunk 2077 to wishlist</td></tr>
             </table>
+=======
+
+        <!-- DASHBOARD -->
+        <section id="dashboard">
+            <!-- Rendered by JS -->
+            <div class="card-container" id="dashboard-cards"></div>
+
+            <h2 style="margin-top: 30px;">Recent Activity</h2>
+            <!-- Rendered by JS -->
+            <table id="activity-table"></table>
+>>>>>>> 554891a87d9d9a691cad0998c1982b9b6427cfe6
         </section>
 
         <!-- MY RENTALS -->
@@ -73,6 +85,7 @@
             <h2>My Rentals</h2>
 
             <p>Active</p>
+<<<<<<< HEAD
             <div class="games-grid">
                 <div class="game-card">
                     <h3>GTA V</h3>
@@ -102,11 +115,20 @@
                     <button onclick="openReview('FIFA 24')">⭐ Leave Review</button>
                 </div>
             </div>
+=======
+            <div class="games-grid" id="active-rentals"></div>
+
+            
+
+            <p>Completed</p>
+            <div class="games-grid" id="completed-rentals"></div>
+>>>>>>> 554891a87d9d9a691cad0998c1982b9b6427cfe6
         </section>
 
         <!-- WISHLIST -->
         <section id="wishlist" style="display:none;">
             <h2>Wishlist</h2>
+<<<<<<< HEAD
             <div class="wishlist-grid">
                 <div class="wishlist-card">
                     <div class="game-cover">⚔️</div>
@@ -127,6 +149,10 @@
                     <button onclick="openRent('Spider-Man 2')">Rent Now</button>
                 </div>
             </div>
+=======
+            <!-- Rendered by JS -->
+            <div class="wishlist-grid" id="wishlist-container"></div>
+>>>>>>> 554891a87d9d9a691cad0998c1982b9b6427cfe6
         </section>
 
         <!-- PROFILE -->
@@ -135,35 +161,62 @@
             <div class="profile-container compact">
 
                 <div class="profile-top">
+<<<<<<< HEAD
                     <div class="profile-avatar" id="avatar">ZA</div>
                     <div class="profile-info">
                         <h3 id="nameText">Zeina Ahmed</h3>
                         <input id="nameInput" type="text" value="Zeina Ahmed" style="display:none;">
                         <p id="emailText">zeina@gmail.com</p>
                         <input id="emailInput" type="email" value="zeina@gmail.com" style="display:none;">
+=======
+                    <div class="profile-avatar" id="avatar"></div>
+                    <div class="profile-info">
+                        <h3 id="nameText"></h3>
+                        <input id="nameInput" type="text" style="display:none;">
+                        <p id="emailText"></p>
+                        <input id="emailInput" type="email" style="display:none;">
+>>>>>>> 554891a87d9d9a691cad0998c1982b9b6427cfe6
                     </div>
                 </div>
 
                 <div class="profile-item">
                     <span class="profile-key">Username</span>
+<<<<<<< HEAD
                     <span class="profile-val" id="usernameText">zeinaahmed</span>
                     <input id="usernameInput" type="text" value="zeinaahmed" style="display:none;">
+=======
+                    <span class="profile-val" id="usernameText"></span>
+                    <input id="usernameInput" type="text" style="display:none;">
+>>>>>>> 554891a87d9d9a691cad0998c1982b9b6427cfe6
                 </div>
 
                 <div class="profile-item">
                     <span class="profile-key">Phone</span>
+<<<<<<< HEAD
                     <span class="profile-val" id="phoneText">+20 123 456 7890</span>
                     <input id="phoneInput" type="text" value="+20 123 456 7890" style="display:none;">
+=======
+                    <span class="profile-val" id="phoneText"></span>
+                    <input id="phoneInput" type="text" style="display:none;">
+>>>>>>> 554891a87d9d9a691cad0998c1982b9b6427cfe6
                 </div>
 
                 <div class="profile-item">
                     <span class="profile-key">Member Since</span>
+<<<<<<< HEAD
                     <span class="profile-val">March 2024</span>
+=======
+                    <span class="profile-val" id="memberSince">-</span>
+>>>>>>> 554891a87d9d9a691cad0998c1982b9b6427cfe6
                 </div>
 
                 <div class="profile-item">
                     <span class="profile-key">Total Rentals</span>
+<<<<<<< HEAD
                     <span class="profile-val">3 Games</span>
+=======
+                    <span class="profile-val" id="totalRentals">0 Games</span>
+>>>>>>> 554891a87d9d9a691cad0998c1982b9b6427cfe6
                 </div>
 
                 <div style="margin-top:15px;">
@@ -181,6 +234,7 @@
 <!-- MODALS -->
 
 <!-- REVIEW MODAL -->
+<<<<<<< HEAD
 <div id="review-modal" class="modal-overlay">
     <div class="modal-box">
         <span class="close" onclick="closeModal('review-modal')">&times;</span>
@@ -220,6 +274,43 @@
 </div>
 
 <div class="toast" id="toast"></div>
+=======
+<div id="review-modal" class="modal-overlay" style="display:none;">
+    <div class="modal-box">
+        <span class="close" onclick="closeModal('review-modal')">&times;</span>
+        <h3>Leave Review</h3>
+        <p id="review-game-name"></p>
+        <div>
+           <div class="star-rating" id="star-rating">
+    <span onclick="setRating(1)">★</span>
+    <span onclick="setRating(2)">★</span>
+    <span onclick="setRating(3)">★</span>
+    <span onclick="setRating(4)">★</span>
+    <span onclick="setRating(5)">★</span>
+</div>
+<input type="hidden" id="rating" value="">
+            <textarea id="comment" placeholder="Write comment"></textarea>
+            <button onclick="submitReview()">Submit</button>
+        </div>
+    </div>
+</div>
+>>>>>>> 554891a87d9d9a691cad0998c1982b9b6427cfe6
 
+<!-- RENT MODAL -->
+<div id="rent-modal" class="modal-overlay" style="display:none;">
+    <div class="modal-box">
+        <span class="close" onclick="closeModal('rent-modal')">&times;</span>
+        <h3 id="rent-game-title"></h3>
+        <input type="date" id="rent-start">
+        <input type="date" id="rent-end">
+        <button onclick="submitRent()">Confirm</button>
+    </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<button onclick="resetDatabase()" class="reset-btn">
+    🔄 Reset Data
+</button>
 </body>
 </html>
