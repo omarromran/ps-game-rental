@@ -1,50 +1,16 @@
-// dashboard.js
+// storedashboard.js
 
-document.addEventListener("DOMContentLoaded", () => {
+let games = [];
 
-    // Example stats (later you can fetch from database or localStorage)
-    const stats = {
-        totalGames: 12,
-        activeRentals: 4,
-        totalEarnings: 240.50,
-        pendingRequests: 3
-    };
+// STORAGE
+function saveGamesToStorage() {
+    localStorage.setItem("games", JSON.stringify(games));
+}
 
-    // Get elements
-    const totalGames = document.getElementById("totalGames");
-    const activeRentals = document.getElementById("activeRentals");
-    const totalEarnings = document.getElementById("totalEarnings");
-    const pendingCount = document.getElementById("pendingCount");
-
-    // Update UI safely
-    if (totalGames) {
-        totalGames.textContent = stats.totalGames;
-    }
-
-    if (activeRentals) {
-        activeRentals.textContent = stats.activeRentals;
-    }
-
-    if (totalEarnings) {
-        totalEarnings.textContent = `$${stats.totalEarnings.toFixed(2)}`;
-    }
-
-    if (pendingCount) {
-        pendingCount.textContent = stats.pendingRequests;
-    }
-
-    console.log("Dashboard stats initialized.");
-
-});
-
-// navigation.js
-
-// Switch between dashboard sections
+// NAVIGATION
 function showSection(sectionId) {
 
-    const sections = document.querySelectorAll("main section");
-
-    sections.forEach(section => {
+    document.querySelectorAll("main section").forEach(section => {
         section.style.display = "none";
     });
 
@@ -55,85 +21,73 @@ function showSection(sectionId) {
     }
 }
 
+function logout() {
+    if (confirm("Are you sure you want to logout?")) {
+        window.location.href = "login.html";
+    }
+}
 
-// Run after page loads
-document.addEventListener("DOMContentLoaded", () => {
+// LOAD DATA
+function loadData() {
 
-    // Logout button
-    const logoutBtn = document.getElementById("logoutBtn");
+    const storedGames = localStorage.getItem("games");
 
-    if (logoutBtn) {
-        logoutBtn.addEventListener("click", () => {
-
-            const confirmLogout = confirm("Are you sure you want to logout?");
-
-            if (confirmLogout) {
-                window.location.href = "login.html";
-            }
-
-        });
+    if (storedGames) {
+        games = JSON.parse(storedGames);
+    } else {
+        games = [];
     }
 
-});
-// add-game.js
+    refreshUI();
+}
 
-document.addEventListener("DOMContentLoaded", () => {
+// REFRESH UI
+function refreshUI() {
+    renderDashboardCards();
+    renderGamesTable();
+}
 
-    const form = document.getElementById("addGameForm");
+// DASHBOARD STATS
+function renderDashboardCards() {
 
-    form.addEventListener("submit", function(e) {
-        e.preventDefault();
+    const totalGamesEl = document.getElementById("totalGames");
+    const activeRentalsEl = document.getElementById("activeRentals");
+    const totalEarningsEl = document.getElementById("totalEarnings");
 
-        // Get form values
-        const title = document.getElementById("gameTitle").value;
-        const platform = document.getElementById("platform").value;
-        const genre = document.getElementById("genre").value;
-        const price = document.getElementById("dailyPrice").value;
-        const description = document.getElementById("description").value;
 
-        const game = {
-            title,
-            platform,
-            genre,
-            price,
-            description,
-            status: "Available"
-        };
+    const totalGames = games.length;
+    const activeRentals = games.filter(g => g.status === "Rented").length;
+    const totalEarnings = games.reduce((sum, g) => sum + (Number(g.price) || 0), 0);
+  
 
-        // Get existing games
-        let games = JSON.parse(localStorage.getItem("games")) || [];
+    if (totalGamesEl) totalGamesEl.textContent = totalGames;
+    if (activeRentalsEl) activeRentalsEl.textContent = activeRentals;
+    if (totalEarningsEl) totalEarningsEl.textContent = `${totalEarnings.toFixed(2)} EGP`;
+    
+}
 
-        // Add new game
-        games.push(game);
-
-        // Save again
-        localStorage.setItem("games", JSON.stringify(games));
-
-        alert("Game added successfully!");
-
-        form.reset();
-    });
-
-});
-// manage-games.js
-
-document.addEventListener("DOMContentLoaded", loadGames);
-
-function loadGames() {
-
-    const games = JSON.parse(localStorage.getItem("games")) || [];
+// MANAGE GAMES TABLE
+function renderGamesTable() {
 
     const tableBody = document.getElementById("gamesList");
     const noGamesMessage = document.getElementById("noGamesMessage");
 
+    if (!tableBody) return;
+
     tableBody.innerHTML = "";
 
     if (games.length === 0) {
-        noGamesMessage.style.display = "block";
+
+        if (noGamesMessage) {
+            noGamesMessage.style.display = "block";
+        }
+
         return;
     }
 
-    noGamesMessage.style.display = "none";
+    if (noGamesMessage) {
+        noGamesMessage.style.display = "none";
+    }
 
     games.forEach((game, index) => {
 
@@ -151,115 +105,65 @@ function loadGames() {
         `;
 
         tableBody.appendChild(row);
-
     });
 }
 
+// DELETE GAME
 function deleteGame(index) {
 
-    let games = JSON.parse(localStorage.getItem("games")) || [];
+    if (confirm("Delete this game?")) {
 
-    games.splice(index, 1);
+        games.splice(index, 1);
 
-    localStorage.setItem("games", JSON.stringify(games));
+        saveGamesToStorage();
 
-    loadGames();
+        refreshUI();
+    }
 }
-const sampleRequests = [
-    {
-        customer: "Gamer_99",
-        game: "Spider-Man 2",
-        startDate: "Nov 1, 2023",
-        endDate: "Nov 4, 2023",
-        totalPrice: "$15.00",
-        status: "Pending"
-    },
-    {
-        customer: "Alex_Pro",
-        game: "God of War",
-        startDate: "Nov 2, 2023",
-        endDate: "Nov 5, 2023",
-        totalPrice: "$12.00",
-        status: "Pending"
-    },
-    {
-        customer: "PlayKing",
-        game: "Elden Ring",
-        startDate: "Nov 3, 2023",
-        endDate: "Nov 6, 2023",
-        totalPrice: "$9.00",
-        status: "Pending"
-    }
-];
 
-function loadRequests() {
-    const tbody = document.getElementById("requestsList");
-    const noMsg = document.getElementById("noRequestsMessage");
+// ADD GAME FORM
+const addGameForm = document.getElementById("addGameForm");
 
-    if (!tbody) return;
+if (addGameForm) {
 
-    // Read current data from localStorage (do NOT reset here)
-    let requests = JSON.parse(localStorage.getItem("rentalRequests")) || [];
+    addGameForm.addEventListener("submit", (e) => {
 
-    tbody.innerHTML = "";
+        e.preventDefault();
 
-    const visible = requests.filter(r => r.status === "Pending" || r.status === "Approved");
+        const title = document.getElementById("gameTitle").value;
+        const platform = document.getElementById("platform").value;
+        const genre = document.getElementById("genre").value;
+        const price = document.getElementById("dailyPrice").value;
+        const description = document.getElementById("description").value;
 
-    if (visible.length === 0) {
-        noMsg.style.display = "block";
-        return;
-    }
+        games.push({
+            title,
+            platform,
+            genre,
+            price,
+            description,
+            status: "Available"
+        });
 
-    noMsg.style.display = "none";
+        saveGamesToStorage();
 
-    requests.forEach((req, index) => {
-        if (req.status !== "Pending" && req.status !== "Approved") return;
+        refreshUI();
 
-        const row = document.createElement("tr");
+        addGameForm.reset();
 
-        row.innerHTML = `
-            <td>${req.customer}</td>
-            <td>${req.game}</td>
-            <td>${req.startDate} → ${req.endDate}</td>
-            <td>${req.totalPrice}</td>
-            <td>${req.status}</td>
-            <td>
-                ${req.status === "Pending" ? `
-                    <button onclick="approveRequest(${index})" style="background:#5c748e; color:#fff; border:none; padding:6px 12px; border-radius:5px; cursor:pointer; margin-right:5px;">Approve</button>
-                    <button onclick="rejectRequest(${index})" style="background:#c0392b; color:#fff; border:none; padding:6px 12px; border-radius:5px; cursor:pointer;">Reject</button>
-                ` : `
-                    <button onclick="markReturned(${index})" style="background:#27ae60; color:#fff; border:none; padding:6px 12px; border-radius:5px; cursor:pointer;">Mark Returned</button>
-                `}
-            </td>
-        `;
-
-        tbody.appendChild(row);
+        alert("Game added successfully!");
     });
 }
 
-function approveRequest(index) {
-    let requests = JSON.parse(localStorage.getItem("rentalRequests"));
-    requests[index].status = "Approved";
-    localStorage.setItem("rentalRequests", JSON.stringify(requests));
-    loadRequests();
-}
-
-function rejectRequest(index) {
-    let requests = JSON.parse(localStorage.getItem("rentalRequests"));
-    requests[index].status = "Rejected";
-    localStorage.setItem("rentalRequests", JSON.stringify(requests));
-    loadRequests();
-}
-
-function markReturned(index) {
-    let requests = JSON.parse(localStorage.getItem("rentalRequests"));
-    requests[index].status = "Returned";
-    localStorage.setItem("rentalRequests", JSON.stringify(requests));
-    loadRequests();
-}
-
+// INITIALIZE
 document.addEventListener("DOMContentLoaded", () => {
-    // Reset to sample data ONLY on page load
-    localStorage.setItem("rentalRequests", JSON.stringify(sampleRequests));
-    loadRequests();
+
+    loadData();
+
+    const logoutBtn = document.getElementById("logoutBtn");
+
+    if (logoutBtn) {
+        logoutBtn.addEventListener("click", logout);
+    }
+
 });
