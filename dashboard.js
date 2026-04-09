@@ -119,7 +119,7 @@ function calculateSystemStatistics() {
 function createStatCardHtml(stat) {
     const cursorType = stat.link ? "pointer" : "default";
     const clickHandler = stat.link ? `onclick="window.location.href='${stat.link}'"` : "";
-    
+
     return `
         <div class="card" ${clickHandler} style="cursor:${cursorType}">
             <h3>${stat.title}</h3>
@@ -150,7 +150,7 @@ function displayUsersTable() {
 
 function getUsersForDisplay(filterType) {
     const approvedUsers = userRegistry.filter(u => u.status !== "pending");
-    
+
     if (filterType === "all") return approvedUsers;
     return approvedUsers.filter(u => u.type === filterType);
 }
@@ -249,7 +249,7 @@ function createGameRowHtml(game) {
 function getVendorDisplayName(game) {
     if (game.vendor) return game.vendor;
     if (!game.vendorID) return "System";
-    
+
     const vendor = userRegistry.find(u => Number(u.userID) === Number(game.vendorID));
     return vendor ? vendor.name : "System";
 }
@@ -281,15 +281,15 @@ function startGameEditing(gameID) {
     const price = prompt("Price (EGP):", game.price);
     if (price === null) return;
 
-    gameInventory[index] = { 
-        ...game, 
-        name, 
-        platform, 
-        genre, 
-        Availability: availability, 
+    gameInventory[index] = {
+        ...game,
+        name,
+        platform,
+        genre,
+        Availability: availability,
         vendorID: vendorUser ? vendorUser.userID : null,
         vendor: vendorUser ? undefined : vendorInput,
-        price: Number(price) 
+        price: Number(price)
     };
     persistGamesToStorage();
     updateDashboardDisplay();
@@ -313,7 +313,7 @@ function handleAdminCreation(event) {
     event.preventDefault();
     const adminForm = event.target;
     const formData = new FormData(adminForm);
-    
+
     if (!validateAdminForm(formData)) return;
 
     const newAdmin = {
@@ -343,7 +343,7 @@ function validateAdminForm(formData) {
         alert("Password must be at least 6 characters!");
         return false;
     }
-    
+
     if (password !== confirmPassword) {
         alert("Passwords do not match!");
         return false;
@@ -371,11 +371,11 @@ function handleGameCreation(event) {
     event.preventDefault();
     const gameForm = event.target;
     const formData = new FormData(gameForm);
-    
+
     const vendorInput = formData.get("gamevendor");
     // FIX: Map text input to an actual business vendorID if exists
     const vendorUser = userRegistry.find(u => u.name.toLowerCase() === vendorInput.toLowerCase() || u.username.toLowerCase() === vendorInput.toLowerCase());
-    
+
     const nextId = gameInventory.length > 0 ? Math.max(...gameInventory.map(g => Number(g.gameID) || 0)) + 1 : 1;
     const newGame = {
         gameID: String(nextId).padStart(3, '0'),
