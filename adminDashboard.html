@@ -17,21 +17,21 @@
         <aside class="sidebar">
             <h2>Admin</h2>
             <nav>
-                <button onclick="showSection('dashboard', this)" class="active">
+                <button onclick="navigateToSection('dashboard', this)" class="active">
                     <i class="fas fa-tachometer-alt"></i> Dashboard
                 </button>
-                <button onclick="showSection('games', this)">
+                <button onclick="navigateToSection('games', this)">
                     <i class="fas fa-gamepad"></i> Games
                 </button>
-                <button onclick="showSection('users', this)">
+                <button onclick="navigateToSection('users', this)">
                     <i class="fas fa-users"></i> Users
                 </button>
-                <button onclick="showSection('addAdmin', this)">
+                <button onclick="navigateToSection('addAdmin', this)">
                     <i class="fas fa-user-plus"></i> Add Admin
                 </button>
 
             </nav>
-            <button class="logout" onclick="resetAllData()" style="margin-bottom: 10px; background-color: #ff9800; border-color: #ff9800; color: white;">
+            <button class="logout" onclick="handleDataReset()" style="margin-bottom: 10px; background-color: #ff9800; border-color: #ff9800; color: white;">
                 <i class="fas fa-sync-alt"></i> Reset Data
             </button>
             <button class="logout" onclick="logout()">
@@ -47,7 +47,7 @@
 
             <section id="games">
                 <h2>Manage Games</h2>
-                <button class="action-btn" onclick="showAddGameForm()">
+                <button class="action-btn" onclick="openAddGameModal()">
                     <i class="fas fa-plus"></i> Add Game
                 </button>
                 <table id="games-table"></table>
@@ -57,7 +57,7 @@
             <section id="users">
                 <div class="users-header">
                     <h2>Manage Users</h2>
-                    <select id="user-type-filter" onchange="renderUsersTable()">
+                    <select id="user-type-filter" onchange="displayUsersTable()">
                         <option value="all">All User Types</option>
                         <option value="admin">Admin</option>
                         <option value="business">Business</option>
@@ -85,7 +85,7 @@
 
     <div id="add-game-form-container" class="modal">
         <div class="modal-content">
-            <span class="close" onclick="closeAddGameForm()">&times;</span>
+            <span class="close" onclick="closeAddGameModal()">&times;</span>
             <h2>Add New Game</h2>
             <form id="add-game-form">
                 <div><input type="text" name="name" placeholder="Game Name" required></div>
