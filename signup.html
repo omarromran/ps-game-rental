@@ -91,6 +91,12 @@
                     return;
                 }
 
+                // FIX: Added email duplication check
+                if (users.some(u => u.email === email)) {
+                    alert("Email already registered! Please use another or log in.");
+                    return;
+                }
+
                 const userID = users.length > 0 ? Math.max(...users.map(u => u.userID)) + 1 : 1;
 
                 let status = "active";
