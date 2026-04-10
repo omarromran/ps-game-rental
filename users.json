@@ -35,6 +35,103 @@
             "type": "customer",
             "phone": "+20 123 456 7890",
             "memberSince": "March 2024"
+        },
+        {
+            "userID": 5,
+            "name": "youssef gamal",
+            "username": "gamers hub",
+            "email": "hub@gmail.com",
+            "password": "hub123",
+            "type": "business",
+            "status": "accepted"
+        },
+        {
+            "userID": 6,
+            "name": "omar tarek",
+            "username": "ps pro",
+            "email": "pspro@gmail.com",
+            "password": "pro123",
+            "type": "business",
+            "status": "accepted"
+        },
+        {
+            "userID": 7,
+            "name": "salma nasr",
+            "username": "egypt games",
+            "email": "egygames@gmail.com",
+            "password": "egy123",
+            "type": "business",
+            "status": "accepted"
+        },
+        {
+            "userID": 8,
+            "name": "youssef",
+            "username": "youssef",
+            "email": "youssef@gmail.com",
+            "password": "youssef123",
+            "type": "customer",
+            "phone": "+20 111 222 3333",
+            "memberSince": "April 2024"
+        },
+        {
+            "userID": 9,
+            "name": "omar h",
+            "username": "omarh",
+            "email": "omarh@gmail.com",
+            "password": "omar123",
+            "type": "customer",
+            "phone": "+20 111 222 3334",
+            "memberSince": "April 2024"
+        },
+        {
+            "userID": 10,
+            "name": "salma",
+            "username": "salma_c",
+            "email": "salma_c@gmail.com",
+            "password": "salma123",
+            "type": "customer",
+            "phone": "+20 111 222 3335",
+            "memberSince": "April 2024"
+        },
+        {
+            "userID": 11,
+            "name": "noura",
+            "username": "noura",
+            "email": "noura@gmail.com",
+            "password": "noura123",
+            "type": "customer",
+            "phone": "+20 111 222 3336",
+            "memberSince": "April 2024"
+        },
+        {
+            "userID": 12,
+            "name": "khaled",
+            "username": "khaled",
+            "email": "khaled@gmail.com",
+            "password": "khaled123",
+            "type": "customer",
+            "phone": "+20 111 222 3337",
+            "memberSince": "April 2024"
+        },
+        {
+            "userID": 13,
+            "name": "tarek",
+            "username": "tarek",
+            "email": "tarek@gmail.com",
+            "password": "tarek123",
+            "type": "customer",
+            "phone": "+20 111 222 3338",
+            "memberSince": "April 2024"
+        },
+        {
+            "userID": 14,
+            "name": "menna",
+            "username": "menna",
+            "email": "menna@gmail.com",
+            "password": "menna123",
+            "type": "customer",
+            "phone": "+20 111 222 3339",
+            "memberSince": "April 2024"
         }
     ]
 }
