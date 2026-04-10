@@ -12,6 +12,7 @@
       "vendorID": 3,
       "storeID": "zeina store",
       "price": 200,
+      "inWishlist": true,
       "customerID": null,
       "img": "GameCovers/eldenring.webp",
       "rental": null
@@ -28,6 +29,7 @@
       "vendorID": 2,
       "storeID": "etsh store",
       "price": 180,
+      "inWishlist": false,
       "customerID": null,
       "img": "GameCovers/farcry6.webp",
       "rental": null
@@ -44,6 +46,7 @@
       "vendorID": 3,
       "storeID": "zeina store",
       "price": 210,
+      "inWishlist": false,
       "customerID": 9,
       "img": "GameCovers/ac.webp",
       "rental": {
@@ -65,6 +68,7 @@
       "vendorID": 3,
       "storeID": "zeina store",
       "price": 140,
+      "inWishlist": false,
       "customerID": null,
       "img": "GameCovers/crew2.webp",
       "rental": null
@@ -81,6 +85,7 @@
       "vendorID": 3,
       "storeID": "zeina store",
       "price": 170,
+      "inWishlist": true,
       "customerID": null,
       "img": "GameCovers/witcher.webp",
       "rental": null
@@ -97,6 +102,7 @@
       "vendorID": 3,
       "storeID": "zeina store",
       "price": 240,
+      "inWishlist": false,
       "customerID": null,
       "img": "GameCovers/tlou.webp",
       "rental": null
@@ -113,6 +119,7 @@
       "vendorID": 3,
       "storeID": "zeina store",
       "price": 150,
+      "inWishlist": false,
       "customerID": null,
       "img": "GameCovers/uncharted.webp",
       "rental": null
@@ -129,6 +136,7 @@
       "vendorID": 3,
       "storeID": "zeina store",
       "price": 160,
+      "inWishlist": false,
       "customerID": null,
       "img": "GameCovers/daysgone.webp",
       "rental": null
@@ -145,6 +153,7 @@
       "vendorID": 7,
       "storeID": "gamers hub",
       "price": 1200,
+      "inWishlist": false,
       "customerID": 4,
       "img": "GameCovers/fifa.webp",
       "rental": {
@@ -166,6 +175,7 @@
       "vendorID": 3,
       "storeID": "zeina store",
       "price": 300,
+      "inWishlist": true,
       "customerID": null,
       "img": "GameCovers/spiderman.webp",
       "rental": null
@@ -182,6 +192,7 @@
       "vendorID": 5,
       "storeID": "gamers hub",
       "price": 210,
+      "inWishlist": false,
       "customerID": null,
       "img": "GameCovers/nba.webp",
       "rental": null
@@ -198,6 +209,7 @@
       "vendorID": 7,
       "storeID": "gamers hub",
       "price": 1300,
+      "inWishlist": false,
       "customerID": null,
       "img": "GameCovers/fc25.webp",
       "rental": null
@@ -214,6 +226,7 @@
       "vendorID": 6,
       "storeID": "ps pro",
       "price": 950,
+      "inWishlist": false,
       "customerID": 4,
       "img": "GameCovers/gta.webp",
       "rental": {
@@ -235,6 +248,7 @@
       "vendorID": 3,
       "storeID": "zeina store",
       "price": 220,
+      "inWishlist": true,
       "customerID": null,
       "img": "GameCovers/rdr2.webp",
       "rental": null
@@ -251,6 +265,7 @@
       "vendorID": 6,
       "storeID": "ps pro",
       "price": 230,
+      "inWishlist": false,
       "customerID": null,
       "img": "GameCovers/re4.webp",
       "rental": null
@@ -267,6 +282,7 @@
       "vendorID": 6,
       "storeID": "ps pro",
       "price": 200,
+      "inWishlist": false,
       "customerID": null,
       "img": "GameCovers/dmc5.webp",
       "rental": null
@@ -283,6 +299,7 @@
       "vendorID": 6,
       "storeID": "ps pro",
       "price": 250,
+      "inWishlist": false,
       "customerID": null,
       "img": "GameCovers/tekken.webp",
       "rental": null
@@ -299,6 +316,7 @@
       "vendorID": 7,
       "storeID": "egypt games",
       "price": 260,
+      "inWishlist": false,
       "customerID": null,
       "img": "GameCovers/horizon.webp",
       "rental": null
@@ -315,6 +333,7 @@
       "vendorID": 7,
       "storeID": "egypt games",
       "price": 170,
+      "inWishlist": false,
       "customerID": null,
       "img": "GameCovers/bloodborne.webp",
       "rental": null
@@ -331,6 +350,7 @@
       "vendorID": 7,
       "storeID": "egypt games",
       "price": 190,
+      "inWishlist": false,
       "customerID": null,
       "img": "GameCovers/sekiro.webp",
       "rental": null
@@ -347,6 +367,7 @@
       "vendorID": 7,
       "storeID": "egypt games",
       "price": 160,
+      "inWishlist": false,
       "customerID": null,
       "img": "GameCovers/nioh2.webp",
       "rental": null
@@ -363,6 +384,7 @@
       "vendorID": 7,
       "storeID": "game zone",
       "price": 100,
+      "inWishlist": false,
       "customerID": null,
       "img": "GameCovers/minecraft.webp",
       "rental": null
@@ -379,6 +401,7 @@
       "vendorID": 15,
       "storeID": "game zone",
       "price": 90,
+      "inWishlist": false,
       "customerID": null,
       "img": "GameCovers/terraria.webp",
       "rental": null
@@ -395,6 +418,7 @@
       "vendorID": 15,
       "storeID": "game zone",
       "price": 80,
+      "inWishlist": false,
       "customerID": null,
       "img": "GameCovers/roblox.webp",
       "rental": null
@@ -411,6 +435,7 @@
       "vendorID": 15,
       "storeID": "game zone",
       "price": 70,
+      "inWishlist": false,
       "customerID": null,
       "img": "GameCovers/amongus.webp",
       "rental": null
@@ -427,6 +452,7 @@
       "vendorID": 15,
       "storeID": "game zone",
       "price": 85,
+      "inWishlist": false,
       "customerID": null,
       "img": "GameCovers/fallguys.webp",
       "rental": null
@@ -443,6 +469,7 @@
       "vendorID": 3,
       "storeID": "zeina store",
       "price": 0,
+      "inWishlist": false,
       "customerID": null,
       "img": "GameCovers/fortnite.webp",
       "rental": null
@@ -459,6 +486,7 @@
       "vendorID": 16,
       "storeID": "next level",
       "price": 0,
+      "inWishlist": false,
       "customerID": null,
       "img": "GameCovers/apex.webp",
       "rental": null
@@ -475,6 +503,7 @@
       "vendorID": 16,
       "storeID": "next level",
       "price": 0,
+      "inWishlist": false,
       "customerID": null,
       "img": "GameCovers/warzone.webp",
       "rental": null
@@ -491,6 +520,7 @@
       "vendorID": 16,
       "storeID": "next level",
       "price": 120,
+      "inWishlist": false,
       "customerID": null,
       "img": "GameCovers/pubg.webp",
       "rental": null
@@ -507,6 +537,7 @@
       "vendorID": 16,
       "storeID": "next level",
       "price": 150,
+      "inWishlist": false,
       "customerID": null,
       "img": "GameCovers/ow2.webp",
       "rental": null
@@ -523,6 +554,7 @@
       "vendorID": 7,
       "storeID": "pro gamers",
       "price": 180,
+      "inWishlist": false,
       "customerID": null,
       "img": "GameCovers/ds3.webp",
       "rental": null
@@ -539,6 +571,7 @@
       "vendorID": 17,
       "storeID": "pro gamers",
       "price": 220,
+      "inWishlist": false,
       "customerID": null,
       "img": "GameCovers/liesofp.webp",
       "rental": null
@@ -555,6 +588,7 @@
       "vendorID": 17,
       "storeID": "pro gamers",
       "price": 200,
+      "inWishlist": false,
       "customerID": null,
       "img": "GameCovers/wolong.webp",
       "rental": null
@@ -571,6 +605,7 @@
       "vendorID": 17,
       "storeID": "pro gamers",
       "price": 210,
+      "inWishlist": false,
       "customerID": null,
       "img": "GameCovers/remnant2.webp",
       "rental": null
@@ -587,6 +622,7 @@
       "vendorID": 17,
       "storeID": "pro gamers",
       "price": 230,
+      "inWishlist": false,
       "customerID": null,
       "img": "GameCovers/returnal.webp",
       "rental": null
@@ -603,6 +639,7 @@
       "vendorID": 18,
       "storeID": "level up",
       "price": 220,
+      "inWishlist": false,
       "customerID": null,
       "img": "GameCovers/ratchet.webp",
       "rental": null
@@ -619,6 +656,7 @@
       "vendorID": 3,
       "storeID": "zeina store",
       "price": 150,
+      "inWishlist": false,
       "customerID": null,
       "img": "GameCovers/crash.webp",
       "rental": null
@@ -635,6 +673,7 @@
       "vendorID": 15,
       "storeID": "level up",
       "price": 140,
+      "inWishlist": false,
       "customerID": null,
       "img": "GameCovers/spyro.webp",
       "rental": null
@@ -651,6 +690,7 @@
       "vendorID": 18,
       "storeID": "level up",
       "price": 130,
+      "inWishlist": false,
       "customerID": null,
       "img": "GameCovers/lbp.webp",
       "rental": null
@@ -667,6 +707,7 @@
       "vendorID": 18,
       "storeID": "level up",
       "price": 170,
+      "inWishlist": false,
       "customerID": null,
       "img": "GameCovers/sackboy.webp",
       "rental": null
@@ -683,6 +724,7 @@
       "vendorID": 19,
       "storeID": "console world",
       "price": 160,
+      "inWishlist": false,
       "customerID": null,
       "img": "GameCovers/nfs.webp",
       "rental": null
@@ -699,6 +741,7 @@
       "vendorID": 19,
       "storeID": "console world",
       "price": 250,
+      "inWishlist": false,
       "customerID": null,
       "img": "GameCovers/forza.webp",
       "rental": null
@@ -715,6 +758,7 @@
       "vendorID": 2,
       "storeID": "etsh store",
       "price": 240,
+      "inWishlist": false,
       "customerID": null,
       "img": "GameCovers/f1.webp",
       "rental": null
@@ -731,6 +775,7 @@
       "vendorID": 19,
       "storeID": "console world",
       "price": 210,
+      "inWishlist": false,
       "customerID": null,
       "img": "GameCovers/motogp.webp",
       "rental": null
@@ -747,6 +792,7 @@
       "vendorID": 19,
       "storeID": "console world",
       "price": 220,
+      "inWishlist": false,
       "customerID": null,
       "img": "GameCovers/ride5.webp",
       "rental": null
@@ -763,6 +809,7 @@
       "vendorID": 20,
       "storeID": "playstation hub",
       "price": 250,
+      "inWishlist": true,
       "customerID": null,
       "img": "GameCovers/gow.webp",
       "rental": null
@@ -779,6 +826,7 @@
       "vendorID": 20,
       "storeID": "playstation hub",
       "price": 200,
+      "inWishlist": false,
       "customerID": null,
       "img": "GameCovers/miles.webp",
       "rental": null
@@ -795,6 +843,7 @@
       "vendorID": 17,
       "storeID": "next level",
       "price": 180,
+      "inWishlist": false,
       "customerID": null,
       "img": "GameCovers/gts.webp",
       "rental": null
@@ -811,6 +860,7 @@
       "vendorID": 17,
       "storeID": "playstation hub",
       "price": 150,
+      "inWishlist": false,
       "customerID": null,
       "img": "GameCovers/killzone.webp",
       "rental": null
@@ -827,6 +877,7 @@
       "vendorID": 3,
       "storeID": "zeina store",
       "price": 170,
+      "inWishlist": false,
       "customerID": null,
       "img": "GameCovers/infamous.webp",
       "rental": null
