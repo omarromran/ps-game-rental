@@ -1,5 +1,6 @@
 let userRegistry = [];
 let gameInventory = [];
+let chartInstances = {};
 
 // --- DATA PERSISTENCE ---
 
@@ -88,6 +89,9 @@ function updateDashboardDisplay() {
     displaySystemStatistics();
     displayUsersTable();
     displayGamesTable();
+    if (typeof Chart !== 'undefined') {
+        renderCharts();
+    }
 }
 
 // --- DASHBOARD STATISTICS ---
@@ -126,6 +130,52 @@ function createStatCardHtml(stat) {
             <p>${stat.value}</p>
         </div>
     `;
+}
+
+function renderCharts() {
+    const lineCtx = document.getElementById('gamesLineChart');
+    if (!lineCtx) return;
+
+    // Bar chart data gathering: Games per Business
+    const businessUsers = userRegistry.filter(u => u.type === 'business');
+    let businessNames = businessUsers.map(u => u.name);
+    
+    let gamesPerBusiness = businessUsers.map(b => {
+        return gameInventory.filter(g => Number(g.vendorID) === Number(b.userID)).length;
+    });
+
+    const systemGamesCount = gameInventory.filter(g => !g.vendorID || !businessUsers.some(b => Number(b.userID) === Number(g.vendorID))).length;
+    if (systemGamesCount > 0) {
+        businessNames.push("System/Others");
+        gamesPerBusiness.push(systemGamesCount);
+    }
+
+    if (chartInstances.line) chartInstances.line.destroy();
+    chartInstances.line = new Chart(lineCtx, {
+        type: 'bar',
+        data: {
+            labels: businessNames,
+            datasets: [{
+                label: 'Number of Games',
+                data: gamesPerBusiness,
+                borderColor: '#36a2eb',
+                backgroundColor: 'rgba(54, 162, 235, 0.6)',
+                borderWidth: 2
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: { beginAtZero: true, ticks: { color: '#ffffff', stepSize: 1 } },
+                x: { ticks: { color: '#ffffff' } }
+            },
+            plugins: {
+                legend: { position: 'top', labels: { color: '#ffffff' } },
+                title: { display: true, text: 'Games Distribution Trend', color: '#ffffff' }
+            }
+        }
+    });
 }
 
 // --- USER MANAGEMENT ---
