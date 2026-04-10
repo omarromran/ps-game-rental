@@ -4,8 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gamer Dashboard - GameLend</title>
-    <link rel="icon" href="photos/images.png">
+    <title>GameLend Dashboard</title>
     <link rel="stylesheet" href="dashboard.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script defer src="gamerDashboard.js"></script>
@@ -13,101 +12,150 @@
 
 <body>
 
-    <div class="dashboard-wrapper">
-        <aside class="sidebar">
-            <h2>Gamer</h2>
-            <nav>
-                <button onclick="showSection('active-rentals', this)" class="active">
-                    <i class="fas fa-gamepad"></i> Active Rentals
-                </button>
-                <button onclick="showSection('pending-bookings', this)">
-                    <i class="fas fa-clock"></i> Pending Bookings
-                </button>
-                <button onclick="showSection('completed-rentals', this)">
-                    <i class="fas fa-check-circle"></i> Completed Rentals
-                </button>
-                <button onclick="showSection('profile', this)">
-                    <i class="fas fa-user"></i> Profile
-                </button>
-            </nav>
-            <button class="logout" onclick="logout()">
-                <i class="fas fa-sign-out-alt"></i> Logout
+<div class="dashboard-wrapper">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+        <h2>GAMER</h2>
+        <nav>
+            <button onclick="showSection('dashboard', this)" class="active">
+                <i class="fas fa-home"></i> Dashboard
             </button>
-        </aside>
+            <button onclick="showSection('my-rentals', this)">
+                <i class="fas fa-gamepad"></i> My Rentals
+            </button>
+            <button onclick="showSection('wishlist', this)">
+                <i class="fas fa-heart"></i> Wishlist
+            </button>
+            <button onclick="showSection('profile', this)">
+                <i class="fas fa-user"></i> Profile
+            </button>
+        </nav>
+        <button class="logout" onclick="logout()">
+            <i class="fas fa-sign-out-alt"></i> Logout
+        </button>
+    </aside>
 
-        <main>
-            <section id="active-rentals">
-                <h2>Active Rentals</h2>
-                <div class="games-grid">
-                    <div class="game-card">GTA <br> Ends: March 10</div>
-                    <div class="game-card">FIFA <br> Ends: March 12</div>
-                </div>
-            </section>
+    <!-- MAIN -->
+    <main>
 
-            <section id="pending-bookings">
-                <h2>Pending Bookings</h2>
-                <div class="games-grid">
-                    <div class="game-card">Call of Duty <br> Waiting for approval</div>
-                </div>
-            </section>
+        <!-- DASHBOARD -->
+        <section id="dashboard">
+            <!-- Rendered by JS -->
+            <div class="card-container" id="dashboard-cards"></div>
 
-            <section id="completed-rentals">
-                <h2>Completed Rentals</h2>
-                <div class="games-grid">
-                    <div class="game-card">
-                        Fortnite
-                        <br><br>
-                        <a href="review.html">
-                            <button class="action-btn">
-                                <i class="fas fa-star"></i> Leave Review
-                            </button>
-                        </a>
+            <h2 style="margin-top: 30px;">Recent Activity</h2>
+            <!-- Rendered by JS -->
+            <table id="activity-table"></table>
+        </section>
+
+        <!-- MY RENTALS -->
+        <section id="my-rentals" style="display:none;">
+            <h2>My Rentals</h2>
+
+            <p>Active</p>
+            <div class="games-grid" id="active-rentals"></div>
+
+            
+
+            <p>Completed</p>
+            <div class="games-grid" id="completed-rentals"></div>
+        </section>
+
+        <!-- WISHLIST -->
+        <section id="wishlist" style="display:none;">
+            <h2>Wishlist</h2>
+            <!-- Rendered by JS -->
+            <div class="wishlist-grid" id="wishlist-container"></div>
+        </section>
+
+        <!-- PROFILE -->
+        <section id="profile" style="display:none;">
+            <h2 class="page-title">Profile</h2>
+            <div class="profile-container compact">
+
+                <div class="profile-top">
+                    <div class="profile-avatar" id="avatar"></div>
+                    <div class="profile-info">
+                        <h3 id="nameText"></h3>
+                        <input id="nameInput" type="text" style="display:none;">
+                        <p id="emailText"></p>
+                        <input id="emailInput" type="email" style="display:none;">
                     </div>
                 </div>
-            </section>
 
-           <section id="profile">
-    <h2>Profile</h2>
+                <div class="profile-item">
+                    <span class="profile-key">Username</span>
+                    <span class="profile-val" id="usernameText"></span>
+                    <input id="usernameInput" type="text" style="display:none;">
+                </div>
 
-    <div class="profile-container">
+                <div class="profile-item">
+                    <span class="profile-key">Phone</span>
+                    <span class="profile-val" id="phoneText"></span>
+                    <input id="phoneInput" type="text" style="display:none;">
+                </div>
 
-        <div class="profile-top">
-            <div class="profile-avatar">ZA</div>
-            <div>
-                <h3>Zeina Ahmed</h3>
-                <p>zeina@gmail.com</p>
+                <div class="profile-item">
+                    <span class="profile-key">Member Since</span>
+                    <span class="profile-val" id="memberSince">-</span>
+                </div>
+
+                <div class="profile-item">
+                    <span class="profile-key">Total Rentals</span>
+                    <span class="profile-val" id="totalRentals">0 Games</span>
+                </div>
+
+                <div style="margin-top:15px;">
+                    <button onclick="editProfile()" id="editBtn">Edit Profile</button>
+                    <button onclick="saveProfile()" id="saveBtn" style="display:none;">Save</button>
+                </div>
+
             </div>
-        </div>
+        </section>
 
-        <div class="profile-item">
-            <span class="profile-dot"></span>
-            <span class="profile-key">Username</span>
-            <span class="profile-val">zeinaahmed</span>
-        </div>
+    </main>
+</div>
 
-        <div class="profile-item">
-            <span class="profile-dot"></span>
-            <span class="profile-key">Phone</span>
-            <span class="profile-val">+20 123 456 7890</span>
-        </div>
 
-        <div class="profile-item">
-            <span class="profile-dot"></span>
-            <span class="profile-key">Member Since</span>
-            <span class="profile-val">March 2024</span>
-        </div>
+<!-- MODALS -->
 
-        <div class="profile-item">
-            <span class="profile-dot"></span>
-            <span class="profile-key">Total Rentals</span>
-            <span class="profile-val">3 Games</span>
+<!-- REVIEW MODAL -->
+<div id="review-modal" class="modal-overlay" style="display:none;">
+    <div class="modal-box">
+        <span class="close" onclick="closeModal('review-modal')">&times;</span>
+        <h3>Leave Review</h3>
+        <p id="review-game-name"></p>
+        <div>
+           <div class="star-rating" id="star-rating">
+    <span onclick="setRating(1)">★</span>
+    <span onclick="setRating(2)">★</span>
+    <span onclick="setRating(3)">★</span>
+    <span onclick="setRating(4)">★</span>
+    <span onclick="setRating(5)">★</span>
+</div>
+<input type="hidden" id="rating" value="">
+            <textarea id="comment" placeholder="Write comment"></textarea>
+            <button onclick="submitReview()">Submit</button>
         </div>
-
     </div>
-</section>
-        </main>
-    </div>
+</div>
 
+<!-- RENT MODAL -->
+<div id="rent-modal" class="modal-overlay" style="display:none;">
+    <div class="modal-box">
+        <span class="close" onclick="closeModal('rent-modal')">&times;</span>
+        <h3 id="rent-game-title"></h3>
+        <input type="date" id="rent-start">
+        <input type="date" id="rent-end">
+        <button onclick="submitRent()">Confirm</button>
+    </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<button onclick="resetDatabase()" class="reset-btn">
+    🔄 Reset Data
+</button>
 </body>
-
 </html>

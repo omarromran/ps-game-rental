@@ -4,83 +4,105 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Log In</title>
-    <link rel="stylesheet" href="admin-style.css">
+    <title>Approve Lenders</title>
+    <link rel="stylesheet" href="approveLenders.css">
     <link rel="icon" href="photos/logo3.jpg">
 </head>
 
 <body>
-<div class="table-container">
-     <h2>Pending Lender Approvals</h2>
-     <table class="admin-table">
-         <th>
-            <tr>
-                <th>ID</th>
-                 <th>Store Name</th>
-                 <th>Owner</th>
-                 <th>Email</th>
-                 <th>Status</th>
-                 <th>Actions</th>
-             </tr>
-         </th>
-        <tbody id="lender-table-body">
-        </tbody>
-    </table>
- </div>
+    <div class="table-container">
+        <h2>Pending Lender Approvals</h2>
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Store Name</th>
+                    <th>Owner</th>
+                    <th>Email</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="lender-table-body">
+            </tbody>
+        </table>
+    </div>
 
- <script>
+    <script>
 
- const pendingLenders = [
-     { id: "001", store: "H store", owner: "ahmed", email: "ahmed@gmail.com" },
-    { id: "002", store: "zeina store", owner: "zeina", email: "zeina@gmail.com" },
-    { id: "003", store: "omran games", owner: "omar", email: "omar@gmail.com" },
-    { id: "004", store: "H el 2adim",owner: "H", email: "H@gmail.com" }
- ];
+        let users = [];
 
-const tableBody = document.getElementById('lender-table-body');
+        function loadPendingLenders() {
+            const storedUsers = localStorage.getItem("users");
+            if (storedUsers) {
+                users = JSON.parse(storedUsers);
+                renderTable();
+            } else {
+                document.getElementById('lender-table-body').innerHTML = "<tr><td colspan='6' style='text-align: center'>No user data found. Go to Dashboard first.</td></tr>";
+            }
+        }
 
-function renderTable() {
-     tableBody.innerHTML = "";
+        function renderTable() {
+            const tableBody = document.getElementById('lender-table-body');
+            tableBody.innerHTML = "";
 
-     pendingLenders.forEach(lender => {
-        const row = `
-            <tr id="row-${lender.id}">
-                <td>${lender.id}</td>
-                <td><strong>${lender.store}</strong></td>
-                <td>${lender.owner}</td>
+            const pendingLenders = users.filter(u => u.status === "pending" && u.type === "business");
+
+            if (pendingLenders.length === 0) {
+                tableBody.innerHTML = "<tr><td colspan='6' style='text-align: center'>No pending approvals.</td></tr>";
+                return;
+            }
+
+            pendingLenders.forEach(lender => {
+                const row = `
+            <tr id="row-${lender.userID}">
+                <td>${lender.userID}</td>
+                <td><strong>${lender.username}</strong></td>
+                <td>${lender.name}</td>
                 <td>${lender.email}</td>
                 <td><span class="status-badge">Pending</span></td>
                 <td>
-                    <button class="btn-check" onclick="handleApproval('${lender.id}', 'Approved')">
+                    <button class="btn-check" onclick="handleApproval(${lender.userID}, 'Approved')">
                          Accept
                     </button>
-                    <button class="btn-trash" onclick="handleApproval('${lender.id}', 'Rejected')">
+                    <button class="btn-trash" onclick="handleApproval(${lender.userID}, 'Rejected')">
                          Decline
                     </button>
                 </td>
             </tr>
         `;
+                tableBody.innerHTML += row;
+            });
+        }
 
-        tableBody.innerHTML += row;
-     });
- }
+        function handleApproval(id, action) {
+            const userIndex = users.findIndex(u => u.userID === id);
+            if (userIndex === -1) return;
+
+            if (action === 'Approved') {
+                users[userIndex].status = "accepted"; // Align with users.json
+            } else {
+                users.splice(userIndex, 1); // Delete if rejected
+            }
+
+            localStorage.setItem("users", JSON.stringify(users));
+            alert(`Lender has been ${action}`);
+
+            const row = document.getElementById(`row-${id}`);
+            row.style.background = action == 'Approved' ? "rgba(46, 204, 113, 0.2)" : "rgba(231, 76, 60, 0.2)";
+
+            setTimeout(() => {
+                row.remove();
+                if (users.filter(u => u.status === "pending" && u.type === "business").length === 0) {
+                    renderTable();
+                }
+            }, 500);
+        }
+
+        document.addEventListener("DOMContentLoaded", loadPendingLenders);
 
 
-function handleApproval(id, action) {
-    alert(`Lender ${id} has been ${action}`);
-     const row = document.getElementById(`row-${id}`);
-     row.style.background = action == 'Approved' ? "rgba(46, 204, 113, 0.2)" : "rgba(231, 76, 60, 0.2)";
-
-
-     setTimeout(() => {
-        row.remove();
-    }, 500);
-}
-
-renderTable();
-
-
-</script>
+    </script>
 
 </body>
 
