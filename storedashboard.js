@@ -1,46 +1,95 @@
-// dashboard.js
+// storedashboard.js
+
+let gameInventory = [];
+
+
+/* ---------------------------
+   INITIALIZATION
+----------------------------*/
 
 document.addEventListener("DOMContentLoaded", () => {
 
-    // Example stats (later you can fetch from database or localStorage)
-    const stats = {
-        totalGames: 12,
-        activeRentals: 4,
-        totalEarnings: 240.50,
-        pendingRequests: 3
-    };
+    initializeData();
 
-    // Get elements
-    const totalGames = document.getElementById("totalGames");
-    const activeRentals = document.getElementById("activeRentals");
-    const totalEarnings = document.getElementById("totalEarnings");
-    const pendingCount = document.getElementById("pendingCount");
+    const form = document.getElementById("addGameForm");
 
-    // Update UI safely
-    if (totalGames) {
-        totalGames.textContent = stats.totalGames;
+    if (form) {
+        form.addEventListener("submit", addGame);
     }
-
-    if (activeRentals) {
-        activeRentals.textContent = stats.activeRentals;
-    }
-
-    if (totalEarnings) {
-        totalEarnings.textContent = `$${stats.totalEarnings.toFixed(2)}`;
-    }
-
-    if (pendingCount) {
-        pendingCount.textContent = stats.pendingRequests;
-    }
-
-    console.log("Dashboard stats initialized.");
 
 });
 
-// navigation.js
 
-// Switch between dashboard sections
-function showSection(sectionId) {
+/* ---------------------------
+   INITIAL DATA LOADING
+----------------------------*/
+
+function initializeData() {
+
+    const storedGames = localStorage.getItem("games");
+
+    if (storedGames) {
+
+        gameInventory = JSON.parse(storedGames);
+        loadGamesTable();
+        updateDashboardStats();
+
+    } else {
+
+        loadGamesFromJSON();
+
+    }
+
+}
+
+
+/* ---------------------------
+   LOAD JSON FILE
+----------------------------*/
+
+function loadGamesFromJSON() {
+
+    fetch("bussiness.json")
+        .then(response => response.json())
+        .then(data => {
+
+            gameInventory = data;
+
+            localStorage.setItem("games", JSON.stringify(gameInventory));
+
+            loadGamesTable();
+            updateDashboardStats();
+
+        })
+        .catch(error => {
+
+            console.error("Error loading JSON:", error);
+
+        });
+
+}
+
+
+/* ---------------------------
+   RESET DATA BUTTON
+----------------------------*/
+
+function resetData() {
+
+    if (!confirm("Reset all data and reload from JSON?")) return;
+
+    localStorage.removeItem("games");
+
+    loadGamesFromJSON();
+
+}
+
+
+/* ---------------------------
+   NAVIGATION
+----------------------------*/
+
+function showSection(sectionId, button) {
 
     const sections = document.querySelectorAll("main section");
 
@@ -48,218 +97,137 @@ function showSection(sectionId) {
         section.style.display = "none";
     });
 
-    const targetSection = document.getElementById(sectionId);
+    const active = document.getElementById(sectionId);
 
-    if (targetSection) {
-        targetSection.style.display = "block";
-    }
+    if (active) active.style.display = "block";
+
+    const buttons = document.querySelectorAll(".sidebar nav button");
+
+    buttons.forEach(btn => btn.classList.remove("active"));
+
+    if (button) button.classList.add("active");
+
 }
 
 
-// Run after page loads
-document.addEventListener("DOMContentLoaded", () => {
+/* ---------------------------
+   DASHBOARD STATS
+----------------------------*/
 
-    // Logout button
-    const logoutBtn = document.getElementById("logoutBtn");
+function updateDashboardStats() {
 
-    if (logoutBtn) {
-        logoutBtn.addEventListener("click", () => {
+    const totalGames = document.getElementById("totalGames");
+    const activeRentals = document.getElementById("activeRentals");
+    const totalEarnings = document.getElementById("totalEarnings");
 
-            const confirmLogout = confirm("Are you sure you want to logout?");
-
-            if (confirmLogout) {
-                window.location.href = "login.html";
-            }
-
-        });
+    if (totalGames) {
+        totalGames.textContent = gameInventory.length;
     }
 
-});
-// add-game.js
+    if (activeRentals) {
+        activeRentals.textContent = 0;
+    }
 
-document.addEventListener("DOMContentLoaded", () => {
+    if (totalEarnings) {
+        totalEarnings.textContent = "0.00 EGP";
+    }
 
-    const form = document.getElementById("addGameForm");
+}
 
-    form.addEventListener("submit", function(e) {
-        e.preventDefault();
 
-        // Get form values
-        const title = document.getElementById("gameTitle").value;
-        const platform = document.getElementById("platform").value;
-        const genre = document.getElementById("genre").value;
-        const price = document.getElementById("dailyPrice").value;
-        const description = document.getElementById("description").value;
+/* ---------------------------
+   ADD GAME
+----------------------------*/
 
-        const game = {
-            title,
-            platform,
-            genre,
-            price,
-            description,
-            status: "Available"
-        };
+function addGame(e) {
 
-        // Get existing games
-        let games = JSON.parse(localStorage.getItem("games")) || [];
+    e.preventDefault();
 
-        // Add new game
-        games.push(game);
+    const title = document.getElementById("gameTitle").value;
+    const platform = document.getElementById("platform").value;
+    const genre = document.getElementById("genre").value;
+    const price = document.getElementById("dailyPrice").value;
+    const description = document.getElementById("description").value;
 
-        // Save again
-        localStorage.setItem("games", JSON.stringify(games));
+    const newGame = {
+        id: Date.now(),
+        title,
+        platform,
+        genre,
+        status: "Available",
+        price,
+        description
+    };
 
-        alert("Game added successfully!");
+    gameInventory.push(newGame);
 
-        form.reset();
-    });
+    localStorage.setItem("games", JSON.stringify(gameInventory));
 
-});
-// manage-games.js
+    document.getElementById("addGameForm").reset();
 
-document.addEventListener("DOMContentLoaded", loadGames);
+    loadGamesTable();
+    updateDashboardStats();
 
-function loadGames() {
+    alert("Game added successfully!");
 
-    const games = JSON.parse(localStorage.getItem("games")) || [];
+}
+
+
+/* ---------------------------
+   LOAD GAMES TABLE
+----------------------------*/
+
+function loadGamesTable() {
 
     const tableBody = document.getElementById("gamesList");
     const noGamesMessage = document.getElementById("noGamesMessage");
 
+    if (!tableBody) return;
+
     tableBody.innerHTML = "";
 
-    if (games.length === 0) {
-        noGamesMessage.style.display = "block";
+    if (gameInventory.length === 0) {
+
+        if (noGamesMessage) noGamesMessage.style.display = "block";
         return;
+
     }
 
-    noGamesMessage.style.display = "none";
+    if (noGamesMessage) noGamesMessage.style.display = "none";
 
-    games.forEach((game, index) => {
+    gameInventory.forEach(game => {
 
         const row = document.createElement("tr");
 
         row.innerHTML = `
             <td>${game.title}</td>
-            <td>${game.platform}</td>
-            <td>${game.genre}</td>
-            <td>$${game.price}</td>
+            <td>${game.platform || "-"}</td>
+            <td>${game.genre || "-"}</td>
+            <td>${game.price}</td>
             <td>${game.status}</td>
             <td>
-                <button onclick="deleteGame(${index})">Delete</button>
+                <button onclick="deleteGame(${game.id})">Delete</button>
             </td>
         `;
 
         tableBody.appendChild(row);
 
     });
+
 }
 
-function deleteGame(index) {
 
-    let games = JSON.parse(localStorage.getItem("games")) || [];
+/* ---------------------------
+   DELETE GAME
+----------------------------*/
 
-    games.splice(index, 1);
+function deleteGame(id) {
 
-    localStorage.setItem("games", JSON.stringify(games));
+    gameInventory = gameInventory.filter(game => game.id !== id);
 
-    loadGames();
+    localStorage.setItem("games", JSON.stringify(gameInventory));
+
+    loadGamesTable();
+    updateDashboardStats();
+
 }
-const sampleRequests = [
-    {
-        customer: "Gamer_99",
-        game: "Spider-Man 2",
-        startDate: "Nov 1, 2023",
-        endDate: "Nov 4, 2023",
-        totalPrice: "$15.00",
-        status: "Pending"
-    },
-    {
-        customer: "Alex_Pro",
-        game: "God of War",
-        startDate: "Nov 2, 2023",
-        endDate: "Nov 5, 2023",
-        totalPrice: "$12.00",
-        status: "Pending"
-    },
-    {
-        customer: "PlayKing",
-        game: "Elden Ring",
-        startDate: "Nov 3, 2023",
-        endDate: "Nov 6, 2023",
-        totalPrice: "$9.00",
-        status: "Pending"
-    }
-];
-
-function loadRequests() {
-    const tbody = document.getElementById("requestsList");
-    const noMsg = document.getElementById("noRequestsMessage");
-
-    if (!tbody) return;
-
-    // Read current data from localStorage (do NOT reset here)
-    let requests = JSON.parse(localStorage.getItem("rentalRequests")) || [];
-
-    tbody.innerHTML = "";
-
-    const visible = requests.filter(r => r.status === "Pending" || r.status === "Approved");
-
-    if (visible.length === 0) {
-        noMsg.style.display = "block";
-        return;
-    }
-
-    noMsg.style.display = "none";
-
-    requests.forEach((req, index) => {
-        if (req.status !== "Pending" && req.status !== "Approved") return;
-
-        const row = document.createElement("tr");
-
-        row.innerHTML = `
-            <td>${req.customer}</td>
-            <td>${req.game}</td>
-            <td>${req.startDate} → ${req.endDate}</td>
-            <td>${req.totalPrice}</td>
-            <td>${req.status}</td>
-            <td>
-                ${req.status === "Pending" ? `
-                    <button onclick="approveRequest(${index})" style="background:#5c748e; color:#fff; border:none; padding:6px 12px; border-radius:5px; cursor:pointer; margin-right:5px;">Approve</button>
-                    <button onclick="rejectRequest(${index})" style="background:#c0392b; color:#fff; border:none; padding:6px 12px; border-radius:5px; cursor:pointer;">Reject</button>
-                ` : `
-                    <button onclick="markReturned(${index})" style="background:#27ae60; color:#fff; border:none; padding:6px 12px; border-radius:5px; cursor:pointer;">Mark Returned</button>
-                `}
-            </td>
-        `;
-
-        tbody.appendChild(row);
-    });
-}
-
-function approveRequest(index) {
-    let requests = JSON.parse(localStorage.getItem("rentalRequests"));
-    requests[index].status = "Approved";
-    localStorage.setItem("rentalRequests", JSON.stringify(requests));
-    loadRequests();
-}
-
-function rejectRequest(index) {
-    let requests = JSON.parse(localStorage.getItem("rentalRequests"));
-    requests[index].status = "Rejected";
-    localStorage.setItem("rentalRequests", JSON.stringify(requests));
-    loadRequests();
-}
-
-function markReturned(index) {
-    let requests = JSON.parse(localStorage.getItem("rentalRequests"));
-    requests[index].status = "Returned";
-    localStorage.setItem("rentalRequests", JSON.stringify(requests));
-    loadRequests();
-}
-
-document.addEventListener("DOMContentLoaded", () => {
-    // Reset to sample data ONLY on page load
-    localStorage.setItem("rentalRequests", JSON.stringify(sampleRequests));
-    loadRequests();
-});
