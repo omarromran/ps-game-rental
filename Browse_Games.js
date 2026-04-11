@@ -4,18 +4,18 @@ let activeStoreFilter = null;
 
 // 1. LOAD DATABASE
 async function loadDB() {
-    let storedGames = localStorage.getItem('games_db');
+    let storedGames = localStorage.getItem('browseGames_db');
     // Load existing cart if available
     let storedCart = localStorage.getItem('pshub_cart');
     if (storedCart) cart = JSON.parse(storedCart);
     
     if (!storedGames || JSON.parse(storedGames).length === 0) {
         try {
-            const response = await fetch('games.json');
+            const response = await fetch('browseGames.json');
             const data = await response.json();
             
             inventory = data; 
-            localStorage.setItem('games_db', JSON.stringify(inventory));
+            localStorage.setItem('browseGames_db', JSON.stringify(inventory));
         } catch (error) {
             console.error("Error loading JSON:", error);
         }
@@ -78,11 +78,10 @@ function renderInventory(data) {
     data.forEach(game => {
         const card = document.createElement('div');
         card.className = 'game-card';
+        card.style.cursor = 'pointer';
+        card.onclick = () => window.location.href = `game_description.html?id=${game.gameID}`;
 
-        // 1. Check if the game is already in the cart
         const isInCart = cart.some(item => item.gameID === game.gameID);
-
-        // 2. Set the text and class based on the result
         const buttonText = isInCart ? "In Cart" : "Add to Cart";
         const buttonClass = isInCart ? "add-btn in-cart" : "add-btn";
 
@@ -92,13 +91,14 @@ function renderInventory(data) {
                 <h3>${game.title}</h3>
                 <p style="font-size: 0.8rem; color: #888; margin: 0;">${game.platform}</p>
                 <div class="price" style="font-weight: bold; margin: 5px 0;">$${game.price}</div>
-                <button class="${buttonClass}" onclick="addToCart('${game.gameID}')">
+                <button class="${buttonClass}" onclick="event.stopPropagation(); addToCart('${game.gameID}')">
                     ${buttonText}
                 </button>
             </div>
         `;
         gallery.appendChild(card);
     });
+
 }
 // 4. CART LOGIC
 function addToCart(id) {
