@@ -52,6 +52,7 @@ async function loadGame() {
                 <span>🏢 ${game.developer || 'Unknown'}</span>
                 <span>📅 ${game.releaseYear || 'N/A'}</span>
                 <span>🆔 ${game.gameID}</span>
+                <span class="report-game" onclick="reportGame()" title="Report inappropriate content">🚩 Report</span>
             </div>
             <p class="desc-text">${game.description || 'No description available.'}</p>
 
@@ -139,16 +140,20 @@ function renderReviews() {
         list.innerHTML = '<p class="no-reviews">No reviews yet — be the first!</p>';
         return;
     }
-    list.innerHTML = reviews.map(r => `
+    list.innerHTML = reviews.map((r, i) => `
         <div class="review-card">
             <div class="review-top">
                 <span class="reviewer-name">${r.reviewer}</span>
                 <span class="review-stars">${'★'.repeat(r.rating)}${'☆'.repeat(5 - r.rating)}</span>
+                <button class="btn-report-review ${r.flagged ? 'flagged' : ''}" onclick="reportReview(${i})" title="Report this review">
+                    ${r.flagged ? 'Flagged' : '🚩'}
+                </button>
             </div>
             <p class="review-comment">${r.comment}</p>
             ${r.date ? `<p style="font-size:0.75rem;color:#444;margin-top:6px">${r.date}</p>` : ''}
         </div>`).join('');
 }
+
 
 // ---- SIMILAR GAMES ----
 function renderSimilar(inventory, current) {
@@ -170,4 +175,28 @@ function renderSimilar(inventory, current) {
         </div>`).join('');
 }
 
+// ---- REPORTING ----
+function reportGame() {
+    if (!confirm('Report this game as inappropriate?')) return;
+    const inventory = JSON.parse(localStorage.getItem('browseGames_db') || '[]');
+    const idx = inventory.findIndex(g => g.gameID === gameID);
+    if (idx > -1) {
+        inventory[idx].flagged = true;
+        localStorage.setItem('browseGames_db', JSON.stringify(inventory));
+        alert('Game reported to admin.');
+    }
+}
+
+function reportReview(idx) {
+    if (!confirm('Report this review?')) return;
+    const reviews = JSON.parse(localStorage.getItem('reviews_' + gameID) || '[]');
+    if (reviews[idx]) {
+        reviews[idx].flagged = true;
+        localStorage.setItem('reviews_' + gameID, JSON.stringify(reviews));
+        renderReviews();
+        alert('Review reported.');
+    }
+}
+
 loadGame();
+
