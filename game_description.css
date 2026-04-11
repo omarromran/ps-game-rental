@@ -1,0 +1,129 @@
+/* ---- Hero Background ---- */
+.hero-bg {
+    position: fixed; inset: 0; z-index: -1;
+    background-size: cover; background-position: center;
+    filter: blur(22px) brightness(0.25) saturate(1.4);
+    transform: scale(1.05);
+    transition: background-image 0.5s ease;
+}
+
+/* ---- Main Layout ---- */
+.desc-page {
+    max-width: 1050px; margin: 50px auto; padding: 0 5%;
+    display: flex; gap: 50px; align-items: flex-start;
+}
+.desc-cover {
+    width: 300px; flex-shrink: 0; border-radius: 18px; overflow: hidden;
+    box-shadow: 0 25px 60px rgba(0,0,0,0.7);
+}
+.desc-cover img { width: 100%; display: block; }
+.desc-info { flex: 1; }
+
+/* ---- Badges ---- */
+.desc-tags { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 14px; }
+.tag {
+    padding: 4px 12px; border-radius: 20px; font-size: 0.75rem;
+    font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase;
+}
+.tag-category { background: rgba(0,67,156,0.3); color: #5b9bd5; border: 1px solid rgba(0,67,156,0.5); }
+.tag-platform { background: rgba(255,255,255,0.08); color: #ccc; border: 1px solid rgba(255,255,255,0.15); }
+.tag-pegi { background: rgba(255,165,0,0.15); color: #ffa500; border: 1px solid rgba(255,165,0,0.3); }
+
+/* ---- Text ---- */
+.desc-title { font-size: 2rem; font-weight: 800; margin-bottom: 6px; }
+.desc-meta { font-size: 0.85rem; color: #888; margin-bottom: 18px; }
+.desc-meta span { margin-right: 16px; }
+.desc-text { font-size: 0.97rem; color: #bbb; line-height: 1.85; margin-bottom: 24px; }
+
+/* ---- Info Grid ---- */
+.info-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+    background: rgba(255,255,255,0.04); border-radius: 12px;
+    padding: 16px; margin-bottom: 24px;
+    border: 1px solid rgba(255,255,255,0.08);
+}
+.info-item { display: flex; flex-direction: column; gap: 2px; }
+.info-label { font-size: 0.7rem; color: #555; text-transform: uppercase; letter-spacing: 1px; }
+.info-val { font-size: 0.9rem; color: #ddd; font-weight: 500; }
+
+/* ---- Price & Buttons ---- */
+.desc-price { font-size: 2.2rem; font-weight: 800; color: #28a745; margin-bottom: 18px; }
+.btn-row { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 30px; }
+.btn-back {
+    background: transparent; border: 1px solid #333; color: #aaa;
+    padding: 13px 26px; border-radius: 50px; cursor: pointer; font-size: 0.9rem; transition: 0.2s;
+}
+.btn-back:hover { border-color: #fff; color: #fff; }
+.btn-cart {
+    background: #28a745; color: white; border: none;
+    padding: 13px 34px; border-radius: 50px; cursor: pointer;
+    font-size: 0.9rem; font-weight: bold; transition: 0.2s;
+}
+.btn-cart:hover { background: #218838; transform: scale(1.03); }
+.btn-cart.in-cart { background: #1a1a1a; border: 1px solid #333; color: #666; cursor: default; transform: none; }
+
+/* ---- Other Stores ---- */
+.other-stores { margin-bottom: 30px; }
+.other-stores h3 { font-size: 0.85rem; color: #555; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; }
+.store-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.store-chip {
+    padding: 6px 14px; background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1); border-radius: 20px;
+    font-size: 0.82rem; color: #aaa; cursor: pointer; transition: 0.2s;
+    text-decoration: none;
+}
+.store-chip:hover { background: rgba(0,67,156,0.2); border-color: #00439c; color: #fff; }
+.store-chip.current { border-color: #28a745; color: #28a745; cursor: default; }
+
+/* ---- Reviews ---- */
+.reviews-section { max-width: 1050px; margin: 0 auto 40px; padding: 0 5%; }
+.reviews-section h2 { font-size: 1.1rem; font-weight: 700; margin-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 10px; }
+
+.review-form {
+    background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 14px; padding: 20px; margin-bottom: 24px;
+}
+.star-row { display: flex; gap: 6px; margin-bottom: 12px; font-size: 1.6rem; cursor: pointer; }
+.star-row span { color: #444; transition: color 0.15s; }
+.star-row span.lit { color: gold; }
+.review-form input, .review-form textarea {
+    width: 100%; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 8px; color: #fff; padding: 10px 14px; font-size: 0.88rem;
+    margin-bottom: 10px; outline: none; font-family: inherit;
+}
+.review-form textarea { resize: vertical; min-height: 80px; }
+.btn-review {
+    background: #00439c; color: #fff; border: none; padding: 10px 24px;
+    border-radius: 50px; cursor: pointer; font-weight: 600; font-size: 0.88rem; transition: 0.2s;
+}
+.btn-review:hover { background: #0056c7; }
+
+.review-card {
+    background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 12px; padding: 16px; margin-bottom: 12px;
+}
+.review-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+.reviewer-name { font-weight: 600; font-size: 0.9rem; }
+.review-stars { color: gold; font-size: 0.95rem; }
+.review-comment { font-size: 0.88rem; color: #aaa; line-height: 1.6; }
+.no-reviews { color: #555; font-size: 0.88rem; text-align: center; padding: 24px 0; }
+
+/* ---- Similar Games ---- */
+.similar-section { max-width: 1050px; margin: 0 auto 60px; padding: 0 5%; }
+.similar-section h2 { font-size: 1.1rem; font-weight: 700; margin-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 10px; }
+.similar-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 16px;
+}
+.similar-card {
+    background: #111; border-radius: 14px; overflow: hidden; cursor: pointer;
+    border: 1px solid rgba(255,255,255,0.08); transition: 0.25s;
+    aspect-ratio: 2/3; position: relative;
+}
+.similar-card:hover { border-color: #00439c; transform: translateY(-5px); box-shadow: 0 10px 30px rgba(0,67,156,0.3); }
+.similar-card img { width: 100%; height: 100%; object-fit: cover; }
+.similar-label {
+    position: absolute; bottom: 0; left: 0; right: 0;
+    background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, transparent 100%);
+    padding: 10px 10px 8px; font-size: 0.78rem; font-weight: 600;
+}
+.similar-price { color: #28a745; font-size: 0.75rem; }
