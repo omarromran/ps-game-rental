@@ -138,3 +138,96 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("add-admin-form")?.addEventListener("submit", handleAdmin);
     document.getElementById("add-game-form")?.addEventListener("submit", handleGame);
 });
+
+// --- MODERATION ---
+const setupModeration = () => showModTab('mod-games');
+
+const showModTab = (id) => {
+    document.querySelectorAll(".tab-panel").forEach(p => p.style.display = "none");
+    document.getElementById(id).style.display = "block";
+    if (id === 'mod-games') renderModGames();
+    if (id === 'mod-reviews') renderModReviews();
+    if (id === 'mod-lenders') renderModLenders();
+};
+
+const renderModGames = () => {
+    const inv = JSON.parse(localStorage.getItem('browseGames_db') || '[]');
+    const flagged = inv.filter(g => g.flagged);
+    const tbl = document.getElementById("mod-games-table");
+    if (!tbl) return;
+    if (!flagged.length) return tbl.innerHTML = '<tr><td style="color:#888;padding:20px;">No reported games found.</td></tr>';
+    tbl.innerHTML = `<thead><tr><th>ID</th><th>Game</th><th>Category</th><th>Price</th><th>Actions</th></tr></thead><tbody>` +
+        flagged.map(g => `<tr><td>${g.gameID}</td><td>${g.title}</td><td>${g.category}</td><td>$${g.price}</td><td>
+        <button class="action-btn" onclick="modDeleteGame('${g.gameID}')" style="background:#e74c3c"><i class="fas fa-trash"></i> Delete</button>
+        <button class="action-btn" onclick="modDismissGame('${g.gameID}')" style="background:#2ecc71"><i class="fas fa-check"></i> Dismiss</button>
+        </td></tr>`).join('') + `</tbody>`;
+};
+
+const modDeleteGame = (id) => {
+    if (!confirm("Permanently remove this game from the platform?")) return;
+    let inv = JSON.parse(localStorage.getItem('browseGames_db') || '[]');
+    inv = inv.filter(g => g.gameID !== id);
+    localStorage.setItem('browseGames_db', JSON.stringify(inv));
+    renderModGames();
+};
+
+const modDismissGame = (id) => {
+    let inv = JSON.parse(localStorage.getItem('browseGames_db') || '[]');
+    const i = inv.findIndex(g => g.gameID === id);
+    if (i > -1) { delete inv[i].flagged; localStorage.setItem('browseGames_db', JSON.stringify(inv)); renderModGames(); }
+};
+
+const renderModReviews = () => {
+    const cont = document.getElementById("mod-reviews");
+    if (!cont) return;
+    const inv = JSON.parse(localStorage.getItem('browseGames_db') || '[]');
+    let html = '';
+    inv.forEach(game => {
+        const reviews = JSON.parse(localStorage.getItem('reviews_' + game.gameID) || '[]');
+        const flagged = reviews.filter(r => r.flagged);
+        if (flagged.length) {
+            html += `<h3 style="margin:20px 0 10px; color:#5b9bd5;">${game.title} (ID: ${game.gameID})</h3>` +
+                `<table class="mod-subtable"><thead><tr><th>User</th><th>Comment</th><th>Stars</th><th>Actions</th></tr></thead><tbody>` +
+                flagged.map((r, i) => {
+                    const originalIdx = reviews.indexOf(r);
+                    return `<tr><td>${r.reviewer}</td><td>${r.comment}</td><td>${r.rating}★</td><td>
+                    <button class="action-btn" onclick="modDeleteReview('${game.gameID}', ${originalIdx})" style="background:#e74c3c">Delete</button>
+                    <button class="action-btn" onclick="modDismissReview('${game.gameID}', ${originalIdx})" style="background:#2ecc71">Dismiss</button>
+                    </td></tr>`;
+                }).join('') + `</tbody></table>`;
+        }
+    });
+    cont.innerHTML = html || '<p style="color:#888;padding:20px;">No reported reviews found.</p>';
+};
+
+const modDeleteReview = (gameID, i) => {
+    if (!confirm("Delete this review?")) return;
+    const reviews = JSON.parse(localStorage.getItem('reviews_' + gameID) || '[]');
+    reviews.splice(i, 1);
+    localStorage.setItem('reviews_' + gameID, JSON.stringify(reviews));
+    renderModReviews();
+};
+
+const modDismissReview = (gameID, i) => {
+    const reviews = JSON.parse(localStorage.getItem('reviews_' + gameID) || '[]');
+    if (reviews[i]) { delete reviews[i].flagged; localStorage.setItem('reviews_' + gameID, JSON.stringify(reviews)); renderModReviews(); }
+};
+
+const renderModLenders = () => {
+    const tbl = document.getElementById("mod-lenders-table");
+    if (!tbl) return;
+    const biz = users.filter(u => u.type === 'business');
+    tbl.innerHTML = `<thead><tr><th>User</th><th>Business Name</th><th>Status</th><th>Actions</th></tr></thead><tbody>` +
+        biz.map(u => `<tr><td>${u.username}</td><td>${u.name}</td><td>${u.suspended ? '🔴 Suspended' : '🟢 Active'}</td><td>
+        <button class="action-btn" onclick="modToggleLender(${u.userID})" style="background:${u.suspended ? '#2ecc71' : '#e67e22'}">
+            ${u.suspended ? 'Restore Account' : 'Suspend Account'}
+        </button></td></tr>`).join('') + `</tbody>`;
+};
+
+const modToggleLender = (id) => {
+    const u = users.find(x => +x.userID === +id);
+    if (u && confirm(`${u.suspended ? 'Restore' : 'Suspend'} account for ${u.username}?`)) {
+        u.suspended = !u.suspended;
+        save("users", users); renderModLenders();
+    }
+};
