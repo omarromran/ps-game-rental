@@ -367,6 +367,11 @@ label {
     font-size: 0.9rem;
 }
 
+
+
+
+
+
 .profile-input {
     background: transparent;
     border: none;
@@ -553,7 +558,7 @@ section p {
     margin-bottom: 1rem;
 }
 
-/* ================= RESPONSIVE ================= */
+
 @media (max-width: 768px) {
     .sidebar {
         width: 100%;

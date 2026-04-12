@@ -349,7 +349,7 @@ function toggleEdit(editing) {
     document.getElementById("saveBtn").style.display = editing ? "block" : "none";
 }
 
-/* ================= TOAST ================= */
+/* ================= TOAST ========= */
 function showToast(msg) {
     const toast = document.getElementById("toast");
     toast.innerText      = msg;
@@ -365,6 +365,8 @@ function setRating(value) {
 }
 
 /* ================= INIT ================= */
+
+
 document.addEventListener("DOMContentLoaded", async () => {
     await loadData();
     showSection("dashboard", document.querySelector(".sidebar nav button"));
