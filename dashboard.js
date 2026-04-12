@@ -44,7 +44,6 @@ const updateDashboard = () => {
         { t: "Total Users", v: users.length },
         { t: "Pending Users", v: users.filter(u => u.status === "pending").length, l: "approveLenders.html" },
         { t: "Total Games", v: games.length },
-        { t: "Available for Rent", v: games.filter(g => (g.Availability || "").toLowerCase() === "rent").length },
         { t: "Total Price Value", v: totalVal + " EGP" }
     ];
     cont.innerHTML = stats.map(s => `<div class="card" ${s.l ? `onclick="window.location.href='${s.l}'" style="cursor:pointer"` : ""}><h3>${s.t}</h3><p>${s.v}</p></div>`).join('');
