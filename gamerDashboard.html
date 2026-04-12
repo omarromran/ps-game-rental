@@ -46,11 +46,13 @@
 
             <h2 style="margin-top: 30px;">Recent Activity</h2>
             <!-- Rendered by JS -->
-            <table id="activity-table"></table>
+            <table id="activity-table">
+    <tbody id="activity-body"></tbody>
+</table>
         </section>
 
         <!-- MY RENTALS -->
-        <section id="my-rentals" style="display:none;">
+        <section id="my-rentals" >
             <h2>My Rentals</h2>
 
             <p>Active</p>
@@ -63,14 +65,14 @@
         </section>
 
         <!-- WISHLIST -->
-        <section id="wishlist" style="display:none;">
+        <section id="wishlist" >
             <h2>Wishlist</h2>
             <!-- Rendered by JS -->
             <div class="wishlist-grid" id="wishlist-container"></div>
         </section>
 
         <!-- PROFILE -->
-        <section id="profile" style="display:none;">
+        <section id="profile" >
             <h2 class="page-title">Profile</h2>
             <div class="profile-container compact">
 
@@ -136,7 +138,7 @@
 </div>
 <input type="hidden" id="rating" value="">
             <textarea id="comment" placeholder="Write comment"></textarea>
-            <button onclick="submitReview()">Submit</button>
+            <button type="button" onclick="submitReview()">Submit</button>
         </div>
     </div>
 </div>
