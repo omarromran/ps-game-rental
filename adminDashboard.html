@@ -30,6 +30,9 @@
                 <button onclick="navigateToSection('addAdmin', this)">
                     <i class="fas fa-user-plus"></i> Add Admin
                 </button>
+                <button onclick="navigateToSection('moderation', this); setupModeration()">
+                    <i class="fas fa-shield-alt"></i> Moderate Listings
+                </button>
 
             </nav>
             <button class="logout" onclick="handleDataReset()"
@@ -86,6 +89,19 @@
                         <i class="fas fa-user-plus"></i> Create Admin
                     </button>
                 </form>
+            </section>
+
+            <section id="moderation">
+                <h2>Moderate Listings</h2>
+                <div style="display:flex;gap:10px;margin:1rem 0">
+                    <button class="action-btn" onclick="showModTab('mod-games')"><i class="fas fa-gamepad"></i> Reported Games</button>
+                    <button class="action-btn" onclick="showModTab('mod-reviews')"><i class="fas fa-star"></i> Reported Reviews</button>
+                    <button class="action-btn" onclick="showModTab('mod-lenders')"><i class="fas fa-store"></i> Lenders Status</button>
+                </div>
+                
+                <div id="mod-games" class="tab-panel"><table id="mod-games-table"></table></div>
+                <div id="mod-reviews" class="tab-panel" style="display:none"></div>
+                <div id="mod-lenders" class="tab-panel" style="display:none"><table id="mod-lenders-table"></table></div>
             </section>
         </main>
     </div>
