@@ -1,45 +1,50 @@
 /* Import font */
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
 
-/* Variables */
+/* ================= THEME (MATCH FIRST CSS STYLE) ================= */
 :root {
-    --primary-color: #182938;
-    --secondary-color: #5c748e;
-    --dark-color: #121f29;
+    --primary-color: #00439c;
+    --secondary-color: #1a1a1a;
+    --dark-color: #0a0a0a;
     --white-color: #ffffff;
-    --input-background: rgba(28, 38, 51, 0.9);
-    --shadow: 0 10px 25px rgba(18, 31, 41, 0.6);
-    --btn-hover: #3e556e;
-    --accent-red: #c0392b;
-    --accent-red-hover: #e74c3c;
+
+    --input-background: #111;
+    --card-border: rgba(255, 255, 255, 0.1);
+
+    --shadow: 0 10px 25px rgba(0, 67, 156, 0.25);
+    --btn-hover: #003a8c;
+
+    --muted: #aaa;
+    --danger: #ff4444;
 }
 
-/* Reset */
+/* ================= RESET ================= */
 * {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
 }
 
-/* Body */
+/* ================= BODY ================= */
 body {
     font-family: 'Poppins', sans-serif;
     background-color: var(--dark-color);
+    background-image: radial-gradient(circle at 50% 0%, #001f4d 0%, #0a0a0a 100%);
     color: var(--white-color);
     min-height: 100vh;
 }
 
-/* Layout */
+/* ================= LAYOUT ================= */
 .dashboard-wrapper,
 .dashboard {
     display: flex;
     min-height: 100vh;
 }
 
-/* Sidebar */
+/* ================= SIDEBAR ================= */
 .sidebar {
     width: 240px;
-    background-color: var(--primary-color);
+    background: #000;
     padding: 2rem 1rem;
     display: flex;
     flex-direction: column;
@@ -47,52 +52,47 @@ body {
     height: 100vh;
 }
 
-/* Sidebar title */
 .sidebar h2,
 .sidebar .logo {
     text-align: center;
     margin-bottom: 2rem;
 }
 
-/* Navigation */
 .sidebar nav {
     display: flex;
     flex-direction: column;
     gap: 10px;
 }
 
-/* Sidebar buttons & links */
 .sidebar button,
 .sidebar a {
     background: transparent;
-    color: var(--secondary-color);
+    color: var(--muted);
     border: none;
     padding: 12px;
     border-radius: 6px;
     cursor: pointer;
     text-align: left;
+    transition: 0.3s;
 }
 
-/* Hover */
 .sidebar button:hover,
 .sidebar a:hover {
-    background-color: var(--secondary-color);
+    background-color: var(--primary-color);
     color: var(--white-color);
 }
 
-/* Logout button */
 .sidebar .logout {
     margin-top: auto;
-    background-color: var(--accent-red);
-    color: var(--white-color);
-    text-align: center;
+    background-color: var(--danger);
+    color: white;
 }
 
 .sidebar .logout:hover {
-    background-color: var(--accent-red-hover);
+    background-color: #cc0000;
 }
 
-/* Main content */
+/* ================= MAIN ================= */
 main,
 .main-content {
     margin-left: 240px;
@@ -100,7 +100,7 @@ main,
     width: calc(100% - 240px);
 }
 
-/* Sections */
+/* ================= SECTIONS ================= */
 section {
     display: none;
 }
@@ -109,7 +109,7 @@ section#dashboard {
     display: block;
 }
 
-/* Cards & Grid */
+/* ================= GRID ================= */
 .card-container,
 .games-grid {
     display: grid;
@@ -117,77 +117,95 @@ section#dashboard {
     gap: 20px;
 }
 
-/* Card */
+/* ================= CARD ================= */
 .card,
 .game-card {
     background-color: var(--input-background);
+    border: 1px solid var(--card-border);
     padding: 20px;
     border-radius: 10px;
     text-align: center;
+    box-shadow: var(--shadow);
 }
 
-/* Table */
+/* ================= TABLE ================= */
 table {
     width: 100%;
     border-collapse: collapse;
     background-color: var(--input-background);
+    margin-top: 1.5rem;
+    border-radius: 10px;
+    overflow: hidden;
 }
 
-/* Table cells */
 th,
 td {
     padding: 12px;
     text-align: left;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
-/* Table header */
 th {
-    background-color: var(--primary-color);
-    color: var(--secondary-color);
+    background-color: #000;
+    color: var(--primary-color);
+    text-transform: uppercase;
+    font-size: 0.8rem;
+    letter-spacing: 1px;
 }
 
-/* Buttons */
+/* ================= BUTTONS ================= */
 button,
 .action-btn,
 .submit-btn {
-    background-color: var(--secondary-color);
+    background-color: var(--primary-color);
     color: var(--white-color);
     border: none;
     padding: 10px 15px;
     border-radius: 6px;
     cursor: pointer;
+    transition: 0.3s;
 }
 
-/* Button hover */
 button:hover,
 .action-btn:hover,
 .submit-btn:hover {
     background-color: var(--btn-hover);
 }
 
-/* Forms */
+/* ================= FORMS ================= */
 form {
-    max-width: 500px;
+    background-color: var(--input-background);
+    padding: 30px;
+    border-radius: 12px;
+    max-width: 600px;
+    margin-top: 2rem;
 }
 
 form div {
     margin-bottom: 1rem;
 }
 
-/* Inputs */
+label {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 0.9rem;
+    color: var(--muted);
+}
+
+/* ================= INPUTS ================= */
 input,
 textarea,
 select {
     width: 100%;
     padding: 10px;
     border-radius: 6px;
-    border: 1px solid var(--secondary-color);
-    background-color: var(--dark-color);
+    border: 1px solid #333;
+    background-color: #1a1a1a;
     color: var(--white-color);
+    font-family: 'Poppins', sans-serif;
 }
 
-/* Modal */
+/* ================= MODAL ================= */
 .modal {
     display: none;
     position: fixed;
@@ -195,35 +213,88 @@ select {
     background-color: rgba(0, 0, 0, 0.8);
 }
 
-/* Modal content */
 .modal-content {
-    background-color: var(--primary-color);
+    background-color: var(--input-background);
     padding: 25px;
     border-radius: 10px;
     width: 90%;
     max-width: 400px;
     margin: auto;
+    box-shadow: var(--shadow);
 }
 
-/* Close button */
 .close {
     position: absolute;
     right: 20px;
     top: 15px;
     cursor: pointer;
+    color: var(--white-color);
 }
 
-/* Responsive */
-@media (max-width: 768px) {
+/* ================= PROFILE ================= */
+.profile-container {
+    background-color: var(--input-background);
+    padding: 40px;
+    border-radius: 16px;
+    max-width: 800px;
+    margin: auto;
+    box-shadow: var(--shadow);
+}
 
+.profile-avatar {
+    width: 80px;
+    height: 80px;
+    background-color: var(--primary-color);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+}
+
+/* ================= WISHLIST ================= */
+.wishlist-grid {
+    margin-top: 1.5rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+}
+
+.wishlist-card {
+    background-color: var(--input-background);
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+}
+
+/* ================= RESET BUTTON ================= */
+.reset-btn {
+    background-color: rgba(0, 67, 156, 0.1);
+    color: var(--primary-color);
+}
+
+.reset-btn:hover {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+/* ================= STAR RATING ================= */
+.star-rating span {
+    font-size: 2rem;
+    cursor: pointer;
+    color: var(--muted);
+    transition: 0.2s;
+}
+
+.star-rating span.active {
+    color: gold;
+}
+
+/* ================= RESPONSIVE ================= */
+@media (max-width: 768px) {
     .sidebar {
         width: 100%;
         position: relative;
-    }
-
-    .dashboard-wrapper,
-    .dashboard {
-        flex-direction: column;
     }
 
     main,
@@ -232,295 +303,14 @@ select {
         width: 100%;
     }
 
+    .dashboard-wrapper,
+    .dashboard {
+        flex-direction: column;
+    }
+
     .sidebar nav {
         flex-direction: row;
         flex-wrap: wrap;
         justify-content: center;
     }
-}
-/* Sidebar active link state */
-.sidebar a.active {
-    background-color: var(--secondary-color);
-    color: var(--white-color);
-}
-
-/* Smooth transition for sidebar links */
-.sidebar a {
-    transition: 0.3s;
-    text-decoration: none;
-}
-
-/* Header styling */
-header h1 {
-    margin-bottom: 0.5rem;
-}
-
-header p {
-    color: var(--secondary-color);
-}
-
-/* Card improvements */
-.card {
-    border-radius: 12px;
-    box-shadow: var(--shadow);
-    padding: 25px; /* overrides 20px */
-}
-
-.card h3 {
-    font-size: 0.9rem;
-    color: var(--secondary-color);
-    margin-bottom: 10px;
-}
-
-.card p {
-    font-size: 1.8rem;
-    font-weight: 700;
-}
-
-/* Table improvements */
-table {
-    margin-top: 1.5rem;
-    border-radius: 10px;
-    overflow: hidden;
-}
-
-th {
-    text-transform: uppercase;
-    font-size: 0.8rem;
-    letter-spacing: 1px;
-}
-
-/* Form improvements */
-form {
-    background-color: var(--input-background);
-    padding: 30px;
-    border-radius: 12px;
-    max-width: 600px; /* overrides 500px */
-    margin-top: 2rem;
-}
-
-.form-group {
-    margin-bottom: 1.5rem;
-}
-
-label {
-    display: block;
-    margin-bottom: 8px;
-    font-size: 0.9rem;
-}
-
-/* Input font fix */
-input, select, textarea {
-    font-family: 'Poppins';
-}
-
-/* Submit button improvement */
-.submit-btn {
-    font-weight: 600;
-    width: 100%;
-}
-
-/*///////////////////////////////////////////////////////*/
-
-/* ================= PROFILE ================= */
-
-.profile-container {
-    background-color: var(--input-background);
-    padding: 40px;
-    border-radius: 16px;
-    max-width: 800px;
-    width: 100%;
-    margin: auto;
-    box-shadow: var(--shadow);
-}
-
-/* TOP */
-.profile-top {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    margin-bottom: 25px;
-}
-
-.profile-avatar {
-    width: 80px;
-    height: 80px;
-    background-color: var(--secondary-color);
-    color: var(--white-color);
-    font-weight: 600;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 50%;
-    font-size: 18px;
-}
-
-/* ITEMS */
-.profile-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 12px 0;
-    border-bottom: 1px solid rgba(255,255,255,0.08);
-}
-
-.profile-left {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.profile-dot {
-    width: 8px;
-    height: 8px;
-    background-color: var(--secondary-color);
-    border-radius: 50%;
-}
-
-.profile-key {
-    font-size: 0.9rem;
-    color: var(--secondary-color);
-}
-
-/* VALUES */
-.profile-val {
-    color: var(--white-color);
-    font-size: 0.9rem;
-}
-
-/* INPUTS (important for clean look) */
-.profile-input {
-    background: transparent;
-    border: none;
-    border-bottom: 1px solid rgba(255,255,255,0.2);
-    color: var(--white-color);
-    text-align: left;
-    outline: none;
-    font-size: 0.9rem;
-    width: 180px;
-}
-
-/* name + email styling */
-.profile-input.name {
-    font-size: 1.1rem;
-    font-weight: 600;
-    border: none;
-    text-align: left;
-}
-
-.profile-input.email {
-    font-size: 0.85rem;
-    color: var(--secondary-color);
-    border: none;
-    text-align: left;
-}
-
-/* SAVE BUTTON */
-.save-btn {
-    margin-top: 20px;
-    width: 100%;
-    padding: 12px;
-    background-color: var(--secondary-color);
-    border: none;
-    border-radius: 8px;
-    color: var(--white-color);
-    font-weight: 600;
-    cursor: pointer;
-    transition: 0.3s;
-}
-
-.save-btn:hover {
-    background-color: var(--btn-hover);
-}
-
-/* Wishlist grid spacing */
-.wishlist-grid {
-    margin-top: 1.5rem;
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 20px; /* THIS is the missing spacing */
-}
-
-/* Card = same style as your .card */
-.wishlist-card {
-    background-color: var(--input-background);
-    padding: 20px;
-    border-radius: 10px;
-    text-align: center;
-}
-
-/* Emoji size */
-.game-cover {
-    font-size: 2rem;
-    margin-bottom: 10px;
-}
-
-/* Meta text */
-.meta {
-    font-size: 0.85rem;
-    color: var(--secondary-color);
-    margin-bottom: 10px;
-}
-
-/* Button spacing */
-.rent-btn {
-    margin-top: 10px;
-    width: 100%;
-}
-
-/* MODAL OVERLAY */
-.modal-overlay {
-    position: fixed;
-    inset: 0;
-    background-color: rgba(0, 0, 0, 0.7);
-
-    display: none;
-    align-items: center;
-    justify-content: center;
-
-    z-index: 9999; 
-}
-
-.modal-box {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;          /* clean spacing */
-}
-
-.modal-box h3 {
-    margin-bottom: 5px;
-}
-
-.modal-box button {
-    margin-top: 10px;
-}
-
-.reset-btn {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    background-color: #ff4d4d;
-    color: white;
-    border: none;
-    padding: 10px 15px;
-    border-radius: 5px;
-    cursor: pointer;
-    font-weight: bold;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-    z-index: 1000;
-}
-
-.reset-btn:hover {
-    background-color: red;
-}
-
-.star-rating span {
-    font-size: 2rem;
-    cursor: pointer;
-    color: var(--secondary-color);
-    transition: color 0.2s;
-}
-
-.star-rating span.active {
-    color: gold;
 }
