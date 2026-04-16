@@ -1,33 +1,29 @@
-/* Import font */
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Segoe+UI&display=swap');
 
-/* ================= THEME (MATCH FIRST CSS STYLE) ================= */
 :root {
-    --primary-color: #00439c;
-    --secondary-color: #1a1a1a;
+    --primary-color: #000000;
+    --secondary-color: #00439c;
     --dark-color: #0a0a0a;
-    --white-color: #ffffff;
-
-    --input-background: #111;
+    --card-bg: #111111;
     --card-border: rgba(255, 255, 255, 0.1);
-
-    --shadow: 0 10px 25px rgba(0, 67, 156, 0.25);
-    --btn-hover: #003a8c;
-
-    --muted: #aaa;
-    --danger: #ff4444;
+    --white-color: #ffffff;
+    --muted-color: #aaaaaa;
+    --input-background: #1a1a1a;
+    --shadow: 0 10px 30px rgba(0, 67, 156, 0.3);
+    --btn-hover: #218838;
+    --accent-red: #ff4444;
+    --accent-red-hover: rgba(255, 68, 68, 0.8);
+    --accent-green: #28a745;
 }
 
-/* ================= RESET ================= */
 * {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
 }
 
-/* ================= BODY ================= */
 body {
-    font-family: 'Poppins', sans-serif;
+    font-family: 'Segoe UI', sans-serif;
     background-color: var(--dark-color);
     background-image: radial-gradient(circle at 50% 0%, #001f4d 0%, #0a0a0a 100%);
     color: var(--white-color);
@@ -44,52 +40,82 @@ body {
 /* ================= SIDEBAR ================= */
 .sidebar {
     width: 240px;
-    background: #000;
+    background-color: var(--primary-color);
     padding: 2rem 1rem;
     display: flex;
     flex-direction: column;
     position: fixed;
     height: 100vh;
+    border-right: 1px solid #222;
+    z-index: 100;
 }
 
 .sidebar h2,
 .sidebar .logo {
     text-align: center;
     margin-bottom: 2rem;
+    font-size: 1.5rem;
+    font-weight: bold;
+    letter-spacing: 2px;
+    color: var(--white-color);
+}
+
+.sidebar h2 span {
+    color: var(--secondary-color);
 }
 
 .sidebar nav {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 8px;
 }
 
 .sidebar button,
 .sidebar a {
     background: transparent;
-    color: var(--muted);
+    color: var(--muted-color);
     border: none;
-    padding: 12px;
-    border-radius: 6px;
+    padding: 12px 15px;
+    border-radius: 12px;
     cursor: pointer;
     text-align: left;
-    transition: 0.3s;
+    font-size: 0.95rem;
+    font-family: 'Segoe UI', sans-serif;
+    transition: 0.2s;
+    text-decoration: none;
 }
 
 .sidebar button:hover,
 .sidebar a:hover {
-    background-color: var(--primary-color);
+    background-color: rgba(0, 67, 156, 0.2);
     color: var(--white-color);
+    border-color: var(--secondary-color);
+}
+
+.sidebar a.active,
+.sidebar button.active {
+    background-color: rgba(0, 67, 156, 0.3);
+    color: var(--white-color);
+    border: 1px solid rgba(0, 67, 156, 0.5);
 }
 
 .sidebar .logout {
     margin-top: auto;
-    background-color: var(--danger);
-    color: white;
+    background: rgba(255, 68, 68, 0.1);
+    color: var(--accent-red);
+    border: 1px solid rgba(255, 68, 68, 0.3);
+    text-align: center;
+    border-radius: 12px;
+    padding: 12px;
+    font-family: 'Segoe UI', sans-serif;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: 0.2s;
 }
 
 .sidebar .logout:hover {
-    background-color: #cc0000;
+    background: var(--accent-red);
+    color: var(--white-color);
 }
 
 /* ================= MAIN ================= */
@@ -109,7 +135,7 @@ section#dashboard {
     display: block;
 }
 
-/* ================= GRID ================= */
+/* ================= CARDS ================= */
 .card-container,
 .games-grid {
     display: grid;
@@ -117,53 +143,119 @@ section#dashboard {
     gap: 20px;
 }
 
-/* ================= CARD ================= */
-.card,
+.card {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    padding: 25px;
+    border-radius: 20px;
+    text-align: center;
+    transition: 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.card:hover {
+    border-color: var(--secondary-color);
+    box-shadow: var(--shadow);
+    transform: translateY(-4px);
+}
+
+.card h3 {
+    font-size: 0.85rem;
+    color: var(--muted-color);
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.card p {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--white-color);
+}
+
+/* ================= GAME CARDS ================= */
 .game-card {
-    background-color: var(--input-background);
+    background: var(--card-bg);
     border: 1px solid var(--card-border);
     padding: 20px;
-    border-radius: 10px;
+    border-radius: 20px;
     text-align: center;
+    transition: 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.game-card:hover {
+    border-color: var(--secondary-color);
+    transform: translateY(-6px);
     box-shadow: var(--shadow);
+}
+
+.game-card h3 {
+    font-size: 1rem;
+    margin-bottom: 6px;
+    color: var(--white-color);
+}
+
+.game-card p {
+    font-size: 0.85rem;
+    color: var(--muted-color);
+    margin-bottom: 8px;
+}
+
+.game-card span {
+    display: inline-block;
+    font-size: 0.75rem;
+    padding: 3px 10px;
+    border-radius: 50px;
+    background: rgba(0, 67, 156, 0.2);
+    color: #6ab0ff;
+    border: 1px solid rgba(0, 67, 156, 0.4);
+    margin-bottom: 10px;
 }
 
 /* ================= TABLE ================= */
 table {
     width: 100%;
     border-collapse: collapse;
-    background-color: var(--input-background);
-    margin-top: 1.5rem;
-    border-radius: 10px;
+    background: var(--card-bg);
+    border-radius: 20px;
     overflow: hidden;
+    margin-top: 1.5rem;
+    border: 1px solid var(--card-border);
 }
 
 th,
 td {
-    padding: 12px;
+    padding: 14px 16px;
     text-align: left;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 th {
     background-color: #000;
-    color: var(--primary-color);
+    color: var(--muted-color);
     text-transform: uppercase;
-    font-size: 0.8rem;
+    font-size: 0.75rem;
     letter-spacing: 1px;
+}
+
+td {
+    font-size: 0.9rem;
+    color: var(--white-color);
 }
 
 /* ================= BUTTONS ================= */
 button,
 .action-btn,
 .submit-btn {
-    background-color: var(--primary-color);
+    background-color: var(--accent-green);
     color: var(--white-color);
     border: none;
-    padding: 10px 15px;
-    border-radius: 6px;
+    padding: 10px 18px;
+    border-radius: 50px;
     cursor: pointer;
-    transition: 0.3s;
+    font-family: 'Segoe UI', sans-serif;
+    font-weight: 600;
+    font-size: 0.9rem;
+    transition: 0.2s;
 }
 
 button:hover,
@@ -172,84 +264,142 @@ button:hover,
     background-color: var(--btn-hover);
 }
 
+/* ================= INPUTS ================= */
+input,
+textarea,
+select {
+    width: 100%;
+    padding: 10px 15px;
+    border-radius: 12px;
+    border: 1px solid #333;
+    background-color: var(--input-background);
+    color: var(--white-color);
+    font-family: 'Segoe UI', sans-serif;
+    outline: none;
+    transition: 0.2s;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+    border-color: var(--secondary-color);
+}
+
 /* ================= FORMS ================= */
 form {
     background-color: var(--input-background);
     padding: 30px;
-    border-radius: 12px;
+    border-radius: 20px;
     max-width: 600px;
     margin-top: 2rem;
+    border: 1px solid var(--card-border);
 }
 
 form div {
     margin-bottom: 1rem;
 }
 
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
 label {
     display: block;
     margin-bottom: 8px;
     font-size: 0.9rem;
-    color: var(--muted);
-}
-
-/* ================= INPUTS ================= */
-input,
-textarea,
-select {
-    width: 100%;
-    padding: 10px;
-    border-radius: 6px;
-    border: 1px solid #333;
-    background-color: #1a1a1a;
-    color: var(--white-color);
-    font-family: 'Poppins', sans-serif;
-}
-
-/* ================= MODAL ================= */
-.modal {
-    display: none;
-    position: fixed;
-    inset: 0;
-    background-color: rgba(0, 0, 0, 0.8);
-}
-
-.modal-content {
-    background-color: var(--input-background);
-    padding: 25px;
-    border-radius: 10px;
-    width: 90%;
-    max-width: 400px;
-    margin: auto;
-    box-shadow: var(--shadow);
-}
-
-.close {
-    position: absolute;
-    right: 20px;
-    top: 15px;
-    cursor: pointer;
-    color: var(--white-color);
+    color: var(--muted-color);
 }
 
 /* ================= PROFILE ================= */
 .profile-container {
-    background-color: var(--input-background);
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
     padding: 40px;
-    border-radius: 16px;
-    max-width: 800px;
+    border-radius: 20px;
+    max-width: 700px;
+    width: 100%;
     margin: auto;
     box-shadow: var(--shadow);
 }
 
+.profile-container.compact {
+    padding: 25px;
+    max-width: 600px;
+}
+
+.profile-top {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 25px;
+}
+
 .profile-avatar {
-    width: 80px;
-    height: 80px;
-    background-color: var(--primary-color);
-    color: white;
+    width: 70px;
+    height: 70px;
+    background: var(--secondary-color);
+    color: var(--white-color);
+    font-weight: 700;
     display: flex;
     align-items: center;
     justify-content: center;
     border-radius: 50%;
+    font-size: 20px;
+    border: 2px solid #fff;
+    flex-shrink: 0;
+}
+
+.profile-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.profile-key {
+    font-size: 0.85rem;
+    color: var(--muted-color);
+}
+
+.profile-val {
+    color: var(--white-color);
+    font-size: 0.9rem;
+}
+
+
+
+
+
+
+.profile-input {
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    color: var(--white-color);
+    outline: none;
+    font-size: 0.9rem;
+    width: 200px;
+    font-family: 'Segoe UI', sans-serif;
+    padding-bottom: 4px;
+}
+
+.save-btn {
+    margin-top: 20px;
+    width: 100%;
+    padding: 12px;
+    background: var(--accent-green);
+    border: none;
+    border-radius: 50px;
+    color: var(--white-color);
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.2s;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+.save-btn:hover {
+    background: var(--btn-hover);
 }
 
 /* ================= WISHLIST ================= */
@@ -261,51 +411,170 @@ select {
 }
 
 .wishlist-card {
-    background-color: var(--input-background);
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
     padding: 20px;
-    border-radius: 10px;
+    border-radius: 20px;
     text-align: center;
+    transition: 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
-/* ================= RESET BUTTON ================= */
-.reset-btn {
-    background-color: rgba(0, 67, 156, 0.1);
-    color: var(--primary-color);
+.wishlist-card:hover {
+    border-color: var(--secondary-color);
+    transform: translateY(-6px);
+    box-shadow: var(--shadow);
 }
 
-.reset-btn:hover {
-    background-color: var(--primary-color);
-    color: white;
+.wishlist-card h3 {
+    font-size: 1rem;
+    margin-bottom: 6px;
+    color: var(--white-color);
+}
+
+.wishlist-card p {
+    font-size: 0.85rem;
+    color: var(--muted-color);
+    margin-bottom: 12px;
+}
+
+/* ================= MODAL ================= */
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.8);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+}
+
+.modal-box {
+    background: #111;
+    border: 1px solid #333;
+    padding: 30px;
+    border-radius: 20px;
+    width: 90%;
+    max-width: 420px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.modal-box h3 {
+    font-size: 1.1rem;
+    margin-bottom: 5px;
+    color: var(--white-color);
+}
+
+.modal-box button {
+    margin-top: 5px;
+}
+
+.close {
+    position: absolute;
+    right: 18px;
+    top: 14px;
+    cursor: pointer;
+    font-size: 1.4rem;
+    color: var(--muted-color);
+    transition: 0.2s;
+    background: none;
+    border: none;
+    padding: 0;
+}
+
+.close:hover {
+    color: var(--white-color);
 }
 
 /* ================= STAR RATING ================= */
 .star-rating span {
     font-size: 2rem;
     cursor: pointer;
-    color: var(--muted);
-    transition: 0.2s;
+    color: #333;
+    transition: color 0.2s;
 }
 
 .star-rating span.active {
     color: gold;
 }
 
-/* ================= RESPONSIVE ================= */
+/* ================= TOAST ================= */
+.toast {
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #1a1a1a;
+    border: 1px solid #333;
+    color: var(--white-color);
+    padding: 12px 24px;
+    border-radius: 50px;
+    font-size: 0.9rem;
+    display: none;
+    z-index: 99999;
+    box-shadow: var(--shadow);
+}
+
+/* ================= RESET BUTTON ================= */
+.reset-btn {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: rgba(255, 68, 68, 0.1);
+    color: var(--accent-red);
+    border: 1px solid rgba(255, 68, 68, 0.3);
+    padding: 10px 15px;
+    border-radius: 50px;
+    cursor: pointer;
+    font-weight: bold;
+    z-index: 1000;
+    transition: 0.2s;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+.reset-btn:hover {
+    background: var(--accent-red);
+    color: white;
+}
+
+/* ================= HEADINGS ================= */
+h2 {
+    font-size: 1.3rem;
+    font-weight: 600;
+    margin-bottom: 1.2rem;
+    color: var(--white-color);
+}
+
+h2.page-title {
+    font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+section p {
+    color: var(--muted-color);
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+}
+
+
 @media (max-width: 768px) {
     .sidebar {
         width: 100%;
         position: relative;
+        height: auto;
+    }
+
+    .dashboard-wrapper,
+    .dashboard {
+        flex-direction: column;
     }
 
     main,
     .main-content {
         margin-left: 0;
         width: 100%;
-    }
-
-    .dashboard-wrapper,
-    .dashboard {
-        flex-direction: column;
     }
 
     .sidebar nav {

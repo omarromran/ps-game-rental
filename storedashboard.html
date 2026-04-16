@@ -1,158 +1,138 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lender Dashboard - PS Rental Hub</title>
+    <link rel="icon" href="photos/images.png">
     <link rel="stylesheet" href="dashboard.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script defer src="storedashboard.js"></script>
 </head>
 
 <body>
 
-<div class="dashboard-wrapper">
+    <div class="dashboard-wrapper">
+        <aside class="sidebar">
+            <h2>PS HUB</h2>
 
-    <aside class="sidebar">
-        <h2>PS HUB</h2>
-
-        <nav>
-            <button onclick="showSection('dashboard', this)" class="active">
-                Store Dashboard
-            </button>
-
-            <button onclick="showSection('addGame', this)">
-                Add New Game
-            </button>
-
-            <button onclick="showSection('manageGames', this)">
-                Manage Games
-            </button>
-
-            <button onclick="resetData()">Reset Data</button>
-        </nav>
-
-        <button class="logout" id="logoutBtn">Logout</button>
-    </aside>
-
-
-    <main>
-
-        <!-- DASHBOARD -->
-        <section id="dashboard">
-            <div class="card-container">
-
-                <div class="card">
-                    <h3>Total Games</h3>
-                    <p id="totalGames">0</p>
-                </div>
-
-                <div class="card">
-                    <h3>Active Rentals</h3>
-                    <p id="activeRentals">0</p>
-                </div>
-
-                <div class="card">
-                    <h3>Total Earnings</h3>
-                    <p id="totalEarnings">0.00 EGP</p>
-                </div>
-
-            </div>
-
-            <div style="margin-top: 3rem;">
-                <h3>Recent Activity</h3>
-
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Game</th>
-                            <th>Customer</th>
-                            <th>Status</th>
-                            <th>Date</th>
-                        </tr>
-                    </thead>
-
-                    <tbody id="activityLog"></tbody>
-                </table>
-            </div>
-        </section>
-
-
-        <!-- ADD GAME -->
-        <section id="addGame" style="display:none;">
-            <h2>List a New Game</h2>
-
-            <form id="addGameForm">
-
-                <div class="form-group">
-                    <label>Game Title</label>
-                    <input type="text" id="gameTitle" required>
-                </div>
-
-                <div class="form-group">
-                    <label>Platform</label>
-                    <select id="platform" required>
-                        <option value="">Select Platform</option>
-                        <option value="PS5">PlayStation 5</option>
-                        <option value="PS4">PlayStation 4</option>
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label>Genre</label>
-                    <select id="genre" required>
-                        <option value="">Select Genre</option>
-                        <option value="Action">Action</option>
-                        <option value="RPG">RPG</option>
-                        <option value="Sports">Sports</option>
-                        <option value="Horror">Horror</option>
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label>Daily Price (EGP)</label>
-                    <input type="number" id="dailyPrice" required>
-                </div>
-
-                <div class="form-group">
-                    <label>Description</label>
-                    <textarea id="description"></textarea>
-                </div>
-
-                <button type="submit" class="submit-btn">
-                    Add Game
+            <nav>
+                <button onclick="showSection('dashboard', this)" class="active">
+                    <i class="fas fa-tachometer-alt"></i> Store Dashboard
                 </button>
 
-            </form>
-        </section>
+                <button onclick="showSection('addGame', this)">
+                    <i class="fas fa-plus-circle"></i> Add New Game
+                </button>
 
+                <button onclick="showSection('manageGames', this)">
+                    <i class="fas fa-tasks"></i> Manage Games
+                </button>
+            </nav>
 
-        <!-- MANAGE GAMES -->
-        <section id="manageGames" style="display:none;">
-            <h2>Manage Your Games</h2>
+            <button class="logout" onclick="resetData()"
+                style="margin-bottom: 10px; background-color: #ff9800; border-color: #ff9800; color: white;">
+                <i class="fas fa-sync-alt"></i> Reset Data
+            </button>
 
-            <table id="gamesTable">
-                <thead>
-                    <tr>
-                        <th>Game Title</th>
-                        <th>Platform</th>
-                        <th>Genre</th>
-                        <th>Daily Price</th>
-                        <th>Status</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
+            <button class="logout" id="logoutBtn">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </button>
+        </aside>
 
-                <tbody id="gamesList"></tbody>
-            </table>
+        <main>
+            <section id="dashboard">
+                <div class="card-container">
+                    <div class="card">
+                        <h3>Total Games</h3>
+                        <p id="totalGames">0</p>
+                    </div>
+                    <div class="card">
+                        <h3>Active Rentals</h3>
+                        <p id="activeRentals">0</p>
+                    </div>
+                    <div class="card">
+                        <h3>Total Earnings</h3>
+                        <p id="totalEarnings">0.00 EGP</p>
+                    </div>
+                </div>
 
-            <div id="noGamesMessage" style="display:none; text-align:center; padding:2rem;">
-                You haven't added any games yet.
-            </div>
+                <div style="margin-top: 3rem;">
+                    <h3>Recent Activity</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Game</th>
+                                <th>Customer</th>
+                                <th>Status</th>
+                                <th>Date</th>
+                            </tr>
+                        </thead>
+                        <tbody id="activityLog"></tbody>
+                    </table>
+                </div>
+            </section>
 
-        </section>
+            <section id="addGame" style="display:none;">
+                <h2>List a New Game</h2>
+                <form id="addGameForm">
+                    <div class="form-group">
+                        <label>Game Title</label>
+                        <input type="text" id="gameTitle" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Platform</label>
+                        <select id="platform" required>
+                            <option value="">Select Platform</option>
+                            <option value="PS5">PlayStation 5</option>
+                            <option value="PS4">PlayStation 4</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Genre</label>
+                        <select id="genre" required>
+                            <option value="">Select Genre</option>
+                            <option value="Action">Action</option>
+                            <option value="RPG">RPG</option>
+                            <option value="Sports">Sports</option>
+                            <option value="Horror">Horror</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Daily Price (EGP)</label>
+                        <input type="number" id="dailyPrice" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Description</label>
+                        <textarea id="description"></textarea>
+                    </div>
+                    <button type="submit" class="submit-btn">Add Game</button>
+                </form>
+            </section>
 
-    </main>
-</div>
+            <section id="manageGames" style="display:none;">
+                <h2>Manage Your Games</h2>
+                <table id="gamesTable">
+                    <thead>
+                        <tr>
+                            <th>Game Title</th>
+                            <th>Platform</th>
+                            <th>Genre</th>
+                            <th>Daily Price</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="gamesList"></tbody>
+                </table>
+                <div id="noGamesMessage" style="display:none; text-align:center; padding:2rem;">
+                    You haven't added any games yet.
+                </div>
+            </section>
+        </main>
+    </div>
 
 </body>
+
 </html>

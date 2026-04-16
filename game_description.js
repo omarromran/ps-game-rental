@@ -2,13 +2,12 @@ let cart = JSON.parse(localStorage.getItem('pshub_cart') || '[]');
 const gameID = new URLSearchParams(window.location.search).get('id');
 let selectedStars = 0;
 
-// ---- LOAD & RENDER GAME ----
 async function loadGame() {
-    let inventory = JSON.parse(localStorage.getItem('browseGames_db') || 'null');
+    let inventory = JSON.parse(localStorage.getItem('pshub_inventory') || 'null');
     if (!inventory) {
         const res = await fetch('browseGames.json');
         inventory = await res.json();
-        localStorage.setItem('browseGames_db', JSON.stringify(inventory));
+        localStorage.setItem('pshub_inventory', JSON.stringify(inventory));
     }
 
     const game = inventory.find(g => g.gameID === gameID);
@@ -19,21 +18,19 @@ async function loadGame() {
         return;
     }
 
-    // Blurred hero background
     document.getElementById('hero-bg').style.backgroundImage = `url('${game.img}')`;
     document.getElementById('cart-count').innerText = cart.length;
     document.title = `PSHUB | ${game.title}`;
 
     const inCart = cart.some(c => c.gameID === game.gameID);
 
-    // Other stores with same title
     const others = inventory.filter(g => g.title === game.title && g.gameID !== game.gameID);
     const othersHtml = others.length ? `
         <div class="other-stores">
             <h3>Also available from</h3>
             <div class="store-chips">
-                <span class="store-chip current">🏪 ${game.storeID} — $${game.price.toFixed(2)} (current)</span>
-                ${others.map(o => `<a class="store-chip" href="game_description.html?id=${o.gameID}">🏪 ${o.storeID} — $${o.price.toFixed(2)}</a>`).join('')}
+                <span class="store-chip current">🏪 ${game.storeID} — ${game.price.toFixed(2)} EGP (current)</span>
+                ${others.map(o => `<a class="store-chip" href="game_description.html?id=${o.gameID}">🏪 ${o.storeID} — ${o.price.toFixed(2)} EGP</a>`).join('')}
             </div>
         </div>` : '';
 
@@ -63,7 +60,7 @@ async function loadGame() {
                 <div class="info-item"><span class="info-label">Age Rating</span><span class="info-val">PEGI ${game.pegi || '?'}</span></div>
             </div>
 
-            <div class="desc-price">$${game.price.toFixed(2)}</div>
+            <div class="desc-price">${game.price.toFixed(2)} EGP</div>
 
             <div class="btn-row">
                 <button class="btn-back" onclick="window.location.href='Browse_Games.html'">← Back to Browse</button>
@@ -75,7 +72,6 @@ async function loadGame() {
             ${othersHtml}
         </div>`;
 
-    // Show reviews & similar sections
     document.getElementById('reviews-section').style.display = 'block';
     document.getElementById('similar-section').style.display = 'block';
 
@@ -84,9 +80,8 @@ async function loadGame() {
     initStars();
 }
 
-// ---- ADD TO CART ----
 function addToCart() {
-    const inventory = JSON.parse(localStorage.getItem('browseGames_db') || '[]');
+    const inventory = JSON.parse(localStorage.getItem('pshub_inventory') || '[]');
     const game = inventory.find(g => g.gameID === gameID);
     if (!game || cart.some(c => c.gameID === gameID)) return;
     cart.push(game);
@@ -97,13 +92,12 @@ function addToCart() {
     document.getElementById('cart-count').innerText = cart.length;
 }
 
-// ---- STAR RATING ----
 function initStars() {
     const stars = document.querySelectorAll('#star-row span');
     stars.forEach(s => {
         s.onmouseover = () => highlightStars(+s.dataset.v);
-        s.onmouseout  = () => highlightStars(selectedStars);
-        s.onclick     = () => { selectedStars = +s.dataset.v; highlightStars(selectedStars); };
+        s.onmouseout = () => highlightStars(selectedStars);
+        s.onclick = () => { selectedStars = +s.dataset.v; highlightStars(selectedStars); };
     });
 }
 
@@ -113,9 +107,8 @@ function highlightStars(n) {
     });
 }
 
-// ---- REVIEWS ----
 function submitReview() {
-    const name    = document.getElementById('reviewer-name').value.trim();
+    const name = document.getElementById('reviewer-name').value.trim();
     const comment = document.getElementById('review-comment').value.trim();
     if (!name || !comment || !selectedStars) {
         alert('Please fill in your name, a comment, and select a star rating.');
@@ -125,7 +118,6 @@ function submitReview() {
     reviews.unshift({ reviewer: name, comment, rating: selectedStars, date: new Date().toLocaleDateString() });
     localStorage.setItem('reviews_' + gameID, JSON.stringify(reviews));
 
-    // Reset form
     document.getElementById('reviewer-name').value = '';
     document.getElementById('review-comment').value = '';
     selectedStars = 0;
@@ -154,8 +146,6 @@ function renderReviews() {
         </div>`).join('');
 }
 
-
-// ---- SIMILAR GAMES ----
 function renderSimilar(inventory, current) {
     const similar = inventory
         .filter(g => g.category === current.category && g.gameID !== current.gameID)
@@ -170,19 +160,18 @@ function renderSimilar(inventory, current) {
             <img src="${g.img}" alt="${g.title}">
             <div class="similar-label">
                 <div>${g.title}</div>
-                <div class="similar-price">$${g.price.toFixed(2)}</div>
+                <div class="similar-price">${g.price.toFixed(2)} EGP</div>
             </div>
         </div>`).join('');
 }
 
-// ---- REPORTING ----
 function reportGame() {
     if (!confirm('Report this game as inappropriate?')) return;
-    const inventory = JSON.parse(localStorage.getItem('browseGames_db') || '[]');
+    const inventory = JSON.parse(localStorage.getItem('pshub_inventory') || '[]');
     const idx = inventory.findIndex(g => g.gameID === gameID);
     if (idx > -1) {
         inventory[idx].flagged = true;
-        localStorage.setItem('browseGames_db', JSON.stringify(inventory));
+        localStorage.setItem('pshub_inventory', JSON.stringify(inventory));
         alert('Game reported to admin.');
     }
 }
@@ -199,4 +188,3 @@ function reportReview(idx) {
 }
 
 loadGame();
-

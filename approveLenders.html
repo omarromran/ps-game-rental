@@ -56,16 +56,16 @@
             pendingLenders.forEach(lender => {
                 const row = `
             <tr id="row-${lender.userID}">
-                <td>${lender.userID}</td>
-                <td><strong>${lender.username}</strong></td>
-                <td>${lender.name}</td>
-                <td>${lender.email}</td>
-                <td><span class="status-badge">Pending</span></td>
-                <td>
+                <td data-label="ID">${lender.userID}</td>
+                <td data-label="Store Name"><strong>${lender.username}</strong></td>
+                <td data-label="Owner">${lender.name}</td>
+                <td data-label="Email">${lender.email}</td>
+                <td data-label="Status"><span class="status-badge">Pending</span></td>
+                <td data-label="Actions">
                     <button class="btn-check" onclick="handleApproval(${lender.userID}, 'Approved')">
                          Accept
                     </button>
-                    <button class="btn-trash" onclick="handleApproval(${lender.userID}, 'Rejected')">
+                    <button class="btn-trash" onclick="handleApproval(${lender.userID}, 'Decline')">
                          Decline
                     </button>
                 </td>
@@ -80,9 +80,9 @@
             if (userIndex === -1) return;
 
             if (action === 'Approved') {
-                users[userIndex].status = "accepted"; // Align with users.json
+                users[userIndex].status = "accepted";
             } else {
-                users.splice(userIndex, 1); // Delete if rejected
+                users.splice(userIndex, 1);
             }
 
             localStorage.setItem("users", JSON.stringify(users));
@@ -100,7 +100,6 @@
         }
 
         document.addEventListener("DOMContentLoaded", loadPendingLenders);
-
 
     </script>
 

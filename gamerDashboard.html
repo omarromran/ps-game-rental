@@ -12,150 +12,159 @@
 
 <body>
 
-<div class="dashboard-wrapper">
+    <div class="dashboard-wrapper">
 
-    <!-- SIDEBAR -->
-    <aside class="sidebar">
-        <h2>GAMER</h2>
-        <nav>
-            <button onclick="showSection('dashboard', this)" class="active">
-                <i class="fas fa-home"></i> Dashboard
+
+        <aside class="sidebar">
+            <h2>GAMER</h2>
+            <nav>
+                <button onclick="showSection('dashboard', this)" class="active">
+                    <i class="fas fa-home"></i> Dashboard
+                </button>
+                <button onclick="showSection('my-rentals', this)">
+                    <i class="fas fa-gamepad"></i> My Rentals
+                </button>
+                <button onclick="showSection('wishlist', this)">
+                    <i class="fas fa-heart"></i> Wishlist
+                </button>
+                <button onclick="showSection('profile', this)">
+                    <i class="fas fa-user"></i> Profile
+                </button>
+            </nav>
+
+            <button class="logout" onclick="resetDatabase()"
+                style="margin-bottom: 10px; background-color: #ff9800; border-color: #ff9800; color: white;">
+                <i class="fas fa-sync-alt"></i> Reset Data
             </button>
-            <button onclick="showSection('my-rentals', this)">
-                <i class="fas fa-gamepad"></i> My Rentals
+
+
+
+
+            <button class="logout" onclick="logout()">
+                <i class="fas fa-sign-out-alt"></i> Logout
             </button>
-            <button onclick="showSection('wishlist', this)">
-                <i class="fas fa-heart"></i> Wishlist
-            </button>
-            <button onclick="showSection('profile', this)">
-                <i class="fas fa-user"></i> Profile
-            </button>
-        </nav>
-        <button class="logout" onclick="logout()">
-            <i class="fas fa-sign-out-alt"></i> Logout
-        </button>
-    </aside>
+        </aside>
 
-    <!-- MAIN -->
-    <main>
 
-        <!-- DASHBOARD -->
-        <section id="dashboard">
-            <!-- Rendered by JS -->
-            <div class="card-container" id="dashboard-cards"></div>
+        <main>
 
-            <h2 style="margin-top: 30px;">Recent Activity</h2>
-            <!-- Rendered by JS -->
-            <table id="activity-table"></table>
-        </section>
 
-        <!-- MY RENTALS -->
-        <section id="my-rentals" style="display:none;">
-            <h2>My Rentals</h2>
+            <section id="dashboard">
+                <!-- Rendered by JS -->
+                <div class="card-container" id="dashboard-cards"></div>
 
-            <p>Active</p>
-            <div class="games-grid" id="active-rentals"></div>
+                <h2 style="margin-top: 30px;">Recent Activity</h2>
+                <!-- Rendered by JS -->
+                <table id="activity-table">
+                    <tbody id="activity-body"></tbody>
+                </table>
+            </section>
 
-            
 
-            <p>Completed</p>
-            <div class="games-grid" id="completed-rentals"></div>
-        </section>
+            <section id="my-rentals">
+                <h2>My Rentals</h2>
 
-        <!-- WISHLIST -->
-        <section id="wishlist" style="display:none;">
-            <h2>Wishlist</h2>
-            <!-- Rendered by JS -->
-            <div class="wishlist-grid" id="wishlist-container"></div>
-        </section>
+                <p>Active</p>
+                <div class="games-grid" id="active-rentals"></div>
 
-        <!-- PROFILE -->
-        <section id="profile" style="display:none;">
-            <h2 class="page-title">Profile</h2>
-            <div class="profile-container compact">
 
-                <div class="profile-top">
-                    <div class="profile-avatar" id="avatar"></div>
-                    <div class="profile-info">
-                        <h3 id="nameText"></h3>
-                        <input id="nameInput" type="text" style="display:none;">
-                        <p id="emailText"></p>
-                        <input id="emailInput" type="email" style="display:none;">
+
+                <p>Completed</p>
+                <div class="games-grid" id="completed-rentals"></div>
+            </section>
+
+
+            <section id="wishlist">
+                <h2>Wishlist</h2>
+                <!-- Rendered by JS -->
+                <div class="wishlist-grid" id="wishlist-container"></div>
+            </section>
+
+
+            <section id="profile">
+                <h2 class="page-title">Profile</h2>
+                <div class="profile-container compact">
+
+                    <div class="profile-top">
+                        <div class="profile-avatar" id="avatar"></div>
+                        <div class="profile-info">
+                            <h3 id="nameText"></h3>
+                            <input id="nameInput" type="text" style="display:none;">
+                            <p id="emailText"></p>
+                            <input id="emailInput" type="email" style="display:none;">
+                        </div>
                     </div>
-                </div>
 
-                <div class="profile-item">
-                    <span class="profile-key">Username</span>
-                    <span class="profile-val" id="usernameText"></span>
-                    <input id="usernameInput" type="text" style="display:none;">
-                </div>
+                    <div class="profile-item">
+                        <span class="profile-key">Username</span>
+                        <span class="profile-val" id="usernameText"></span>
+                        <input id="usernameInput" type="text" style="display:none;">
+                    </div>
 
-                <div class="profile-item">
-                    <span class="profile-key">Phone</span>
-                    <span class="profile-val" id="phoneText"></span>
-                    <input id="phoneInput" type="text" style="display:none;">
-                </div>
+                    <div class="profile-item">
+                        <span class="profile-key">Phone</span>
+                        <span class="profile-val" id="phoneText"></span>
+                        <input id="phoneInput" type="text" style="display:none;">
+                    </div>
 
-                <div class="profile-item">
-                    <span class="profile-key">Member Since</span>
-                    <span class="profile-val" id="memberSince">-</span>
-                </div>
+                    <div class="profile-item">
+                        <span class="profile-key">Member Since</span>
+                        <span class="profile-val" id="memberSince">-</span>
+                    </div>
 
-                <div class="profile-item">
-                    <span class="profile-key">Total Rentals</span>
-                    <span class="profile-val" id="totalRentals">0 Games</span>
-                </div>
+                    <div class="profile-item">
+                        <span class="profile-key">Total Rentals</span>
+                        <span class="profile-val" id="totalRentals">0 Games</span>
+                    </div>
 
-                <div style="margin-top:15px;">
-                    <button onclick="editProfile()" id="editBtn">Edit Profile</button>
-                    <button onclick="saveProfile()" id="saveBtn" style="display:none;">Save</button>
-                </div>
+                    <div style="margin-top:15px;">
+                        <button onclick="editProfile()" id="editBtn">Edit Profile</button>
+                        <button onclick="saveProfile()" id="saveBtn" style="display:none;">Save</button>
+                    </div>
 
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+
+
+    <div id="review-modal" class="modal-overlay" style="display:none;">
+        <div class="modal-box">
+            <span class="close" onclick="closeModal('review-modal')">&times;</span>
+            <h3>Leave Review</h3>
+            <p id="review-game-name"></p>
+            <div>
+                <div class="star-rating" id="star-rating">
+                    <span onclick="setRating(1)">★</span>
+                    <span onclick="setRating(2)">★</span>
+                    <span onclick="setRating(3)">★</span>
+                    <span onclick="setRating(4)">★</span>
+                    <span onclick="setRating(5)">★</span>
+                </div>
+                <input type="hidden" id="rating" value="">
+                <textarea id="comment" placeholder="Write comment"></textarea>
+                <button type="button" onclick="submitReview()">Submit</button>
             </div>
-        </section>
-
-    </main>
-</div>
-
-
-<!-- MODALS -->
-
-<!-- REVIEW MODAL -->
-<div id="review-modal" class="modal-overlay" style="display:none;">
-    <div class="modal-box">
-        <span class="close" onclick="closeModal('review-modal')">&times;</span>
-        <h3>Leave Review</h3>
-        <p id="review-game-name"></p>
-        <div>
-           <div class="star-rating" id="star-rating">
-    <span onclick="setRating(1)">★</span>
-    <span onclick="setRating(2)">★</span>
-    <span onclick="setRating(3)">★</span>
-    <span onclick="setRating(4)">★</span>
-    <span onclick="setRating(5)">★</span>
-</div>
-<input type="hidden" id="rating" value="">
-            <textarea id="comment" placeholder="Write comment"></textarea>
-            <button onclick="submitReview()">Submit</button>
         </div>
     </div>
-</div>
 
-<!-- RENT MODAL -->
-<div id="rent-modal" class="modal-overlay" style="display:none;">
-    <div class="modal-box">
-        <span class="close" onclick="closeModal('rent-modal')">&times;</span>
-        <h3 id="rent-game-title"></h3>
-        <input type="date" id="rent-start">
-        <input type="date" id="rent-end">
-        <button onclick="submitRent()">Confirm</button>
+
+    <div id="rent-modal" class="modal-overlay" style="display:none;">
+        <div class="modal-box">
+            <span class="close" onclick="closeModal('rent-modal')">&times;</span>
+            <h3 id="rent-game-title"></h3>
+            <input type="date" id="rent-start">
+            <input type="date" id="rent-end">
+            <button onclick="submitRent()">Confirm</button>
+        </div>
     </div>
-</div>
 
-<div class="toast" id="toast"></div>
+    <div class="toast" id="toast"></div>
 
-<button onclick="resetDatabase()" class="reset-btn">
-    🔄 Reset Data
-</button>
+
 </body>
+
+
 </html>

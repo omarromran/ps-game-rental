@@ -1,18 +1,20 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
 
 :root {
-    --primary-color: #182938;
-    --secondary-color: #5c748e;
-    --dark-color: #121f29;
-    --white-color: #ffffff;
-    --input-background: rgba(28, 38, 51, 0.9);
-    --shadow: 0 10px 25px rgba(18, 31, 41, 0.6);
-    --btn-hover: #3e556e;
-    --accent-red: #c0392b;
-    --accent-red-hover: #e74c3c;
+    --primary-color: #00439c;
+    --secondary-color: #1a1a1a;
+    --dark-color: #0a0a0a;
+    --black: #000000;
+    --white: #ffffff;
+
+    --input-background: rgba(17, 17, 17, 0.92);
+    --shadow: 0 10px 25px rgba(0, 67, 156, 0.25);
+
+    --text-white: #ffffff;
+    --text-muted: #aaa;
+
     --success-color: #2ecc71;
-    --success-hover: #27ae60;
-    --warning-color: #f39c12;
+    --danger-color: #e74c3c;
 }
 
 * {
@@ -23,102 +25,135 @@
 
 body {
     font-family: 'Poppins', sans-serif;
-    background-color: var(--dark-color);
-    color: var(--white-color);
+    background: radial-gradient(circle at 50% 0%, #001f4d 0%, #0a0a0a 100%);
     min-height: 100vh;
     display: flex;
     justify-content: center;
     align-items: flex-start;
-    padding: 3rem 1rem;
+    padding: 4rem 1rem;
+    color: var(--text-white);
 }
 
 .table-container {
     width: 100%;
-    max-width: 1000px;
-    background-color: var(--input-background);
+    max-width: 1100px;
     padding: 2.5rem;
     border-radius: 12px;
+    background-color: var(--input-background);
     box-shadow: var(--shadow);
 }
 
 h2 {
-    margin-bottom: 1.5rem;
-    color: var(--white-color);
+    text-align: left;
+    margin-bottom: 2rem;
     font-weight: 600;
+    color: var(--primary-color);
+    font-size: 1.8rem;
+    border-left: 5px solid var(--primary-color);
+    padding-left: 15px;
 }
 
 .admin-table {
     width: 100%;
     border-collapse: collapse;
-    background-color: var(--primary-color);
-    color: var(--white-color);
-    border-radius: 10px;
-    overflow: hidden;
-    box-shadow: var(--shadow);
-}
-
-.admin-table th, .admin-table td {
-    padding: 15px 20px;
-    text-align: left;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    margin-top: 1rem;
+    font-size: 0.95rem;
 }
 
 .admin-table th {
-    background-color: var(--dark-color);
-    color: var(--secondary-color);
-    text-transform: uppercase;
-    font-size: 0.85rem;
-    letter-spacing: 1px;
+    background-color: rgba(0, 67, 156, 0.1);
+    color: var(--primary-color);
+    text-align: left;
+    padding: 15px;
     font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-size: 0.85rem;
+    border-bottom: 2px solid var(--primary-color);
+}
+
+.admin-table td {
+    padding: 15px;
+    border-bottom: 1px solid #333;
+    color: var(--text-white);
 }
 
 .admin-table tbody tr {
-    transition: background-color 0.3s ease;
+    transition: background 0.3s;
 }
 
 .admin-table tbody tr:hover {
-    background-color: rgba(255, 255, 255, 0.02);
+    background-color: rgba(255, 255, 255, 0.03);
 }
 
 .status-badge {
-    background-color: var(--warning-color);
-    color: var(--white-color);
-    padding: 6px 12px;
-    border-radius: 6px;
-    font-size: 0.8rem;
-    font-weight: 500;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    background: rgba(255, 152, 0, 0.2);
+    color: #ff9800;
+    border: 1px solid #ff9800;
 }
 
-/* Button Styles */
-.btn-check, .btn-trash {
-    font-family: 'Poppins', sans-serif;
-    color: var(--white-color);
+.btn-check,
+.btn-trash {
+    padding: 8px 16px;
+    border-radius: 8px;
     border: none;
-    padding: 8px 15px;
-    cursor: pointer;
-    border-radius: 6px;
-    font-size: 0.85rem;
+    font-family: 'Poppins', sans-serif;
     font-weight: 500;
-    transition: all 0.3s ease;
+    cursor: pointer;
+    transition: 0.3s;
+    font-size: 0.85rem;
 }
 
-.btn-check { 
-    background-color: var(--success-color); 
-    margin-right: 8px; 
+.btn-check {
+    background: var(--success-color);
+    color: white;
+    margin-right: 8px;
 }
 
 .btn-check:hover {
-    background-color: var(--success-hover);
-    transform: translateY(-1px);
+    background: #27ae60;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(46, 204, 113, 0.3);
 }
 
-.btn-trash { 
-    background-color: var(--accent-red); 
+.btn-trash {
+    background: var(--danger-color);
+    color: white;
 }
 
 .btn-trash:hover {
-    background-color: var(--accent-red-hover);
-    transform: translateY(-1px);
+    background: #c0392b;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(231, 76, 60, 0.3);
+}
+
+@media (max-width: 768px) {
+    .table-container {
+        padding: 1.5rem;
+    }
+
+    .admin-table thead {
+        display: none;
+    }
+
+    .admin-table td {
+        display: block;
+        text-align: right;
+        padding-left: 50%;
+        position: relative;
+    }
+
+    .admin-table td::before {
+        content: attr(data-label);
+        position: absolute;
+        left: 15px;
+        width: 45%;
+        text-align: left;
+        font-weight: bold;
+        color: var(--primary-color);
+    }
 }

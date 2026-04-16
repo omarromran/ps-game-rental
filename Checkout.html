@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PSHUB | Checkout</title>
     <link rel="stylesheet" href="Checkout.css">
 </head>
+
 <body>
 
     <header class="navbar">
@@ -21,19 +23,19 @@
     <main class="checkout-container">
         <div class="checkout-main">
             <button class="back-link" onclick="window.location.href='Browse_Games.html'">← Back to Store</button>
-            
+
             <section class="order-review">
                 <h2>Review Your Rental</h2>
                 <div id="checkout-list" class="horizontal-list">
-                    </div>
+                </div>
             </section>
 
             <section class="delivery-form">
                 <h2>Delivery Information</h2>
                 <div class="form-group">
-                <label for="phone">Phone Number (Egyptian)</label>
-                <input type="tel" id="phone" placeholder="01xxxxxxxxx" maxlength="11">
-                 </div>
+                    <label for="phone">Phone Number (Egyptian)</label>
+                    <input type="tel" id="phone" placeholder="01xxxxxxxxx" maxlength="11">
+                </div>
                 <div class="form-group">
                     <label for="address">Full Shipping Address</label>
                     <input type="text" id="address" placeholder="Street name, Building, Apartment...">
@@ -43,7 +45,7 @@
 
         <aside class="checkout-summary">
             <h3>Order Summary</h3>
-            
+
             <div class="payment-section">
                 <p class="section-label">Payment Method</p>
                 <label class="payment-option">
@@ -56,11 +58,11 @@
             <div class="price-breakdown">
                 <div class="price-row">
                     <span>Subtotal</span>
-                    <span>$<span id="subtotal">0.00</span></span>
+                    <span><span id="subtotal">0.00</span> EGP</span>
                 </div>
                 <div class="price-row total-row">
                     <span>Total</span>
-                    <span>$<span id="final-total">0.00</span></span>
+                    <span><span id="final-total">0.00</span> EGP</span>
                 </div>
             </div>
 
@@ -69,18 +71,19 @@
     </main>
 
     <div id="success-overlay" class="success-overlay">
-    <div class="success-content">
-        <div class="checkmark-circle">
-            <svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
-                <circle class="checkmark-circle-bg" cx="26" cy="26" r="25" fill="none"/>
-                <path class="checkmark-check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
-            </svg>
+        <div class="success-content">
+            <div class="checkmark-circle">
+                <svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
+                    <circle class="checkmark-circle-bg" cx="26" cy="26" r="25" fill="none" />
+                    <path class="checkmark-check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8" />
+                </svg>
+            </div>
+            <h1>Order Confirmed!</h1>
+            <p>Alex, your rental is ready.</p>
         </div>
-        <h1>Order Confirmed!</h1>
-        <p>Alex, your rental is ready.</p>
     </div>
-</div>
 
     <script src="Checkout.js"></script>
 </body>
+
 </html>

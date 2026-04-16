@@ -1,22 +1,23 @@
 let users = [], games = [], chartObj;
-const save = (key, data) => localStorage.setItem(key, JSON.stringify(data));
+const save = (key, data) => localStorage.setItem(key, JSON.stringify(data));//b save f local storage 
 
-// --- NAVIGATION & UI ---
+//navigate b el ID 
 const navigateToSection = (id, btn) => {
     document.querySelectorAll("main > section").forEach(s => s.style.display = "none");
     if (document.getElementById(id)) document.getElementById(id).style.display = "block";
     document.querySelectorAll(".sidebar nav button").forEach(b => b.classList.remove("active"));
     if (btn) btn.classList.add("active");
 };
-const logout = () => confirm("Log out?") && (window.location.href = "login.html");
-const handleDataReset = () => confirm("Reset data?") && (localStorage.clear(), init());
 
-// --- INITIALIZATION ---
+const logout = () => confirm("Log out?") && (window.location.href = "login.html");
+
+const handleDataReset = () => confirm("Reset data?") && (localStorage.clear(), init());//reset all data 
+
 const loadData = async (key) => {
-    const stored = localStorage.getItem(key);
-    if (stored) return JSON.parse(stored);
-    const data = await (await fetch(`${key}.json`)).json();
-    save(key, data[key] || []);
+    const stored = localStorage.getItem(key);//byload mn local storage
+    if (stored) return JSON.parse(stored);//lw data f local storage by3ml parse 3ashan y7otaha f js array 
+    const data = await (await fetch(`${key}.json`)).json();//lw mesh mawgooda b fetch mn el json files 
+    save(key, data[key] || []);//b save f local storage newly fetched data 
     return data[key] || [];
 };
 
@@ -35,7 +36,6 @@ const updateUI = () => {
     if (typeof Chart !== 'undefined') renderChart();
 };
 
-// --- DASHBOARD STATISTICS ---
 const updateDashboard = () => {
     const cont = document.getElementById("dashboard-cards");
     if (!cont) return;
@@ -65,7 +65,6 @@ const renderChart = () => {
     });
 };
 
-// --- USER MANAGEMENT ---
 const renderUsers = () => {
     const filter = document.getElementById("user-type-filter")?.value || "all";
     const tbl = document.getElementById("users-table");
@@ -86,7 +85,6 @@ const editUser = (i) => {
 };
 const delUser = (i) => confirm("Delete user?") && (users.splice(i, 1), save("users", users), updateUI());
 
-// --- GAME MANAGEMENT ---
 const getVendor = (g) => g.vendor || (users.find(u => +u.userID === +g.vendorID)?.name || "System");
 
 const renderGames = () => {
@@ -108,11 +106,10 @@ const editGame = (id) => {
 };
 const delGame = (id) => confirm("Delete game?") && (games = games.filter(g => g.gameID !== id), save("games", games), updateUI());
 
-// --- FORMS ---
 const handleAdmin = (e) => {
     e.preventDefault();
     const d = Object.fromEntries(new FormData(e.target));
-    if (d.password.length < 6 || d.password !== d.confirmPassword) return alert("Password issue!");
+    if (d.password.length < 6 || d.password !== d.confirmPassword) return alert("Password too short or not matching!");
     if (users.some(u => u.username === d.username || u.email === d.email)) return alert("User exists!");
     users.push({ userID: Math.max(0, ...users.map(u => +u.userID || 0)) + 1, ...d, type: "admin", status: "active" });
     save("users", users); updateUI(); e.target.reset(); alert("Admin added!");
@@ -129,7 +126,6 @@ const handleGame = (e) => {
     save("games", games); updateUI(); e.target.reset(); closeAddGameModal();
 };
 
-// --- BOOTSTRAP ---
 document.addEventListener("DOMContentLoaded", () => {
     init();
     navigateToSection('dashboard', document.querySelector(".sidebar nav button"));
