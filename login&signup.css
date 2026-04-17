@@ -1,7 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
 
 :root {
-  /* ================= GAMING BLUE THEME ================= */
   --primary-color: #00439c;
   --secondary-color: #1a1a1a;
   --dark-color: #0a0a0a;
@@ -15,14 +14,12 @@
   --text-muted: #aaa;
 }
 
-/* ================= RESET ================= */
 * {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
 }
 
-/* ================= BODY ================= */
 body {
   font-family: 'Poppins', sans-serif;
   background: radial-gradient(circle at 50% 0%, #001f4d 0%, #0a0a0a 100%);
@@ -32,7 +29,6 @@ body {
   color: var(--text-white);
 }
 
-/* ================= WRAPPER ================= */
 .wrapper {
   width: 100%;
   max-width: 420px;
@@ -43,7 +39,6 @@ body {
   text-align: center;
 }
 
-/* TITLE */
 h1 {
   text-align: center;
   margin-bottom: 2rem;
@@ -51,20 +46,18 @@ h1 {
   color: var(--primary-color);
 }
 
-/* ================= INPUTS ================= */
 .input-group {
   position: relative;
   margin-bottom: 1.2rem;
 }
 
-.input-group img {
+.input-group i {
   position: absolute;
   top: 50%;
   left: 12px;
   transform: translateY(-50%);
-  width: 20px;
-  height: 20px;
-  filter: brightness(0) invert(1);
+  font-size: 16px;
+  color: var(--white);
   opacity: 0.7;
   pointer-events: none;
 }
@@ -80,7 +73,6 @@ h1 {
   outline: none;
 }
 
-/* ================= ACCOUNT TYPE ================= */
 .account-type {
   display: flex;
   justify-content: space-around;
@@ -102,7 +94,6 @@ h1 {
   cursor: pointer;
 }
 
-/* ================= BUTTON ================= */
 button {
   width: 100%;
   padding: 14px;
@@ -122,7 +113,6 @@ button:hover {
   transform: translateY(-2px);
 }
 
-/* ================= LINKS ================= */
 form p {
   margin-top: 1rem;
   font-size: 0.9rem;
@@ -139,7 +129,6 @@ p a:hover {
   text-decoration: underline;
 }
 
-/* ================= RESPONSIVE ================= */
 @media (max-width: 450px) {
   .wrapper {
     padding: 2rem 1.5rem;
