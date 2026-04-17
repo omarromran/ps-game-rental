@@ -6,25 +6,29 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Log In</title>
     <link rel="stylesheet" href="login&signup.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="icon" href="photos/images.png">
 </head>
 
 <body>
+
     <div class="wrapper">
         <h1>Log In</h1>
         <form id="login-form">
+
             <div class="input-group">
-                <img src="photos/person_icon.svg" alt="User Icon">
+                <i class="fa-solid fa-user"></i>
                 <input type="text" name="username" id="username-input" placeholder="Username" required>
             </div>
 
             <div class="input-group">
-                <img src="photos/lock_icon.svg" alt="Password Icon">
+                <i class="fa-solid fa-lock"></i>
                 <input type="password" name="password" id="password-input" placeholder="Password" required>
             </div>
 
             <button type="submit">Log In</button>
             <p>Don't have an account? <a href="signup.html">Sign Up</a></p>
+
         </form>
     </div>
 
@@ -43,7 +47,6 @@
                     users = JSON.parse(storedUsers);
                 } else {
                     const response = await fetch("users.json");
-                    if (!response.ok) throw new Error("Could not load users.json");
 
                     const data = await response.json();
                     users = data.users || [];
@@ -57,7 +60,12 @@
                 if (loginUser) {
 
                     if (loginUser.status && loginUser.status.toLowerCase() === "pending") {
-                        alert("Your account is still pending approval.");
+                        alert("Your account is pending approval.");
+                        return;
+                    }
+
+                    if (loginUser.status && loginUser.status.toLowerCase() === "rejected") {
+                        alert("Your account application has been rejected.");
                         return;
                     }
 
@@ -74,7 +82,7 @@
                             window.location.href = "storedashboard.html";
                             break;
                         case "customer":
-                            window.location.href = "Browse_Games.html";
+                            window.location.href = "BrowseGames.html";
                             break;
                         default:
                             alert("User type not recognized.");
