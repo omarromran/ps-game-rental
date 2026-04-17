@@ -69,10 +69,20 @@ function processOrder() {
     cart.forEach(cartItem => {
         const itemIdx = inventory.findIndex(invItem => invItem.gameID === cartItem.gameID);
         if (itemIdx !== -1) {
-            inventory[itemIdx].status = 'rented';
-            inventory[itemIdx].customerID = "Alex Walker";
-            inventory[itemIdx].customerPhone = phone;
-            inventory[itemIdx].customerAddress = address;
+            const currentUser = JSON.parse(localStorage.getItem("currentUser"));
+
+            inventory[itemIdx].status = "rented";/////////////////////////added//////
+
+inventory[itemIdx].rental = {
+    status: "active",
+    start: new Date().toLocaleDateString(),
+    end: "—",
+    owner: inventory[itemIdx].storeID
+};
+
+inventory[itemIdx].customerID = currentUser.userID;
+inventory[itemIdx].customerPhone = phone;
+inventory[itemIdx].customerAddress = address;
         }
     });
 
