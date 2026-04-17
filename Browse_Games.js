@@ -23,7 +23,23 @@ async function loadDB() {
     applyFilters();
 }
 
-window.onload = loadDB;
+window.onload = function() {
+    loadCurrentUser();
+    loadDB();
+};
+
+function loadCurrentUser() {
+    const userLink = document.getElementById('user-name-link');
+    if (!userLink) return;
+    const stored = localStorage.getItem('currentUser');
+    if (stored) {
+        const user = JSON.parse(stored);
+        userLink.textContent = user.name || user.username || 'My Account';
+    } else {
+        userLink.textContent = 'Guest';
+        userLink.removeAttribute('href');
+    }
+}
 
 function applyFilters() {
     const search = document.getElementById('mainSearch').value.toLowerCase();
@@ -154,5 +170,4 @@ function checkout() {
 document.getElementById('mainSearch').addEventListener('input', applyFilters);
 document.getElementById('minPrice').addEventListener('input', applyFilters);
 document.getElementById('maxPrice').addEventListener('input', applyFilters);
-
-loadDB();
+
