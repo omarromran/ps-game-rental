@@ -1,23 +1,20 @@
 let users = [], games = [], chartObj;
-const save = (key, data) => localStorage.setItem(key, JSON.stringify(data));//b save f local storage 
+const save = (key, data) => localStorage.setItem(key, JSON.stringify(data));
 
-//navigate b el ID 
 const navigateToSection = (id, btn) => {
     document.querySelectorAll("main > section").forEach(s => s.style.display = "none");
     if (document.getElementById(id)) document.getElementById(id).style.display = "block";
     document.querySelectorAll(".sidebar nav button").forEach(b => b.classList.remove("active"));
     if (btn) btn.classList.add("active");
 };
-
 const logout = () => confirm("Log out?") && (window.location.href = "login.html");
-
-const handleDataReset = () => confirm("Reset data?") && (localStorage.clear(), init());//reset all data 
+const handleDataReset = () => confirm("Reset data?") && (localStorage.clear(), init());
 
 const loadData = async (key) => {
-    const stored = localStorage.getItem(key);//byload mn local storage
-    if (stored) return JSON.parse(stored);//lw data f local storage by3ml parse 3ashan y7otaha f js array 
-    const data = await (await fetch(`${key}.json`)).json();//lw mesh mawgooda b fetch mn el json files 
-    save(key, data[key] || []);//b save f local storage newly fetched data 
+    const stored = localStorage.getItem(key);
+    if (stored) return JSON.parse(stored);
+    const data = await (await fetch(`${key}.json`)).json();
+    save(key, data[key] || []);
     return data[key] || [];
 };
 
@@ -44,7 +41,7 @@ const updateDashboard = () => {
         { t: "Total Users", v: users.length },
         { t: "Pending Users", v: users.filter(u => u.status === "pending").length, l: "approveLenders.html" },
         { t: "Total Games", v: games.length },
-        { t: "Total Price Value", v: totalVal + " EGP" }
+        { t: "Total Price Value", v: totalVal.toFixed(2) + " EGP" }
     ];
     cont.innerHTML = stats.map(s => `<div class="card" ${s.l ? `onclick="window.location.href='${s.l}'" style="cursor:pointer"` : ""}><h3>${s.t}</h3><p>${s.v}</p></div>`).join('');
 };
@@ -109,7 +106,7 @@ const delGame = (id) => confirm("Delete game?") && (games = games.filter(g => g.
 const handleAdmin = (e) => {
     e.preventDefault();
     const d = Object.fromEntries(new FormData(e.target));
-    if (d.password.length < 6 || d.password !== d.confirmPassword) return alert("Password too short or not matching!");
+    if (d.password.length < 6 || d.password !== d.confirmPassword) return alert("Password issue!");
     if (users.some(u => u.username === d.username || u.email === d.email)) return alert("User exists!");
     users.push({ userID: Math.max(0, ...users.map(u => +u.userID || 0)) + 1, ...d, type: "admin", status: "active" });
     save("users", users); updateUI(); e.target.reset(); alert("Admin added!");
@@ -125,6 +122,48 @@ const handleGame = (e) => {
     games.push({ gameID: String(Math.max(0, ...games.map(g => +g.gameID || 0)) + 1).padStart(3, '0'), ...d, Availability: d.availability || "buy", vendorID: vu?.userID || null, vendor: vu ? undefined : d.gamevendor, price: +d.price });
     save("games", games); updateUI(); e.target.reset(); closeAddGameModal();
 };
+
+const setupModeration = () => showModTab('mod-games');
+
+function showModTab(id) {
+    document.querySelectorAll('.tab-panel').forEach(p => p.style.display = 'none');
+    document.getElementById(id).style.display = 'block';
+    if (id === 'mod-games') {
+        const flagged = JSON.parse(localStorage.getItem('pshub_inventory') || '[]').filter(g => g.flagged);
+        document.getElementById('mod-games-table').innerHTML = flagged.length ? `<thead><th>G-ID</th><th>Title</th><th>Actions</th></thead>` + flagged.map(g => `<tr><td>${g.gameID}</td><td>${g.title}</td><td style="display:flex;gap:8px"><button class="action-btn" onclick="handleMod('game','${g.gameID}','keep')">✅</button><button class="action-btn" onclick="handleMod('game','${g.gameID}','del')" style="background:#e74c3c">🗑️</button></td></tr>`).join('') : '<p style="padding:10px">No reports</p>';
+    } else if (id === 'mod-reviews') {
+        let revs = [];
+        for (let i = 0; i < localStorage.length; i++) {
+            let k = localStorage.key(i);
+            if (k.startsWith('reviews_')) JSON.parse(localStorage.getItem(k)).forEach((r, idx) => r.flagged && revs.push({ ...r, gID: k.split('_')[1], idx }));
+        }
+        document.getElementById('mod-reviews').innerHTML = revs.length ? revs.map(r => `<div style="background:rgba(255,255,255,0.05);padding:15px;margin:10px 0;border-radius:8px;border-left:4px solid var(--primary-color)"><strong>${r.reviewer}</strong>: ${r.comment} <div style="margin-top:10px"><button class="action-btn" onclick="handleMod('rev','${r.gID}','keep',${r.idx})">Keep</button><button class="action-btn" onclick="handleMod('rev','${r.gID}','del',${r.idx})" style="background:#e74c3c">Delete</button></div></div>`).join('') : '<p style="padding:10px">No reported reviews</p>';
+    } else if (id === 'mod-lenders') {
+        const pending = users.filter(u => u.type === 'business' && u.status === 'pending');
+        document.getElementById('mod-lenders-table').innerHTML = pending.length ? `<thead><th>Store</th><th>Actions</th></thead>` + pending.map(u => `<tr><td>${u.username}</td><td style="display:flex;gap:8px"><button class="action-btn" onclick="handleMod('len',${u.userID},'ok')">Approve</button><button class="action-btn" onclick="handleMod('len',${u.userID},'no')" style="background:#e74c3c">Reject</button></td></tr>`).join('') : '<p style="padding:10px">No pending lenders</p>';
+    }
+}
+
+function handleMod(type, id, act, idx) {
+    if (type === 'game') {
+        let inv = JSON.parse(localStorage.getItem('pshub_inventory'));
+        let i = inv.findIndex(g => g.gameID === id);
+        act === 'keep' ? delete inv[i].flagged : inv.splice(i, 1);
+        localStorage.setItem('pshub_inventory', JSON.stringify(inv));
+        showModTab('mod-games');
+    } else if (type === 'rev') {
+        let k = 'reviews_' + id, r = JSON.parse(localStorage.getItem(k));
+        act === 'keep' ? delete r[idx].flagged : r.splice(idx, 1);
+        localStorage.setItem(k, JSON.stringify(r));
+        showModTab('mod-reviews');
+    } else if (type === 'len') {
+        let i = users.findIndex(u => u.userID === id);
+        users[i].status = (act === 'ok' ? 'active' : 'rejected');
+        save('users', users);
+        showModTab('mod-lenders');
+    }
+    updateUI();
+}
 
 document.addEventListener("DOMContentLoaded", () => {
     init();

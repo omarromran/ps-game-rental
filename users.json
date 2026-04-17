@@ -186,6 +186,33 @@
             "password": "pshub123",
             "type": "business",
             "status": "accepted"
+        },
+        {
+            "userID": 21,
+            "name": "John Doe",
+            "username": "Game Master",
+            "email": "john@gmail.com",
+            "password": "password123",
+            "type": "business",
+            "status": "pending"
+        },
+        {
+            "userID": 22,
+            "name": "Jane Smith",
+            "username": "Digital World",
+            "email": "jane@gmail.com",
+            "password": "password456",
+            "type": "business",
+            "status": "pending"
+        },
+        {
+            "userID": 23,
+            "name": "Ibrahim Ahmed",
+            "username": "Ibrahim Store",
+            "email": "ibrahim@gmail.com",
+            "password": "password789",
+            "type": "business",
+            "status": "pending"
         }
     ]
 }
