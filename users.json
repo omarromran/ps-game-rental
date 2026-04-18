@@ -11,7 +11,7 @@
         {
             "userID": 2,
             "name": "ahmed hisham",
-            "username": "etsh store",
+            "username": "etsh_store",
             "email": "ahmed@gmail.com",
             "password": "ahmed123",
             "type": "business",
@@ -20,7 +20,7 @@
         {
             "userID": 3,
             "name": "zeina ahmed",
-            "username": "zeina store",
+            "username": "zeina_store",
             "email": "zeina@gmail.com",
             "password": "zeina123",
             "type": "business",
@@ -44,7 +44,7 @@
         {
             "userID": 5,
             "name": "youssef gamal",
-            "username": "gamers hub",
+            "username": "gamers_hub",
             "email": "hub@gmail.com",
             "password": "hub123",
             "type": "business",
@@ -53,7 +53,7 @@
         {
             "userID": 6,
             "name": "omar tarek",
-            "username": "ps pro",
+            "username": "ps_pro",
             "email": "pspro@gmail.com",
             "password": "pro123",
             "type": "business",
@@ -62,7 +62,7 @@
         {
             "userID": 7,
             "name": "salma nasr",
-            "username": "egypt games",
+            "username": "egypt_games",
             "email": "egygames@gmail.com",
             "password": "egy123",
             "type": "business",
@@ -86,7 +86,7 @@
         },
         {
             "userID": 9,
-            "name": "omar h",
+            "name": "omar_h",
             "username": "omarh",
             "email": "omarh@gmail.com",
             "password": "omar123",
@@ -177,7 +177,7 @@
         {
             "userID": 15,
             "name": "mohamed adel",
-            "username": "game zone",
+            "username": "game_zone",
             "email": "gamezone@gmail.com",
             "password": "zone123",
             "type": "business",
@@ -186,7 +186,7 @@
         {
             "userID": 16,
             "name": "sara ibrahim",
-            "username": "next level",
+            "username": "next_level",
             "email": "nextlevel@gmail.com",
             "password": "next123",
             "type": "business",
@@ -195,7 +195,7 @@
         {
             "userID": 17,
             "name": "karim said",
-            "username": "pro gamers",
+            "username": "pro_gamers",
             "email": "progamers@gmail.com",
             "password": "pro123",
             "type": "business",
@@ -204,7 +204,7 @@
         {
             "userID": 18,
             "name": "nour khaled",
-            "username": "level up",
+            "username": "level_up",
             "email": "levelup@gmail.com",
             "password": "level123",
             "type": "business",
@@ -213,7 +213,7 @@
         {
             "userID": 19,
             "name": "hassan ali",
-            "username": "console world",
+            "username": "console_world",
             "email": "console@gmail.com",
             "password": "console123",
             "type": "business",
@@ -222,7 +222,7 @@
         {
             "userID": 20,
             "name": "mena wael",
-            "username": "playstation hub",
+            "username": "playstation_hub",
             "email": "pshub@gmail.com",
             "password": "pshub123",
             "type": "business",
@@ -231,7 +231,7 @@
         {
             "userID": 21,
             "name": "John Doe",
-            "username": "Game Master",
+            "username": "Game_Master",
             "email": "john@gmail.com",
             "password": "password123",
             "type": "business",
@@ -240,7 +240,7 @@
         {
             "userID": 22,
             "name": "Jane Smith",
-            "username": "Digital World",
+            "username": "Digital_World",
             "email": "jane@gmail.com",
             "password": "password456",
             "type": "business",
@@ -249,7 +249,7 @@
         {
             "userID": 23,
             "name": "Ibrahim Ahmed",
-            "username": "Ibrahim Store",
+            "username": "Ibrahim_Store",
             "email": "ibrahim@gmail.com",
             "password": "password789",
             "type": "business",

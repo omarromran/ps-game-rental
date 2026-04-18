@@ -60,8 +60,8 @@
     </div>
 
     <script>
-        document.getElementById("signup-form").addEventListener("submit", async function (event) {
-            event.preventDefault();
+        document.getElementById("signup-form").addEventListener("submit", async e => {
+            e.preventDefault();
 
             const name = document.getElementById("name-input").value.trim();
             const email = document.getElementById("email-input").value.trim();
@@ -70,60 +70,60 @@
             const confirmPassword = document.getElementById("confirm-password-input").value;
             const type = document.querySelector('input[name="account-type"]:checked').value;
 
+            if (!/^\S+$/.test(username)) {
+                alert("Username must not contain spaces.");
+                return;
+            }
+
+            if (!/^[^ ]+@[^ ]+\.[a-z]{2,3}$/.test(email)) {
+                alert("Please enter a valid email.");
+                return;
+            }
+
             if (password !== confirmPassword) {
                 alert("Passwords do not match!");
                 return;
             }
 
             try {
-                let users = [];
-                const storedUsers = localStorage.getItem("users");
+                let users = JSON.parse(localStorage.getItem("users")) || [];
 
-                if (storedUsers) {
-                    users = JSON.parse(storedUsers);
-                } else {
-                    const response = await fetch("users.json");
-                    const data = await response.json();
+                if (!users.length) {
+                    const res = await fetch("users.json");
+                    const data = await res.json();
                     users = data.users || [];
                     localStorage.setItem("users", JSON.stringify(users));
                 }
 
                 if (users.some(u => u.username === username)) {
-                    alert("Username already taken! Please choose another.");
+                    alert("Username already taken!");
                     return;
                 }
 
-                // FIX: Added email duplication check
                 if (users.some(u => u.email === email)) {
-                    alert("Email already registered! Please use another or log in.");
+                    alert("Email already registered!");
                     return;
                 }
 
-                const userID = users.length > 0 ? Math.max(...users.map(u => u.userID)) + 1 : 1;
-
-                let status = "active";
-                if (type === "business") {
-                    status = "pending";
-                }
+                const userID = users.length ? Math.max(...users.map(u => u.userID)) + 1 : 1;
 
                 const newUser = {
-                    userID: userID,
-                    name: name,
-                    username: username,
-                    email: email,
-                    password: password,
-                    type: type,
-                    status: status
+                    userID,
+                    name,
+                    username,
+                    email,
+                    password,
+                    type,
+                    status: type === "business" ? "pending" : "active"
                 };
 
                 users.push(newUser);
                 localStorage.setItem("users", JSON.stringify(users));
 
-                alert("Account created successfully! You can now log in.");
+                alert("Account created successfully!");
                 window.location.href = "login.html";
 
-            } catch (error) {
-                console.error("Error during signup:", error);
+            } catch {
                 alert("Error accessing user data. Make sure you are using Live Server.");
             }
         });
