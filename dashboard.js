@@ -49,10 +49,9 @@ const updateDashboard = () => {
 const renderChart = () => {
     const ctx = document.getElementById('gamesBarChart');
     if (!ctx) return;
-    const biz = users.filter(u => u.type === 'business');
-    const labels = [...biz.map(u => u.name), "System/Others"];
-    const data = biz.map(b => games.filter(g => +g.vendorID === +b.userID).length)
-        .concat(games.filter(g => !biz.some(b => +b.userID === +g.vendorID)).length);
+    const biz = users.filter(u => u.type === 'business' && u.status === 'accepted');
+    const labels = biz.map(u => u.name);
+    const data = biz.map(b => games.filter(g => +g.vendorID === +b.userID).length);
 
     if (chartObj) chartObj.destroy();
     chartObj = new Chart(ctx, {
