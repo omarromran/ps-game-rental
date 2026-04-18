@@ -27,7 +27,7 @@ function saveWishlist(list) {
     if (idx === -1) return;
     fresh[idx].wishlist = list;
     localStorage.setItem("users", JSON.stringify(fresh));
-    users = fresh; // keep memory in sync
+    users = fresh; 
 }
 
 
@@ -70,7 +70,7 @@ async function loadData() {
         g.review = g.review || null;
     });
 
-    // ✅ CREATE BACKUP (IMPORTANT)
+    
     if (!localStorage.getItem("backup_users")) {
         localStorage.setItem("backup_users", JSON.stringify(users));
     }
@@ -99,7 +99,7 @@ async function resetDatabase() {
         localStorage.setItem("users", JSON.stringify(freshUsers));
         localStorage.setItem("pshub_inventory", JSON.stringify(freshGames));
 
-        location.reload(); // IMPORTANT
+        location.reload(); 
     } catch (e) {
         alert("Reset failed: JSON files not loading");
         console.error(e);
@@ -146,7 +146,7 @@ function renderDashboard() {
     const user = getCurrentUser();
     if (!user) return;
 
-    // 1. Calculate Stats
+   
     const activeRentals = games.filter(g => 
         g.rental?.status === "active" && g.customerID === user.userID
     );
@@ -156,7 +156,7 @@ function renderDashboard() {
         wishlistIds.includes(g.gameID) && g.status === "available"
     );
 
-    // 2. Update Stats Cards
+   
     const cards = document.getElementById("dashboard-cards");
     if (cards) {
         cards.innerHTML = `
@@ -165,23 +165,23 @@ function renderDashboard() {
         `;
     }
 
-    // 3. Build Activity Table
+    
     const tbody = document.getElementById("activity-body");
     if (!tbody) return;
 
     let activityHtml = "";
 
-    // Add Rented Games to Activity
+    
     activeRentals.forEach(game => {
         activityHtml += `<tr><td>🎮 Rented: **${game.title}**</td></tr>`;
     });
 
-    // Add Wishlist Items to Activity
+    
     availableWishlist.forEach(game => {
         activityHtml += `<tr><td>❤️ Wishlist: **${game.title}**</td></tr>`;
     });
 
-    // Add Reviews (Check if user reviewed this specific game)
+    
     games.forEach(game => {
         if (game.review && game.customerID === user.userID) {
             activityHtml += `<tr><td>⭐ Reviewed: **${game.title}**</td></tr>`;
@@ -349,7 +349,7 @@ function returnGame(gameID) {
         game.status = "available";
         saveGamesToStorage();
 
-        // Remove from wishlist after returning
+        
         const updatedWishlist = getWishlist().filter(id => id !== gameID);
         saveWishlist(updatedWishlist);
 

@@ -131,40 +131,6 @@
 
 
 
-    <div id="review-modal" class="modal-overlay" style="display:none;">
-        <div class="modal-box">
-            <span class="close" onclick="closeModal('review-modal')">&times;</span>
-            <h3>Leave Review</h3>
-            <p id="review-game-name"></p>
-            <div>
-                <div class="star-rating" id="star-rating">
-                    <span onclick="setRating(1)">★</span>
-                    <span onclick="setRating(2)">★</span>
-                    <span onclick="setRating(3)">★</span>
-                    <span onclick="setRating(4)">★</span>
-                    <span onclick="setRating(5)">★</span>
-                </div>
-                <input type="hidden" id="rating" value="">
-                <textarea id="comment" placeholder="Write comment"></textarea>
-                <button type="button" onclick="submitReview()">Submit</button>
-            </div>
-        </div>
-    </div>
-
-
-    <div id="rent-modal" class="modal-overlay" style="display:none;">
-        <div class="modal-box">
-            <span class="close" onclick="closeModal('rent-modal')">&times;</span>
-            <h3 id="rent-game-title"></h3>
-            <input type="date" id="rent-start">
-            <input type="date" id="rent-end">
-            <button onclick="submitRent()">Confirm</button>
-        </div>
-    </div>
-
-    <div class="toast" id="toast"></div>
-
-
 </body>
 
 
