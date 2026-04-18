@@ -1,11 +1,25 @@
 let inventory = [];
 let cart = [];
+let wishlist = [];
 let activeStoreFilter = null;
 
 async function loadDB() {
     let storedGames = localStorage.getItem('pshub_inventory');
     let storedCart = localStorage.getItem('pshub_cart');
+    let storedWishlist;
+    const currentUserStr = localStorage.getItem('currentUser');
+    if (currentUserStr) {
+        const currentUser = JSON.parse(currentUserStr);
+        const users = JSON.parse(localStorage.getItem('users') || '[]');
+        const userObj = users.find(u => u.username === currentUser.username);
+        if (userObj && userObj.wishlist) {
+            storedWishlist = JSON.stringify(userObj.wishlist);
+        }
+    }
+    if (!storedWishlist) storedWishlist = localStorage.getItem('pshub_wishlist');
+
     if (storedCart) cart = JSON.parse(storedCart);
+    if (storedWishlist) wishlist = JSON.parse(storedWishlist);
 
     if (!storedGames || JSON.parse(storedGames).length === 0) {
         try {
@@ -23,7 +37,7 @@ async function loadDB() {
     applyFilters();
 }
 
-window.onload = function() {
+window.onload = function () {
     loadCurrentUser();
     loadDB();
 };
@@ -91,8 +105,12 @@ function renderInventory(data) {
         const buttonText = isInCart ? "In Cart" : "Add to Cart";
         const buttonClass = isInCart ? "add-btn in-cart" : "add-btn";
 
+        const isInWishlist = wishlist.includes(game.gameID);
+        const heartIcon = isInWishlist ? "❤️" : "🤍";
+
         card.innerHTML = `
             <img src="${game.img}" alt="${game.title}">
+            <div class="wishlist-btn" onclick="event.stopPropagation(); toggleWishlist('${game.gameID}')">${heartIcon}</div>
             <div class="game-info"> 
                 <h3>${game.title}</h3>
                 <p style="font-size: 0.8rem; color: #888; margin: 0;">${game.platform}</p>
@@ -157,6 +175,29 @@ function toggleCart(open) {
 function saveDB() {
     localStorage.setItem('pshub_inventory', JSON.stringify(inventory));
     localStorage.setItem('pshub_cart', JSON.stringify(cart));
+
+    const currentUserStr = localStorage.getItem('currentUser');
+    if (currentUserStr) {
+        const currentUser = JSON.parse(currentUserStr);
+        const users = JSON.parse(localStorage.getItem('users') || '[]');
+        const idx = users.findIndex(u => u.username === currentUser.username);
+        if (idx !== -1) {
+            users[idx].wishlist = wishlist;
+            localStorage.setItem('users', JSON.stringify(users));
+        }
+    } else {
+        localStorage.setItem('pshub_wishlist', JSON.stringify(wishlist));
+    }
+}
+
+function toggleWishlist(id) {
+    if (wishlist.includes(id)) {
+        wishlist = wishlist.filter(wId => wId !== id);
+    } else {
+        wishlist.push(id);
+    }
+    saveDB();
+    applyFilters();
 }
 
 function resetDatabase() {
@@ -173,4 +214,3 @@ function checkout() {
 document.getElementById('mainSearch').addEventListener('input', applyFilters);
 document.getElementById('minPrice').addEventListener('input', applyFilters);
 document.getElementById('maxPrice').addEventListener('input', applyFilters);
-
