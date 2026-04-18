@@ -1,4 +1,4 @@
-/* ---- Hero Background ---- */
+
 .hero-bg {
     position: fixed;
     inset: 0;
@@ -10,7 +10,7 @@
     transition: background-image 0.5s ease;
 }
 
-/* ---- Main Layout ---- */
+
 .desc-page {
     max-width: 1050px;
     margin: 50px auto;
@@ -37,7 +37,7 @@
     flex: 1;
 }
 
-/* ---- Badges ---- */
+
 .desc-tags {
     display: flex;
     gap: 8px;
@@ -72,7 +72,7 @@
     border: 1px solid rgba(255, 165, 0, 0.3);
 }
 
-/* ---- Text ---- */
+
 .desc-title {
     font-size: 2rem;
     font-weight: 800;
@@ -96,7 +96,7 @@
     margin-bottom: 24px;
 }
 
-/* ---- Info Grid ---- */
+
 .info-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -127,7 +127,7 @@
     font-weight: 500;
 }
 
-/* ---- Price & Buttons ---- */
+
 .desc-price {
     font-size: 2.2rem;
     font-weight: 800;
@@ -183,7 +183,7 @@
     transform: none;
 }
 
-/* ---- Other Stores ---- */
+
 .other-stores {
     margin-bottom: 30px;
 }
@@ -226,7 +226,7 @@
     cursor: default;
 }
 
-/* ---- Reviews ---- */
+
 .reviews-section {
     max-width: 1050px;
     margin: 0 auto 40px;
@@ -339,7 +339,7 @@
     padding: 24px 0;
 }
 
-/* ---- Similar Games ---- */
+
 .similar-section {
     max-width: 1050px;
     margin: 0 auto 60px;
@@ -399,7 +399,7 @@
     font-size: 0.75rem;
 }
 
-/* ---- Report Buttons ---- */
+
 .report-game {
     color: #888;
     cursor: pointer;
