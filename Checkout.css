@@ -86,7 +86,6 @@ h2 {
     font-size: 1.5rem;
 }
 
-/* Horizontal Game Cards */
 .horizontal-item {
     display: flex;
     align-items: center;
@@ -126,7 +125,6 @@ h2 {
     color: #fff;
 }
 
-/* Form Design */
 .delivery-form {
     margin-top: 40px;
 }
@@ -156,7 +154,6 @@ h2 {
     border-color: #00439c;
 }
 
-/* Radio Buttons */
 .payment-section {
     margin-bottom: 30px;
 }
@@ -178,7 +175,6 @@ h2 {
     cursor: pointer;
 }
 
-/* Price Section */
 .price-breakdown {
     border-top: 1px solid #333;
     padding-top: 20px;
@@ -199,7 +195,6 @@ h2 {
     margin-top: 10px;
 }
 
-/* Confirm Button */
 .confirm-btn {
     width: 100%;
     background: #28a745;
@@ -218,7 +213,6 @@ h2 {
     transform: scale(1.02);
 }
 
-/* Success Overlay - Hidden by default */
 .success-overlay {
     position: fixed;
     top: 0;
@@ -226,9 +220,7 @@ h2 {
     width: 100%;
     height: 100%;
     background: rgba(0, 31, 77, 0.9);
-    /* Deep PSHUB Blue */
     display: none;
-    /* Controlled by JS */
     justify-content: center;
     align-items: center;
     z-index: 9999;
@@ -250,7 +242,6 @@ h2 {
     margin-top: 10px;
 }
 
-/* The Animated Checkmark */
 .checkmark-circle {
     width: 100px;
     height: 100px;
@@ -264,7 +255,6 @@ h2 {
     display: block;
     stroke-width: 3;
     stroke: #28a745;
-    /* Green */
     stroke-miterlimit: 10;
     box-shadow: inset 0px 0px 0px #28a745;
     animation: fill 0.4s ease-in-out 0.4s forwards, scale .3s ease-in-out .9s both;
@@ -286,7 +276,6 @@ h2 {
     animation: stroke 0.3s cubic-bezier(0.65, 0, 0.45, 1) 0.8s forwards;
 }
 
-/* Animations */
 @keyframes stroke {
     100% {
         stroke-dashoffset: 0;

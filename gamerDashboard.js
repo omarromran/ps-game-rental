@@ -13,7 +13,6 @@ function getCurrentUser() {
     return fresh.find(u => u.username === currentUsername) || null;
 }
 
-
 function getWishlist() {
     const user = getCurrentUser();
     return user?.wishlist || [];
@@ -27,10 +26,8 @@ function saveWishlist(list) {
     if (idx === -1) return;
     fresh[idx].wishlist = list;
     localStorage.setItem("users", JSON.stringify(fresh));
-    users = fresh; 
+    users = fresh;
 }
-
-
 
 function saveUsersToStorage() {
     localStorage.setItem("users", JSON.stringify(users));
@@ -39,7 +36,6 @@ function saveUsersToStorage() {
 function saveGamesToStorage() {
     localStorage.setItem("pshub_inventory", JSON.stringify(games));
 }
-
 
 async function loadData() {
     const savedUsers = localStorage.getItem("users");
@@ -70,7 +66,7 @@ async function loadData() {
         g.review = g.review || null;
     });
 
-    
+
     if (!localStorage.getItem("backup_users")) {
         localStorage.setItem("backup_users", JSON.stringify(users));
     }
@@ -99,7 +95,7 @@ async function resetDatabase() {
         localStorage.setItem("users", JSON.stringify(freshUsers));
         localStorage.setItem("pshub_inventory", JSON.stringify(freshGames));
 
-        location.reload(); 
+        location.reload();
     } catch (e) {
         alert("Reset failed: JSON files not loading");
         console.error(e);
@@ -146,17 +142,17 @@ function renderDashboard() {
     const user = getCurrentUser();
     if (!user) return;
 
-   
-    const activeRentals = games.filter(g => 
+
+    const activeRentals = games.filter(g =>
         g.rental?.status === "active" && g.customerID === user.userID
     );
-    
+
     const wishlistIds = getWishlist();
-    const availableWishlist = games.filter(g => 
+    const availableWishlist = games.filter(g =>
         wishlistIds.includes(g.gameID) && g.status === "available"
     );
 
-   
+
     const cards = document.getElementById("dashboard-cards");
     if (cards) {
         cards.innerHTML = `
@@ -165,23 +161,23 @@ function renderDashboard() {
         `;
     }
 
-    
+
     const tbody = document.getElementById("activity-body");
     if (!tbody) return;
 
     let activityHtml = "";
 
-    
+
     activeRentals.forEach(game => {
         activityHtml += `<tr><td>🎮 Rented: **${game.title}**</td></tr>`;
     });
 
-    
+
     availableWishlist.forEach(game => {
         activityHtml += `<tr><td>❤️ Wishlist: **${game.title}**</td></tr>`;
     });
 
-    
+
     games.forEach(game => {
         if (game.review && game.customerID === user.userID) {
             activityHtml += `<tr><td>⭐ Reviewed: **${game.title}**</td></tr>`;
@@ -221,7 +217,7 @@ function renderWishlist() {
 
     let wishlistIds = getWishlist();
 
-    const availableGames = games.filter(g => 
+    const availableGames = games.filter(g =>
         wishlistIds.includes(g.gameID) && g.status === "available"
     );
 
@@ -271,11 +267,10 @@ function renderRentals() {
                 <p>${game.rental.owner || ""}</p>
                 <p>${game.rental.start} → ${game.rental.end || ""}</p>
                 <span>${game.rental.status}</span>
-                ${
-                    game.rental.status === "active"
-                    ? `<button onclick="returnGame('${game.gameID}')">Return</button>`
-                    : ""
-                }
+                ${game.rental.status === "active"
+                ? `<button onclick="returnGame('${game.gameID}')">Return</button>`
+                : ""
+            }
             </div>
         `;
 
@@ -341,7 +336,6 @@ function toggleEdit(editing) {
     document.getElementById("saveBtn").style.display = editing ? "block" : "none";
 }
 
-
 function returnGame(gameID) {
     const game = games.find(g => g.gameID === gameID);
     if (game?.rental) {
@@ -349,7 +343,7 @@ function returnGame(gameID) {
         game.status = "available";
         saveGamesToStorage();
 
-        
+
         const updatedWishlist = getWishlist().filter(id => id !== gameID);
         saveWishlist(updatedWishlist);
 
@@ -357,7 +351,6 @@ function returnGame(gameID) {
         showToast(`${gameName(game)} returned!`);
     }
 }
-
 
 document.addEventListener("DOMContentLoaded", async () => {
     await loadData();

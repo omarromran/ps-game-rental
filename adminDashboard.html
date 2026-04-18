@@ -17,6 +17,7 @@
     <div class="dashboard-wrapper">
         <aside class="sidebar">
             <h2>Admin</h2>
+
             <nav>
                 <button onclick="navigateToSection('dashboard', this)" class="active">
                     <i class="fas fa-tachometer-alt"></i> Dashboard
@@ -35,13 +36,16 @@
                 </button>
 
             </nav>
+
             <button class="logout" onclick="handleDataReset()"
                 style="margin-bottom: 10px; background-color: #ff9800; border-color: #ff9800; color: white;">
                 <i class="fas fa-sync-alt"></i> Reset Data
             </button>
+
             <button class="logout" onclick="logout()">
                 <i class="fas fa-sign-out-alt"></i> Logout
             </button>
+
         </aside>
 
         <main>
@@ -62,7 +66,6 @@
                 </button>
                 <table id="games-table"></table>
             </section>
-
 
             <section id="users">
                 <div class="users-header">
