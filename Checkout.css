@@ -12,7 +12,7 @@ body {
     min-height: 100vh;
 }
 
-/* Header (Matching PSHUB Theme) */
+
 .navbar {
     display: flex;
     justify-content: space-between;

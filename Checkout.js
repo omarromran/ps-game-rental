@@ -1,7 +1,20 @@
 let cart = [];
 let inventory = [];
 
+function loadCurrentUser() {
+    const userLink = document.querySelector('.user-name');
+    if (!userLink) return;
+    const stored = localStorage.getItem('currentUser');
+    if (stored) {
+        const user = JSON.parse(stored);
+        userLink.textContent = user.name || user.username || 'My Account';
+    } else {
+        userLink.textContent = 'Guest';
+    }
+}
+
 function initCheckout() {
+    loadCurrentUser();
     const savedCart = localStorage.getItem('pshub_cart');
     const savedInv = localStorage.getItem('pshub_inventory');
 
@@ -69,15 +82,33 @@ function processOrder() {
     cart.forEach(cartItem => {
         const itemIdx = inventory.findIndex(invItem => invItem.gameID === cartItem.gameID);
         if (itemIdx !== -1) {
-            inventory[itemIdx].status = 'rented';
-            inventory[itemIdx].customerID = "Alex Walker";
-            inventory[itemIdx].customerPhone = phone;
-            inventory[itemIdx].customerAddress = address;
+            const currentUser = JSON.parse(localStorage.getItem("currentUser"));
+
+            inventory[itemIdx].status = "rented";/////////////////////////added//////
+
+inventory[itemIdx].rental = {
+    status: "active",
+    start: new Date().toLocaleDateString(),
+    end: "—",
+    owner: inventory[itemIdx].storeID
+};
+
+inventory[itemIdx].customerID = currentUser.userID;
+inventory[itemIdx].customerPhone = phone;
+inventory[itemIdx].customerAddress = address;
         }
     });
 
     localStorage.setItem('pshub_inventory', JSON.stringify(inventory));
     localStorage.removeItem('pshub_cart');
+
+    // Update success message with user name
+    const currentUser = JSON.parse(localStorage.getItem("currentUser"));
+    const userName = currentUser ? (currentUser.name || currentUser.username || 'User') : 'User';
+    const successMsg = document.getElementById('success-message');
+    if (successMsg) {
+        successMsg.textContent = `${userName}, your rental is ready.`;
+    }
 
     const overlay = document.getElementById('success-overlay');
     if (overlay) {

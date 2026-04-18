@@ -34,7 +34,12 @@
             "password": "basmala123",
             "type": "customer",
             "phone": "+20 123 456 7890",
-            "memberSince": "March 2024"
+            "memberSince": "March 2024",
+            "wishlist": [
+                "G-101",
+                "G-104",
+                "G-116"
+            ]
         },
         {
             "userID": 5,
@@ -71,7 +76,13 @@
             "password": "youssef123",
             "type": "customer",
             "phone": "+20 111 222 3333",
-            "memberSince": "April 2024"
+            "memberSince": "April 2024",
+            "wishlist": [
+                "G-102",
+                "G-106",
+                "G-110",
+                "G-120"
+            ]
         },
         {
             "userID": 9,
@@ -81,7 +92,12 @@
             "password": "omar123",
             "type": "customer",
             "phone": "+20 111 222 3334",
-            "memberSince": "April 2024"
+            "memberSince": "April 2024",
+            "wishlist": [
+                "G-107",
+                "G-111",
+                "G-132"
+            ]
         },
         {
             "userID": 10,
@@ -91,7 +107,12 @@
             "password": "salma123",
             "type": "customer",
             "phone": "+20 111 222 3335",
-            "memberSince": "April 2024"
+            "memberSince": "April 2024",
+            "wishlist": [
+                "G-103",
+                "G-113",
+                "G-117"
+            ]
         },
         {
             "userID": 11,
@@ -101,7 +122,12 @@
             "password": "noura123",
             "type": "customer",
             "phone": "+20 111 222 3336",
-            "memberSince": "April 2024"
+            "memberSince": "April 2024",
+            "wishlist": [
+                "G-118",
+                "G-119",
+                "G-120"
+            ]
         },
         {
             "userID": 12,
@@ -111,7 +137,12 @@
             "password": "khaled123",
             "type": "customer",
             "phone": "+20 111 222 3337",
-            "memberSince": "April 2024"
+            "memberSince": "April 2024",
+            "wishlist": [
+                "G-105",
+                "G-109",
+                "G-114"
+            ]
         },
         {
             "userID": 13,
@@ -121,7 +152,12 @@
             "password": "tarek123",
             "type": "customer",
             "phone": "+20 111 222 3338",
-            "memberSince": "April 2024"
+            "memberSince": "April 2024",
+            "wishlist": [
+                "G-110",
+                "G-111",
+                "G-115"
+            ]
         },
         {
             "userID": 14,
@@ -131,7 +167,12 @@
             "password": "menna123",
             "type": "customer",
             "phone": "+20 111 222 3339",
-            "memberSince": "April 2024"
+            "memberSince": "April 2024",
+            "wishlist": [
+                "G-101",
+                "G-102",
+                "G-103"
+            ]
         },
         {
             "userID": 15,
