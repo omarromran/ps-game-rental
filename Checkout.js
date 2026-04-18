@@ -84,7 +84,7 @@ function processOrder() {
         if (itemIdx !== -1) {
             const currentUser = JSON.parse(localStorage.getItem("currentUser"));
 
-            inventory[itemIdx].status = "rented";/////////////////////////added//////
+            inventory[itemIdx].status = "rented";
 
 inventory[itemIdx].rental = {
     status: "active",
@@ -102,7 +102,7 @@ inventory[itemIdx].customerAddress = address;
     localStorage.setItem('pshub_inventory', JSON.stringify(inventory));
     localStorage.removeItem('pshub_cart');
 
-    // Update success message with user name
+    
     const currentUser = JSON.parse(localStorage.getItem("currentUser"));
     const userName = currentUser ? (currentUser.name || currentUser.username || 'User') : 'User';
     const successMsg = document.getElementById('success-message');
