@@ -30,14 +30,12 @@ body {
     min-height: 100vh;
 }
 
-/* ================= LAYOUT ================= */
 .dashboard-wrapper,
 .dashboard {
     display: flex;
     min-height: 100vh;
 }
 
-/* ================= SIDEBAR ================= */
 .sidebar {
     width: 240px;
     background-color: var(--primary-color);
@@ -118,7 +116,6 @@ body {
     color: var(--white-color);
 }
 
-/* ================= MAIN ================= */
 main,
 .main-content {
     margin-left: 240px;
@@ -126,7 +123,6 @@ main,
     width: calc(100% - 240px);
 }
 
-/* ================= SECTIONS ================= */
 section {
     display: none;
 }
@@ -135,7 +131,6 @@ section#dashboard {
     display: block;
 }
 
-/* ================= CARDS ================= */
 .card-container,
 .games-grid {
     display: grid;
@@ -172,7 +167,6 @@ section#dashboard {
     color: var(--white-color);
 }
 
-/* ================= GAME CARDS ================= */
 .game-card {
     background: var(--card-bg);
     border: 1px solid var(--card-border);
@@ -211,7 +205,6 @@ section#dashboard {
     margin-bottom: 10px;
 }
 
-/* ================= TABLE ================= */
 table {
     width: 100%;
     border-collapse: collapse;
@@ -242,7 +235,6 @@ td {
     color: var(--white-color);
 }
 
-/* ================= BUTTONS ================= */
 button,
 .action-btn,
 .submit-btn {
@@ -264,7 +256,6 @@ button:hover,
     background-color: var(--btn-hover);
 }
 
-/* ================= INPUTS ================= */
 input,
 textarea,
 select {
@@ -285,7 +276,6 @@ select:focus {
     border-color: var(--secondary-color);
 }
 
-/* ================= FORMS ================= */
 form {
     background-color: var(--input-background);
     padding: 30px;
@@ -310,7 +300,6 @@ label {
     color: var(--muted-color);
 }
 
-/* ================= PROFILE ================= */
 .profile-container {
     background: var(--card-bg);
     border: 1px solid var(--card-border);
@@ -367,11 +356,6 @@ label {
     font-size: 0.9rem;
 }
 
-
-
-
-
-
 .profile-input {
     background: transparent;
     border: none;
@@ -402,7 +386,6 @@ label {
     background: var(--btn-hover);
 }
 
-/* ================= WISHLIST ================= */
 .wishlist-grid {
     margin-top: 1.5rem;
     display: grid;
@@ -437,7 +420,6 @@ label {
     margin-bottom: 12px;
 }
 
-/* ================= MODAL ================= */
 .modal-overlay {
     position: fixed;
     inset: 0;
@@ -488,7 +470,6 @@ label {
     color: var(--white-color);
 }
 
-/* ================= STAR RATING ================= */
 .star-rating span {
     font-size: 2rem;
     cursor: pointer;
@@ -500,7 +481,6 @@ label {
     color: gold;
 }
 
-/* ================= TOAST ================= */
 .toast {
     position: fixed;
     bottom: 30px;
@@ -517,7 +497,6 @@ label {
     box-shadow: var(--shadow);
 }
 
-/* ================= RESET BUTTON ================= */
 .reset-btn {
     position: fixed;
     bottom: 20px;
@@ -539,7 +518,6 @@ label {
     color: white;
 }
 
-/* ================= HEADINGS ================= */
 h2 {
     font-size: 1.3rem;
     font-weight: 600;

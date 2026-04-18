@@ -213,6 +213,40 @@
             "password": "password789",
             "type": "business",
             "status": "pending"
+        },
+        {
+            "userID": 24,
+            "name": "admin",
+            "username": "admin",
+            "email": "admin@gmail.com",
+            "password": "admin123",
+            "type": "admin"
+        },
+        {
+            "userID": 25,
+            "name": "customer",
+            "username": "customer",
+            "email": "customer@gmail.com",
+            "password": "customer123",
+            "type": "customer"
+        },
+        {
+            "userID": 26,
+            "name": "business",
+            "username": "business",
+            "email": "business@gmail.com",
+            "password": "business123",
+            "type": "business",
+            "status": "accepted"
+        },
+        {
+            "userID": 27,
+            "name": "pending",
+            "username": "pending",
+            "email": "pending@gmail.com",
+            "password": "pending123",
+            "type": "business",
+            "status": "pending"
         }
     ]
 }
