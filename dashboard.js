@@ -137,9 +137,6 @@ function showModTab(id) {
             if (k.startsWith('reviews_')) JSON.parse(localStorage.getItem(k)).forEach((r, idx) => r.flagged && revs.push({ ...r, gID: k.split('_')[1], idx }));
         }
         document.getElementById('mod-reviews').innerHTML = revs.length ? revs.map(r => `<div style="background:rgba(255,255,255,0.05);padding:15px;margin:10px 0;border-radius:8px;border-left:4px solid var(--primary-color)"><strong>${r.reviewer}</strong>: ${r.comment} <div style="margin-top:10px"><button class="action-btn" onclick="handleMod('rev','${r.gID}','keep',${r.idx})">Keep</button><button class="action-btn" onclick="handleMod('rev','${r.gID}','del',${r.idx})" style="background:#e74c3c">Delete</button></div></div>`).join('') : '<p style="padding:10px">No reported reviews</p>';
-    } else if (id === 'mod-lenders') {
-        const pending = users.filter(u => u.type === 'business' && u.status === 'pending');
-        document.getElementById('mod-lenders-table').innerHTML = pending.length ? `<thead><th>Store</th><th>Actions</th></thead>` + pending.map(u => `<tr><td>${u.username}</td><td style="display:flex;gap:8px"><button class="action-btn" onclick="handleMod('len',${u.userID},'ok')">Approve</button><button class="action-btn" onclick="handleMod('len',${u.userID},'no')" style="background:#e74c3c">Reject</button></td></tr>`).join('') : '<p style="padding:10px">No pending lenders</p>';
     }
 }
 
@@ -155,11 +152,6 @@ function handleMod(type, id, act, idx) {
         act === 'keep' ? delete r[idx].flagged : r.splice(idx, 1);
         localStorage.setItem(k, JSON.stringify(r));
         showModTab('mod-reviews');
-    } else if (type === 'len') {
-        let i = users.findIndex(u => u.userID === id);
-        users[i].status = (act === 'ok' ? 'active' : 'rejected');
-        save('users', users);
-        showModTab('mod-lenders');
     }
     updateUI();
 }
