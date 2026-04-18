@@ -2,6 +2,18 @@ let cart = JSON.parse(localStorage.getItem('pshub_cart') || '[]');
 const gameID = new URLSearchParams(window.location.search).get('id');
 let selectedStars = 0;
 
+function loadCurrentUser() {
+    const userLink = document.querySelector('.user-name');
+    if (!userLink) return;
+    const stored = localStorage.getItem('currentUser');
+    if (stored) {
+        const user = JSON.parse(stored);
+        userLink.textContent = user.name || user.username || 'My Account';
+    } else {
+        userLink.textContent = 'Guest';
+    }
+}
+
 async function loadGame() {
     let inventory = JSON.parse(localStorage.getItem('pshub_inventory') || 'null');
     if (!inventory) {
@@ -187,4 +199,5 @@ function reportReview(idx) {
     }
 }
 
+loadCurrentUser();
 loadGame();
