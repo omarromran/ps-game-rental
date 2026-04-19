@@ -3,14 +3,18 @@ const gameID = new URLSearchParams(window.location.search).get('id');
 let selectedStars = 0;
 
 function loadCurrentUser() {
-    const userLink = document.querySelector('.user-name');
+    const userLink = document.getElementById('user-name-link');
+    const loginBtn = document.querySelector('.login-btn');
     if (!userLink) return;
     const stored = localStorage.getItem('currentUser');
     if (stored) {
         const user = JSON.parse(stored);
         userLink.textContent = user.name || user.username || 'My Account';
+        if (loginBtn) loginBtn.style.display = 'none';
     } else {
         userLink.textContent = 'Guest';
+        userLink.removeAttribute('href');
+        if (loginBtn) loginBtn.style.display = 'inline';
     }
 }
 
