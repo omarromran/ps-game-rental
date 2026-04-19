@@ -214,3 +214,7 @@ function checkout() {
 document.getElementById('mainSearch').addEventListener('input', applyFilters);
 document.getElementById('minPrice').addEventListener('input', applyFilters);
 document.getElementById('maxPrice').addEventListener('input', applyFilters);
+
+function index() {
+    window.location.href = 'index.html';
+}
