@@ -109,31 +109,6 @@
         </main>
     </div>
 
-    <div id="add-game-form-container" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeAddGameModal()">&times;</span>
-            <h2>Add New Game</h2>
-            <form id="add-game-form">
-                <div><input type="text" name="name" placeholder="Game Name" required></div>
-                <div><input type="text" name="platform" placeholder="Platform" required></div>
-                <div><input type="text" name="genre" placeholder="Genre" required></div>
-                <div>
-                    <label>Status</label>
-                    <select name="availability" required>
-                        <option value="buy">Buy</option>
-                        <option value="rent">Rent</option>
-                    </select>
-                </div>
-                <div><input type="text" name="gamevendor" placeholder="Vendor" required></div>
-                <div><input type="number" name="price" placeholder="Price (EGP)" min="0" required></div>
-                <div><textarea name="description" placeholder="Description"></textarea></div>
-                <button type="submit" class="submit-btn">
-                    <i class="fas fa-plus"></i> Add Game
-                </button>
-            </form>
-        </div>
-    </div>
-
 </body>
 
 </html>

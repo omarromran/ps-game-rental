@@ -88,38 +88,18 @@ const renderGames = () => {
     if (!tbl) return;
     tbl.innerHTML = `<thead><tr><th>ID</th><th>Name</th><th>Platform</th><th>Genre</th><th>Status</th><th>Vendor</th><th>Price</th><th>Actions</th></tr></thead><tbody>` +
         games.map(g => `<tr><td>${g.gameID}</td><td>${g.name}</td><td>${g.platform}</td><td>${g.genre}</td><td>${g.Availability || "N/A"}</td><td>${getVendor(g)}</td><td>${g.price || "-"}</td><td class="games-action">
-        <button class="action-btn" onclick="editGame('${g.gameID}')"><i class="fas fa-edit"></i></button> <button class="action-btn" onclick="delGame('${g.gameID}')"><i class="fas fa-trash"></i></button></td></tr>`).join('') + `</tbody>`;
+        <button class="action-btn" onclick="delGame('${g.gameID}')"><i class="fas fa-trash"></i></button></td></tr>`).join('') + `</tbody>`;
 };
 
-const editGame = (id) => {
-    const i = games.findIndex(g => g.gameID === id);
-    if (i < 0) return;
-    let g = games[i], n = prompt("Name:", g.name), pl = prompt("Platform:", g.platform), ge = prompt("Genre:", g.genre), a = prompt("Status:", g.Availability), v = prompt("Vendor:", getVendor(g)), pr = prompt("Price:", g.price);
-    if (!n || !pl || !ge || !a || !v || !pr) return;
-    let vu = users.find(u => u.name.toLowerCase() === v.toLowerCase());
-    games[i] = { ...g, name: n, platform: pl, genre: ge, Availability: a.toLowerCase() === 'rent' ? 'rent' : 'buy', vendorID: vu?.userID || null, vendor: vu ? undefined : v, price: +pr };
-    save("games", games); updateUI();
-};
 const delGame = (id) => confirm("Delete game?") && (games = games.filter(g => g.gameID !== id), save("games", games), updateUI());
 
 const handleAdmin = (e) => {
     e.preventDefault();
     const d = Object.fromEntries(new FormData(e.target));
-    if (d.password.length < 6 || d.password !== d.confirmPassword) return alert("Password issue!");
+    if (d.password !== d.confirmPassword) return alert("Password mismatch!");
     if (users.some(u => u.username === d.username || u.email === d.email)) return alert("User exists!");
     users.push({ userID: Math.max(0, ...users.map(u => +u.userID || 0)) + 1, ...d, type: "admin", status: "active" });
     save("users", users); updateUI(); e.target.reset(); alert("Admin added!");
-};
-
-const openAddGameModal = () => document.getElementById("add-game-form-container").style.display = "block";
-const closeAddGameModal = () => document.getElementById("add-game-form-container").style.display = "none";
-
-const handleGame = (e) => {
-    e.preventDefault();
-    const d = Object.fromEntries(new FormData(e.target));
-    let vu = users.find(u => u.name.toLowerCase() === d.gamevendor.toLowerCase());
-    games.push({ gameID: String(Math.max(0, ...games.map(g => +g.gameID || 0)) + 1).padStart(3, '0'), ...d, Availability: d.availability || "buy", vendorID: vu?.userID || null, vendor: vu ? undefined : d.gamevendor, price: +d.price });
-    save("games", games); updateUI(); e.target.reset(); closeAddGameModal();
 };
 
 const setupModeration = () => showModTab('mod-games');
