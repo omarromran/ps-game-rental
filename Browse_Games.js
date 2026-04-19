@@ -211,9 +211,11 @@ function checkout() {
     window.location.href = 'Checkout.html';
 }
 
-document.getElementById('mainSearch').addEventListener('input', applyFilters);
-document.getElementById('minPrice').addEventListener('input', applyFilters);
-document.getElementById('maxPrice').addEventListener('input', applyFilters);
+document.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('mainSearch').addEventListener('input', applyFilters);
+    document.getElementById('minPrice').addEventListener('input', applyFilters);
+    document.getElementById('maxPrice').addEventListener('input', applyFilters);
+});
 
 function index() {
     window.location.href = 'index.html';

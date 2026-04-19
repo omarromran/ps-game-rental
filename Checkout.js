@@ -122,8 +122,12 @@ inventory[itemIdx].customerAddress = address;
     }, 3000);
 }
 
-document.getElementById('phone').addEventListener('input', function (e) {
-    this.value = this.value.replace(/[^0-9]/g, '');
+document.addEventListener('DOMContentLoaded', () => {
+    const phoneInput = document.getElementById('phone');
+    if (phoneInput) {
+        phoneInput.addEventListener('input', function (e) {
+            this.value = this.value.replace(/[^0-9]/g, '');
+        });
+    }
+    initCheckout();
 });
-
-document.addEventListener('DOMContentLoaded', initCheckout);

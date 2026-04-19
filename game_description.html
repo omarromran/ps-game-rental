@@ -17,11 +17,12 @@
     <header class="navbar">
         <div class="logo" onclick="index()">PS<span>HUB</span></div>
         <div class="header-right">
-            <div class="cart-icon" onclick="window.location.href='Browse_Games.html'">
+            <div class="cart-icon" onclick="toggleCart()">
                 🛒 <span id="cart-count">0</span>
             </div>
             <div class="user-profile">
-                <span class="user-name">Alex Walker</span>
+                <a id="user-name-link" class="user-name" href="gamerDashboard.html"
+                    style="text-decoration:none; color:inherit;"></a>
                 <div class="avatar"></div>
             </div>
         </div>
@@ -48,6 +49,18 @@
     <div class="similar-section" id="similar-section" style="display:none">
         <h2>🎮 More Like This</h2>
         <div class="similar-grid" id="similar-grid"></div>
+    </div>
+
+    <div id="cart-sidebar" class="cart-sidebar">
+        <div class="cart-header">
+            <h2>Your Cart</h2>
+            <button class="close-btn" onclick="toggleCart(false)">×</button>
+        </div>
+        <div id="cart-items" class="cart-items-container"></div>
+        <div class="cart-footer">
+            <div class="total">Total: <span id="cart-total">0.00</span> EGP</div>
+            <button class="checkout-btn" onclick="checkout()">Checkout</button>
+        </div>
     </div>
 
 </body>

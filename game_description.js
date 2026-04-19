@@ -31,8 +31,9 @@ async function loadGame() {
     }
 
     document.getElementById('hero-bg').style.backgroundImage = `url('${game.img}')`;
-    document.getElementById('cart-count').innerText = cart.length;
     document.title = `PSHUB | ${game.title}`;
+
+    renderCart();
 
     const inCart = cart.some(c => c.gameID === game.gameID);
 
@@ -101,7 +102,7 @@ function addToCart() {
     const btn = document.getElementById('cart-btn');
     btn.textContent = '✓ In Cart';
     btn.classList.add('in-cart');
-    document.getElementById('cart-count').innerText = cart.length;
+    renderCart();
 }
 
 function initStars() {
@@ -204,4 +205,56 @@ loadGame();
 
 function index() {
     window.location.href = 'index.html';
+}
+
+function renderCart() {
+    const cartList = document.getElementById('cart-items');
+    const cartCount = document.getElementById('cart-count');
+    const cartTotal = document.getElementById('cart-total');
+
+    if (cartCount) cartCount.innerText = cart.length;
+
+    let total = 0;
+    if (cartList) {
+        cartList.innerHTML = cart.map(item => {
+            total += item.price;
+            return `
+                <div class="cart-item">
+                    <img src="${item.img}" style="width:40px; height:60px; object-fit:cover; border-radius:4px;">
+                    <div style="flex:1; font-size:0.85rem; color:white; margin-left:10px;">${item.title}<br>${item.price} EGP</div>
+                    <button onclick="removeFromCart('${item.gameID}')" style="background:none; border:none; cursor:pointer; color:white;">🗑️</button>
+                </div>
+            `;
+        }).join('');
+    }
+    if (cartTotal) cartTotal.innerText = total.toFixed(2);
+}
+
+function removeFromCart(id) {
+    cart = cart.filter(c => c.gameID !== id);
+    localStorage.setItem('pshub_cart', JSON.stringify(cart));
+    renderCart();
+
+    if (id === gameID) {
+        const btn = document.getElementById('cart-btn');
+        if (btn) {
+            btn.textContent = '+ Add to Cart';
+            btn.classList.remove('in-cart');
+        }
+    }
+}
+
+function checkout() {
+    if (cart.length === 0) { alert("Your cart is empty!"); return; }
+    localStorage.setItem('pshub_cart', JSON.stringify(cart));
+    window.location.href = 'Checkout.html';
+}
+
+function toggleCart(open) {
+    const sidebar = document.getElementById('cart-sidebar');
+    if (!sidebar) return;
+
+    if (open === true) sidebar.classList.add('open');
+    else if (open === false) sidebar.classList.remove('open');
+    else sidebar.classList.toggle('open');
 }
