@@ -56,6 +56,12 @@ function renderCheckoutList() {
 }
 
 function processOrder() {
+    const storedUser = localStorage.getItem("currentUser");
+    if (!storedUser) {
+        window.location.href = 'login.html';
+        return;
+    }
+
     const phoneInput = document.getElementById('phone');
     const addressInput = document.getElementById('address');
 
