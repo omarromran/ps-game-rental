@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PSHUB | Browse Games</title>
+    <link rel="stylesheet" href="BrowseGames.css">
+    <link rel="icon" href="photos/images.png">
+    <script src="Browse_Games.js" defer></script>
+</head>
+
+<body>
+    <header class="navbar">
+        <div class="logo" onclick="index()">PS<span>HUB</span></div>
+        <div class="header-right">
+            <div class="cart-icon" onclick="toggleCart()">
+                🛒 <span id="cart-count">0</span>
+            </div>
+            <div class="user-profile">
+                <a id="user-name-link" class="user-name" href="gamerDashboard.html"
+                    style="text-decoration:none; color:inherit;"></a>
+                <a href="login.html" class="login-btn">Login</a>
+                <div class="avatar"></div>
+            </div>
+        </div>
+    </header>
+
+    <div class="toolbar">
+
+        <div class="search-container">
+            <input type="text" id="mainSearch" placeholder="Search title or ID...">
+        </div>
+
+        <div class="filter-group">
+            <div class="price-inputs">
+                <input type="number" id="minPrice" placeholder="Min EGP">
+                <input type="number" id="maxPrice" placeholder="Max EGP">
+            </div>
+
+            <div class="dropdown">
+                <button class="drop-btn">Platform ▾</button>
+                <div class="dropdown-content" id="platform-filters">
+                    <label><input type="checkbox" value="PS5" onchange="applyFilters()"> PS5</label>
+                    <label><input type="checkbox" value="PS4" onchange="applyFilters()"> PS4</label>
+                </div>
+            </div>
+
+            <div class="dropdown">
+                <button class="drop-btn">Genre ▾</button>
+                <div class="dropdown-content" id="category-filters">
+                    <label><input type="checkbox" value="Action" onchange="applyFilters()"> Action</label>
+                    <label><input type="checkbox" value="FPS" onchange="applyFilters()"> FPS</label>
+                    <label><input type="checkbox" value="Telltale" onchange="applyFilters()"> Telltale</label>
+                    <label><input type="checkbox" value="Platform" onchange="applyFilters()"> Platform</label>
+                </div>
+            </div>
+            <button class="reset-btn" onclick="resetDatabase()">Reset All Data</button>
+
+        </div>
+    </div>
+
+    <main class="store-container">
+        <div class="inventory-header">
+            <h1 id="view-title">All Games</h1>
+            <span id="item-count">0 games found</span>
+        </div>
+        <div class="game-grid" id="game-grid"></div>
+    </main>
+
+    <div id="cart-sidebar" class="cart-sidebar">
+        <div class="cart-header">
+            <h2>Your Cart</h2>
+            <button class="close-btn" onclick="toggleCart(false)">×</button>
+        </div>
+        <div id="cart-items" class="cart-items-container"></div>
+        <div class="cart-footer">
+            <div class="total">Total: <span id="cart-total">0.00</span> EGP</div>
+            <button class="checkout-btn" onclick="checkout()">Checkout</button>
+        </div>
+    </div>
+
+</body>
+
+</html>

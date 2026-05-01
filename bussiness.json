@@ -1,0 +1,72 @@
+{
+  "games": [
+    {
+      "id": 1,
+      "title": "FIFA 24",
+      "platform": "PS5",
+      "genre": "Sports",
+      "status": "Available",
+      "price": 50
+    },
+    {
+      "id": 2,
+      "title": "Call of Duty: Modern Warfare III",
+      "platform": "PS5",
+      "genre": "Shooter",
+      "status": "Rented",
+      "price": 70
+    },
+    {
+      "id": 3,
+      "title": "God of War Ragnarok",
+      "platform": "PS5",
+      "genre": "Action",
+      "status": "Available",
+      "price": 60
+    },
+    {
+      "id": 4,
+      "title": "Spider-Man 2",
+      "platform": "PS5",
+      "genre": "Action",
+      "status": "Available",
+      "price": 65
+    },
+    {
+      "id": 5,
+      "title": "NBA 2K24",
+      "platform": "PS5",
+      "genre": "Sports",
+      "status": "Rented",
+      "price": 55
+    },
+    {
+      "id": 6,
+      "title": "Resident Evil 4 Remake",
+      "platform": "PS5",
+      "genre": "Horror",
+      "status": "Available",
+      "price": 60
+    }
+  ],
+  "activity": [
+    {
+      "game": "Call of Duty: MW III",
+      "customer": "Ahmed Ali",
+      "status": "Rented",
+      "date": "2026-04-16"
+    },
+    {
+      "game": "NBA 2K24",
+      "customer": "Sara Ahmed",
+      "status": "Rented",
+      "date": "2026-04-15"
+    },
+    {
+      "game": "FIFA 24",
+      "customer": "John Doe",
+      "status": "Returned",
+      "date": "2026-04-14"
+    }
+  ]
+}

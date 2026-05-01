@@ -1,0 +1,403 @@
+@import url('https://fonts.googleapis.com/css2?family=Segoe+UI&display=swap');
+
+:root {
+    --primary-color: #000000;
+    --secondary-color: #00439c;
+    --dark-color: #0a0a0a;
+    --card-bg: #111111;
+    --card-border: rgba(255, 255, 255, 0.1);
+    --white-color: #ffffff;
+    --muted-color: #aaaaaa;
+    --input-background: #1a1a1a;
+    --shadow: 0 10px 30px rgba(0, 67, 156, 0.3);
+    --btn-hover: #218838;
+    --accent-red: #ff4444;
+    --accent-red-hover: rgba(255, 68, 68, 0.8);
+    --accent-green: #28a745;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Segoe UI', sans-serif;
+    background-color: var(--dark-color);
+    background-image: radial-gradient(circle at 50% 0%, #001f4d 0%, #0a0a0a 100%);
+    color: var(--white-color);
+    min-height: 100vh;
+}
+
+.dashboard-wrapper,
+.dashboard {
+    display: flex;
+    min-height: 100vh;
+}
+
+.sidebar {
+    width: 240px;
+    background-color: var(--primary-color);
+    padding: 2rem 1rem;
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    height: 100vh;
+    border-right: 1px solid #222;
+    z-index: 100;
+}
+
+.sidebar h2,
+.sidebar .logo {
+    text-align: center;
+    margin-bottom: 2rem;
+    font-size: 1.5rem;
+    font-weight: bold;
+    letter-spacing: 2px;
+    color: var(--white-color);
+}
+
+.sidebar h2 span {
+    color: var(--secondary-color);
+}
+
+.sidebar nav {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.sidebar button,
+.sidebar a {
+    background: transparent;
+    color: var(--muted-color);
+    border: none;
+    padding: 12px 15px;
+    border-radius: 12px;
+    cursor: pointer;
+    text-align: left;
+    font-size: 0.95rem;
+    font-family: 'Segoe UI', sans-serif;
+    transition: 0.2s;
+    text-decoration: none;
+}
+
+.sidebar button:hover,
+.sidebar a:hover {
+    background-color: rgba(0, 67, 156, 0.2);
+    color: var(--white-color);
+    border-color: var(--secondary-color);
+}
+
+.sidebar a.active,
+.sidebar button.active {
+    background-color: rgba(0, 67, 156, 0.3);
+    color: var(--white-color);
+    border: 1px solid rgba(0, 67, 156, 0.5);
+}
+
+.sidebar .logout {
+    margin-top: auto;
+    background: rgba(255, 68, 68, 0.1);
+    color: var(--accent-red);
+    border: 1px solid rgba(255, 68, 68, 0.3);
+    text-align: center;
+    border-radius: 12px;
+    padding: 12px;
+    font-family: 'Segoe UI', sans-serif;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.sidebar .logout:hover {
+    background: var(--accent-red);
+    color: var(--white-color);
+}
+
+main,
+.main-content {
+    margin-left: 240px;
+    padding: 2rem;
+    width: calc(100% - 240px);
+}
+
+section {
+    display: none;
+}
+
+section#dashboard {
+    display: block;
+}
+
+.card-container,
+.games-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+}
+
+.card {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    padding: 25px;
+    border-radius: 20px;
+    text-align: center;
+    transition: 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.card:hover {
+    border-color: var(--secondary-color);
+    box-shadow: var(--shadow);
+    transform: translateY(-4px);
+}
+
+.card h3 {
+    font-size: 0.85rem;
+    color: var(--muted-color);
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.card p {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--white-color);
+}
+
+
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--card-bg);
+    border-radius: 20px;
+    overflow: hidden;
+    margin-top: 1.5rem;
+    border: 1px solid var(--card-border);
+}
+
+th,
+td {
+    padding: 14px 16px;
+    text-align: left;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+th {
+    background-color: #000;
+    color: var(--muted-color);
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 1px;
+}
+
+td {
+    font-size: 0.9rem;
+    color: var(--white-color);
+}
+
+button,
+.action-btn,
+.submit-btn {
+    background-color: var(--accent-green);
+    color: var(--white-color);
+    border: none;
+    padding: 10px 18px;
+    border-radius: 50px;
+    cursor: pointer;
+    font-family: 'Segoe UI', sans-serif;
+    font-weight: 600;
+    font-size: 0.9rem;
+    transition: 0.2s;
+}
+
+button:hover,
+.action-btn:hover,
+.submit-btn:hover {
+    background-color: var(--btn-hover);
+}
+
+input,
+textarea,
+select {
+    width: 100%;
+    padding: 10px 15px;
+    border-radius: 12px;
+    border: 1px solid #333;
+    background-color: var(--input-background);
+    color: var(--white-color);
+    font-family: 'Segoe UI', sans-serif;
+    outline: none;
+    transition: 0.2s;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+    border-color: var(--secondary-color);
+}
+
+form {
+    background-color: var(--input-background);
+    padding: 30px;
+    border-radius: 20px;
+    max-width: 600px;
+    margin-top: 2rem;
+    border: 1px solid var(--card-border);
+}
+
+form div {
+    margin-bottom: 1rem;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+label {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 0.9rem;
+    color: var(--muted-color);
+}
+
+.profile-container {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    padding: 40px;
+    border-radius: 20px;
+    max-width: 700px;
+    width: 100%;
+    margin: auto;
+    box-shadow: var(--shadow);
+}
+
+.profile-container.compact {
+    padding: 25px;
+    max-width: 600px;
+}
+
+.profile-top {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 25px;
+}
+
+.profile-avatar {
+    width: 70px;
+    height: 70px;
+    background: var(--secondary-color);
+    color: var(--white-color);
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    font-size: 20px;
+    border: 2px solid #fff;
+    flex-shrink: 0;
+}
+
+.profile-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.profile-key {
+    font-size: 0.85rem;
+    color: var(--muted-color);
+}
+
+.profile-val {
+    color: var(--white-color);
+    font-size: 0.9rem;
+}
+
+
+
+.wishlist-grid {
+    margin-top: 1.5rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+}
+
+.wishlist-card {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    padding: 20px;
+    border-radius: 20px;
+    text-align: center;
+    transition: 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.wishlist-card:hover {
+    border-color: var(--secondary-color);
+    transform: translateY(-6px);
+    box-shadow: var(--shadow);
+}
+
+.wishlist-card h3 {
+    font-size: 1rem;
+    margin-bottom: 6px;
+    color: var(--white-color);
+}
+
+.wishlist-card p {
+    font-size: 0.85rem;
+    color: var(--muted-color);
+    margin-bottom: 12px;
+}
+
+
+
+h2 {
+    font-size: 1.3rem;
+    font-weight: 600;
+    margin-bottom: 1.2rem;
+    color: var(--white-color);
+}
+
+h2.page-title {
+    font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+section p {
+    color: var(--muted-color);
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+}
+
+
+@media (max-width: 768px) {
+    .sidebar {
+        width: 100%;
+        position: relative;
+        height: auto;
+    }
+
+    .dashboard-wrapper,
+    .dashboard {
+        flex-direction: column;
+    }
+
+    main,
+    .main-content {
+        margin-left: 0;
+        width: 100%;
+    }
+
+    .sidebar nav {
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+}

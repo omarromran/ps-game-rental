@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <link rel="icon" href="photos/images.png">
+    <link rel="stylesheet" href="dashboard.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script defer src="dashboard.js"></script>
+</head>
+
+<body>
+
+    <div class="dashboard-wrapper">
+        <aside class="sidebar">
+            <h2>Admin</h2>
+
+            <nav>
+                <button onclick="navigateToSection('dashboard', this)" class="active">
+                    <i class="fas fa-tachometer-alt"></i> Dashboard
+                </button>
+                <button onclick="navigateToSection('games', this)">
+                    <i class="fas fa-gamepad"></i> Games
+                </button>
+                <button onclick="navigateToSection('users', this)">
+                    <i class="fas fa-users"></i> Users
+                </button>
+                <button onclick="navigateToSection('addAdmin', this)">
+                    <i class="fas fa-user-plus"></i> Add Admin
+                </button>
+                <button onclick="navigateToSection('moderation', this); setupModeration()">
+                    <i class="fas fa-shield-alt"></i> Moderate Listings
+                </button>
+
+            </nav>
+
+            <button class="reset-btn" onclick="handleDataReset()"
+                style="margin-bottom: 10px; background-color: #ff9800; border-color: #ff9800; color: white;">
+                <i class="fas fa-sync-alt"></i> Reset Data
+            </button>
+
+            <button class="logout" onclick="logout()">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </button>
+
+        </aside>
+
+        <main>
+            <section id="dashboard">
+                <div class="card-container" id="dashboard-cards">
+                </div>
+                <div class="charts-container">
+                    <div class="chart-wrapper">
+                        <canvas id="gamesBarChart"></canvas>
+                    </div>
+                </div>
+            </section>
+
+            <section id="games">
+                <h2>Manage Games</h2>
+
+                <table id="games-table"></table>
+            </section>
+
+            <section id="users">
+                <div class="users-header">
+                    <h2>Manage Users</h2>
+                    <select id="user-type-filter" onchange="renderUsers()">
+                        <option value="all">All User Types</option>
+                        <option value="admin">Admin</option>
+                        <option value="business">Business</option>
+                        <option value="customer">Customer</option>
+                    </select>
+                </div>
+                <table id="users-table"></table>
+            </section>
+
+            <section id="addAdmin">
+                <h2>Add New Admin</h2>
+                <form id="add-admin-form">
+                    <div><input type="text" placeholder="Full Name" name="name" required></div>
+                    <div><input type="text" placeholder="Username" name="username" required></div>
+                    <div><input type="email" placeholder="Email" name="email" required></div>
+                    <div><input type="password" placeholder="Password" name="password" required></div>
+                    <div><input type="password" placeholder="Confirm Password" name="confirmPassword" required></div>
+                    <button type="submit" class="submit-btn">
+                        <i class="fas fa-user-plus"></i> Create Admin
+                    </button>
+                </form>
+            </section>
+
+            <section id="moderation">
+                <h2>Moderate Listings</h2>
+                <div style="display:flex;gap:10px;margin:1rem 0">
+                    <button class="action-btn" onclick="showModTab('mod-games')"><i class="fas fa-gamepad"></i> Reported
+                        Games</button>
+                    <button class="action-btn" onclick="showModTab('mod-reviews')"><i class="fas fa-star"></i> Reported
+                        Reviews</button>
+                </div>
+
+                <div id="mod-games" class="tab-panel">
+                    <table id="mod-games-table"></table>
+                </div>
+                <div id="mod-reviews" class="tab-panel" style="display:none"></div>
+            </section>
+        </main>
+    </div>
+
+</body>
+
+</html>

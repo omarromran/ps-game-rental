@@ -1,0 +1,23 @@
+{
+  "name": "ps-game-rental",
+  "version": "1.0.0",
+  "description": "",
+  "homepage": "https://github.com/omarromran/ps-game-rental#readme",
+  "bugs": {
+    "url": "https://github.com/omarromran/ps-game-rental/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/omarromran/ps-game-rental.git"
+  },
+  "license": "ISC",
+  "author": "",
+  "type": "commonjs",
+  "main": "Browse_Games.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "express": "^5.2.1"
+  }
+}

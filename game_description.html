@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PSHUB | Game Details</title>
+    <link rel="stylesheet" href="BrowseGames.css">
+    <link rel="stylesheet" href="game_description.css">
+    <link rel="icon" href="photos/images.png">
+    <script src="game_description.js" defer></script>
+</head>
+
+<body>
+    <div class="hero-bg" id="hero-bg"></div>
+
+    <header class="navbar">
+        <div class="logo" onclick="index()">PS<span>HUB</span></div>
+        <div class="header-right">
+            <div class="cart-icon" onclick="toggleCart()">
+                🛒 <span id="cart-count">0</span>
+            </div>
+            <div class="user-profile">
+                <a id="user-name-link" class="user-name" href="gamerDashboard.html"
+                    style="text-decoration:none; color:inherit;"></a>
+                <a href="login.html" class="login-btn">Login</a>
+                <div class="avatar"></div>
+            </div>
+        </div>
+    </header>
+
+    <div class="desc-page" id="desc-page">
+        <p style="color:#555">Loading...</p>
+    </div>
+
+    <div class="reviews-section" id="reviews-section" style="display:none">
+        <h2>⭐ Player Reviews</h2>
+        <div class="review-form">
+            <div class="star-row" id="star-row">
+                <span data-v="1">★</span><span data-v="2">★</span>
+                <span data-v="3">★</span><span data-v="4">★</span><span data-v="5">★</span>
+            </div>
+            <input type="text" id="reviewer-name" placeholder="Your name">
+            <textarea id="review-comment" placeholder="Share your thoughts..."></textarea>
+            <button class="btn-review" onclick="submitReview()">Post Review</button>
+        </div>
+        <div id="reviews-list"></div>
+    </div>
+
+    <div class="similar-section" id="similar-section" style="display:none">
+        <h2>🎮 More Like This</h2>
+        <div class="similar-grid" id="similar-grid"></div>
+    </div>
+
+    <div id="cart-sidebar" class="cart-sidebar">
+        <div class="cart-header">
+            <h2>Your Cart</h2>
+            <button class="close-btn" onclick="toggleCart(false)">×</button>
+        </div>
+        <div id="cart-items" class="cart-items-container"></div>
+        <div class="cart-footer">
+            <div class="total">Total: <span id="cart-total">0.00</span> EGP</div>
+            <button class="checkout-btn" onclick="checkout()">Checkout</button>
+        </div>
+    </div>
+
+</body>
+
+</html>

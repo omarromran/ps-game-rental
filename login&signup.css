@@ -1,0 +1,145 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+:root {
+  --primary-color: #00439c;
+  --secondary-color: #1a1a1a;
+  --dark-color: #0a0a0a;
+  --black: #000000;
+  --white: #ffffff;
+
+  --input-background: #111;
+  --shadow: 0 10px 25px rgba(0, 67, 156, 0.25);
+
+  --text-white: #ffffff;
+  --text-muted: #aaa;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Poppins', sans-serif;
+  background: radial-gradient(circle at 50% 0%, #001f4d 0%, #0a0a0a 100%);
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  color: var(--text-white);
+}
+
+.wrapper {
+  width: 100%;
+  max-width: 420px;
+  padding: 2.5rem;
+  border-radius: 12px;
+  background-color: rgba(17, 17, 17, 0.92);
+  box-shadow: var(--shadow);
+  text-align: center;
+}
+
+h1 {
+  text-align: center;
+  margin-bottom: 2rem;
+  font-weight: 600;
+  color: var(--primary-color);
+}
+
+.input-group {
+  position: relative;
+  margin-bottom: 1.2rem;
+}
+
+.input-group i {
+  position: absolute;
+  top: 50%;
+  left: 12px;
+  transform: translateY(-50%);
+  font-size: 16px;
+  color: var(--white);
+  opacity: 0.7;
+  pointer-events: none;
+}
+
+.input-group input {
+  width: 100%;
+  padding: 12px 12px 12px 42px;
+  border-radius: 8px;
+  border: 1px solid #333;
+  background-color: #1a1a1a;
+  color: var(--text-white);
+  font-size: 1rem;
+  outline: none;
+}
+
+.account-type {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  margin: 1.5rem 0;
+  color: var(--text-muted);
+  font-size: 0.95rem;
+}
+
+.account-type label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+}
+
+.account-type input[type="radio"] {
+  accent-color: var(--primary-color);
+  cursor: pointer;
+}
+
+button {
+  width: 100%;
+  padding: 14px;
+  background: var(--primary-color);
+  color: var(--white);
+  border: none;
+  border-radius: 10px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: 0.3s;
+  margin-bottom: 1rem;
+}
+
+button:hover {
+  background: #003a8c;
+  transform: translateY(-2px);
+}
+
+form p {
+  margin-top: 1rem;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+
+p a {
+  color: var(--primary-color);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+p a:hover {
+  text-decoration: underline;
+}
+
+@media (max-width: 450px) {
+  .wrapper {
+    padding: 2rem 1.5rem;
+  }
+
+  .input-group input {
+    padding-left: 38px;
+  }
+
+  .account-type {
+    flex-direction: column;
+    gap: 10px;
+  }
+}

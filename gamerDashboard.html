@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GameLend Dashboard</title>
+    <link rel="stylesheet" href="dashboard.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script defer src="gamerDashboard.js"></script>
+    <link rel="icon" href="photos/images.png">
+</head>
+
+<body>
+
+    <div class="dashboard-wrapper">
+
+        <aside class="sidebar">
+            <h2>GAMER</h2>
+            <nav>
+                <button onclick="showSection('dashboard', this)" class="active">
+                    <i class="fas fa-home"></i> Dashboard
+                </button>
+                <button onclick="showSection('my-rentals', this)">
+                    <i class="fas fa-gamepad"></i> My Rentals
+                </button>
+                <button onclick="showSection('wishlist', this)">
+                    <i class="fas fa-heart"></i> Wishlist
+                </button>
+                <button onclick="showSection('profile', this)">
+                    <i class="fas fa-user"></i> Profile
+                </button>
+            </nav>
+
+            <button class="logout" onclick="resetDatabase()"
+                style="margin-bottom: 10px; background-color: #ff9800; border-color: #ff9800; color: white;">
+                <i class="fas fa-sync-alt"></i> Reset Data
+            </button>
+
+            <button class="logout" onclick="logout()">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </button>
+        </aside>
+
+
+        <main>
+
+            <section id="dashboard">
+                <div class="card-container" id="dashboard-cards"></div>
+
+                <h2 style="margin-top: 30px;">Recent Activity</h2>
+
+                <table id="activity-table">
+                    <tbody id="activity-body"></tbody>
+                </table>
+
+            </section>
+
+            <section id="my-rentals">
+                <h2>My Rentals</h2>
+
+                <p>Active</p>
+                <div class="games-grid" id="active-rentals"></div>
+
+                <p>Completed</p>
+                <div class="games-grid" id="completed-rentals"></div>
+            </section>
+
+
+            <section id="wishlist">
+                <h2>Wishlist</h2>
+
+                <div class="wishlist-grid" id="wishlist-container"></div>
+            </section>
+
+            <section id="profile">
+                <h2 class="page-title">Profile</h2>
+                <div class="profile-container compact">
+
+                    <div class="profile-top">
+                        <div class="profile-avatar" id="avatar"></div>
+                        <div class="profile-info">
+                            <h3 id="nameText"></h3>
+                            <input id="nameInput" type="text" style="display:none;">
+                            <p id="emailText"></p>
+                            <input id="emailInput" type="email" style="display:none;">
+                        </div>
+                    </div>
+
+                    <div class="profile-item">
+                        <span class="profile-key">Username</span>
+                        <span class="profile-val" id="usernameText"></span>
+                        <input id="usernameInput" type="text" style="display:none;">
+                    </div>
+
+                    <div class="profile-item">
+                        <span class="profile-key">Phone</span>
+                        <span class="profile-val" id="phoneText"></span>
+                        <input id="phoneInput" type="text" style="display:none;">
+                    </div>
+
+                    <div class="profile-item">
+                        <span class="profile-key">Member Since</span>
+                        <span class="profile-val" id="memberSince">-</span>
+                    </div>
+
+                    <div class="profile-item">
+                        <span class="profile-key">Total Rentals</span>
+                        <span class="profile-val" id="totalRentals">0 Games</span>
+                    </div>
+
+                    <div style="margin-top:15px;">
+                        <button onclick="editProfile()" id="editBtn">Edit Profile</button>
+                        <button onclick="saveProfile()" id="saveBtn" style="display:none;">Save</button>
+                    </div>
+
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+</body>
+
+</html>

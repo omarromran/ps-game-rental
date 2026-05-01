@@ -1,0 +1,293 @@
+{
+    "users": [
+        {
+            "userID": 1,
+            "name": "omar omran",
+            "username": "omarromran",
+            "email": "omar@gmail.com",
+            "password": "omar123",
+            "type": "admin"
+        },
+        {
+            "userID": 2,
+            "name": "ahmed hisham",
+            "username": "etsh_store",
+            "email": "ahmed@gmail.com",
+            "password": "ahmed123",
+            "type": "business",
+            "status": "accepted"
+        },
+        {
+            "userID": 3,
+            "name": "zeina ahmed",
+            "username": "zeina_store",
+            "email": "zeina@gmail.com",
+            "password": "zeina123",
+            "type": "business",
+            "status": "accepted"
+        },
+        {
+            "userID": 4,
+            "name": "basmala",
+            "username": "basmala",
+            "email": "basmala@gmail.com",
+            "password": "basmala123",
+            "type": "customer",
+            "phone": "+20 123 456 7890",
+            "memberSince": "March 2024",
+            "wishlist": [
+                "G-101",
+                "G-104",
+                "G-116"
+            ]
+        },
+        {
+            "userID": 5,
+            "name": "youssef gamal",
+            "username": "gamers_hub",
+            "email": "hub@gmail.com",
+            "password": "hub123",
+            "type": "business",
+            "status": "accepted"
+        },
+        {
+            "userID": 6,
+            "name": "omar tarek",
+            "username": "ps_pro",
+            "email": "pspro@gmail.com",
+            "password": "pro123",
+            "type": "business",
+            "status": "accepted"
+        },
+        {
+            "userID": 7,
+            "name": "salma nasr",
+            "username": "egypt_games",
+            "email": "egygames@gmail.com",
+            "password": "egy123",
+            "type": "business",
+            "status": "accepted"
+        },
+        {
+            "userID": 8,
+            "name": "youssef",
+            "username": "youssef",
+            "email": "youssef@gmail.com",
+            "password": "youssef123",
+            "type": "customer",
+            "phone": "+20 111 222 3333",
+            "memberSince": "April 2024",
+            "wishlist": [
+                "G-102",
+                "G-106",
+                "G-110",
+                "G-120"
+            ]
+        },
+        {
+            "userID": 9,
+            "name": "omar_h",
+            "username": "omarh",
+            "email": "omarh@gmail.com",
+            "password": "omar123",
+            "type": "customer",
+            "phone": "+20 111 222 3334",
+            "memberSince": "April 2024",
+            "wishlist": [
+                "G-107",
+                "G-111",
+                "G-132"
+            ]
+        },
+        {
+            "userID": 10,
+            "name": "salma",
+            "username": "salma_c",
+            "email": "salma_c@gmail.com",
+            "password": "salma123",
+            "type": "customer",
+            "phone": "+20 111 222 3335",
+            "memberSince": "April 2024",
+            "wishlist": [
+                "G-103",
+                "G-113",
+                "G-117"
+            ]
+        },
+        {
+            "userID": 11,
+            "name": "noura",
+            "username": "noura",
+            "email": "noura@gmail.com",
+            "password": "noura123",
+            "type": "customer",
+            "phone": "+20 111 222 3336",
+            "memberSince": "April 2024",
+            "wishlist": [
+                "G-118",
+                "G-119",
+                "G-120"
+            ]
+        },
+        {
+            "userID": 12,
+            "name": "khaled",
+            "username": "khaled",
+            "email": "khaled@gmail.com",
+            "password": "khaled123",
+            "type": "customer",
+            "phone": "+20 111 222 3337",
+            "memberSince": "April 2024",
+            "wishlist": [
+                "G-105",
+                "G-109",
+                "G-114"
+            ]
+        },
+        {
+            "userID": 13,
+            "name": "tarek",
+            "username": "tarek",
+            "email": "tarek@gmail.com",
+            "password": "tarek123",
+            "type": "customer",
+            "phone": "+20 111 222 3338",
+            "memberSince": "April 2024",
+            "wishlist": [
+                "G-110",
+                "G-111",
+                "G-115"
+            ]
+        },
+        {
+            "userID": 14,
+            "name": "menna",
+            "username": "menna",
+            "email": "menna@gmail.com",
+            "password": "menna123",
+            "type": "customer",
+            "phone": "+20 111 222 3339",
+            "memberSince": "April 2024",
+            "wishlist": [
+                "G-101",
+                "G-102",
+                "G-103"
+            ]
+        },
+        {
+            "userID": 15,
+            "name": "mohamed adel",
+            "username": "game_zone",
+            "email": "gamezone@gmail.com",
+            "password": "zone123",
+            "type": "business",
+            "status": "accepted"
+        },
+        {
+            "userID": 16,
+            "name": "sara ibrahim",
+            "username": "next_level",
+            "email": "nextlevel@gmail.com",
+            "password": "next123",
+            "type": "business",
+            "status": "accepted"
+        },
+        {
+            "userID": 17,
+            "name": "karim said",
+            "username": "pro_gamers",
+            "email": "progamers@gmail.com",
+            "password": "pro123",
+            "type": "business",
+            "status": "accepted"
+        },
+        {
+            "userID": 18,
+            "name": "nour khaled",
+            "username": "level_up",
+            "email": "levelup@gmail.com",
+            "password": "level123",
+            "type": "business",
+            "status": "accepted"
+        },
+        {
+            "userID": 19,
+            "name": "hassan ali",
+            "username": "console_world",
+            "email": "console@gmail.com",
+            "password": "console123",
+            "type": "business",
+            "status": "accepted"
+        },
+        {
+            "userID": 20,
+            "name": "mena wael",
+            "username": "playstation_hub",
+            "email": "pshub@gmail.com",
+            "password": "pshub123",
+            "type": "business",
+            "status": "accepted"
+        },
+        {
+            "userID": 21,
+            "name": "John Doe",
+            "username": "Game_Master",
+            "email": "john@gmail.com",
+            "password": "password123",
+            "type": "business",
+            "status": "pending"
+        },
+        {
+            "userID": 22,
+            "name": "Jane Smith",
+            "username": "Digital_World",
+            "email": "jane@gmail.com",
+            "password": "password456",
+            "type": "business",
+            "status": "pending"
+        },
+        {
+            "userID": 23,
+            "name": "Ibrahim Ahmed",
+            "username": "Ibrahim_Store",
+            "email": "ibrahim@gmail.com",
+            "password": "password789",
+            "type": "business",
+            "status": "pending"
+        },
+        {
+            "userID": 24,
+            "name": "admin",
+            "username": "admin",
+            "email": "admin@gmail.com",
+            "password": "admin123",
+            "type": "admin"
+        },
+        {
+            "userID": 25,
+            "name": "customer",
+            "username": "customer",
+            "email": "customer@gmail.com",
+            "password": "customer123",
+            "type": "customer"
+        },
+        {
+            "userID": 26,
+            "name": "business",
+            "username": "business",
+            "email": "business@gmail.com",
+            "password": "business123",
+            "type": "business",
+            "status": "accepted"
+        },
+        {
+            "userID": 27,
+            "name": "pending",
+            "username": "pending",
+            "email": "pending@gmail.com",
+            "password": "pending123",
+            "type": "business",
+            "status": "pending"
+        }
+    ]
+}

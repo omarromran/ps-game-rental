@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Log In</title>
+    <link rel="stylesheet" href="login&signup.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="icon" href="photos/images.png">
+</head>
+
+<body>
+
+    <div class="wrapper">
+        <h1>Log In</h1>
+        <form id="login-form">
+
+            <div class="input-group">
+                <i class="fa-solid fa-user"></i>
+                <input type="text" name="username" id="username-input" placeholder="Username" required>
+            </div>
+
+            <div class="input-group">
+                <i class="fa-solid fa-lock"></i>
+                <input type="password" name="password" id="password-input" placeholder="Password" required>
+            </div>
+
+            <button type="submit">Log In</button>
+            <p>Don't have an account? <a href="signup.html">Sign Up</a></p>
+
+        </form>
+    </div>
+
+    <script>
+        document.getElementById("login-form").addEventListener("submit", async e => {
+            e.preventDefault();
+
+            const username = document.getElementById("username-input").value.trim();
+            const password = document.getElementById("password-input").value;
+
+            if (!/^\S+$/.test(username)) {
+                alert("Username must not contain spaces.");
+                return;
+            }
+
+            try {
+                let users = JSON.parse(localStorage.getItem("users")) || [];
+
+                if (!users.length) {
+                    const res = await fetch("users.json");
+                    const data = await res.json();
+                    users = data.users || [];
+                    localStorage.setItem("users", JSON.stringify(users));
+                }
+
+                const user = users.find(u => u.username === username && u.password === password);
+
+                if (!user) {
+                    alert("Invalid username or password!");
+                    return;
+                }
+
+                const status = (user.status || "").toLowerCase();
+
+                if (status === "pending") {
+                    alert("Your account is pending approval.");
+                    return;
+                }
+
+                if (status === "rejected") {
+                    alert("Your account has been rejected.");
+                    return;
+                }
+
+                localStorage.setItem("currentUser", JSON.stringify(user));
+                alert(`Welcome, ${user.name}!`);
+
+                const type = user.type.trim().toLowerCase();
+
+                if (type === "admin") window.location.href = "adminDashboard.html";
+                else if (type === "business") window.location.href = "storedashboard.html";
+                else if (type === "customer") window.location.href = "Browse_Games.html";
+                else alert("User type not recognized");
+
+            } catch {
+                alert("An error occurred. Make sure you are using Live Server.");
+            }
+        });
+    </script>
+</body>
+
+
+</html>
