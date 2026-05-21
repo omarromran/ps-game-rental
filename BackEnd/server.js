@@ -2,27 +2,46 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const dotenv = require('dotenv');
+const path = require('path');
 
-dotenv.config();
+// Import your models
+const Game = require('./models/Game');
+
+// Load environment variables securely
+dotenv.config({ path: path.resolve(__dirname, '.env') });
 
 const app = express();
 const PORT = process.env.PORT || 8080;
 
-// Middleware
+// Global Middleware
 app.use(cors());
 app.use(express.json());
 
-// Database Connection
+// Cloud Database Connection
 mongoose.connect(process.env.MONGO_URI)
   .then(() => console.log('🎮 SUCCESS: Connected securely to PS Rental Hub Cloud Database!'))
   .catch((err) => console.error('❌ DATABASE CONNECTION ERROR:', err));
 
-// Core Route
+// ==========================================
+// 🚀 API ROUTES (For your frontend to call)
+// ==========================================
+
+// 1. Fetch all games from the database
+app.get('/api/games', async (req, res) => {
+  try {
+    const games = await Game.find();
+    res.json(games);
+  } catch (err) {
+    res.status(500).json({ error: "Failed to fetch games from the database." });
+  }
+});
+
+// 2. Core Base Route (Just to check if the server is alive)
 app.get('/', (req, res) => {
   res.json({ message: "Welcome to the PlayStation Rental Hub API!" });
 });
 
-// CRUCIAL: This keeps the server running!
+// Ignition Switch
 app.listen(PORT, () => {
-  console.log(`🚀 Server running on http://localhost:${PORT}`);
+  console.log(`🚀 Server is flying high on http://localhost:${PORT}`);
 });
