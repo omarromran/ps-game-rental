@@ -1,9 +1,10 @@
 const express = require('express');
 const router = express.Router();
-const authController = require('../Controllers/authControllers');
+const { register, login, logout, getMe } = require('../Controllers/authControllers');
 
-// Define API target addresses
-router.post('/register', authController.register);
-router.post('/login', authController.login);
+router.post('/register', register);
+router.post('/login', login);
+router.get('/logout', logout);
+router.get('/me', getMe);
 
 module.exports = router;

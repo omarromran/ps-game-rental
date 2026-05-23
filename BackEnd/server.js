@@ -5,6 +5,9 @@ const dotenv = require('dotenv');
 const path = require('path');
 const authRoutes = require('./Routes/authRoutes');
 const gameRoutes = require('./routes/gameRoutes');
+const session = require('express-session');
+const rentalRoutes = require('./Routes/rentalRoutes');
+const userRoutes = require('./Routes/userRoutes');
 
 // Load environment variables securely
 dotenv.config({ path: path.resolve(__dirname, '.env') });
@@ -14,7 +17,17 @@ const PORT = process.env.PORT || 8080;
 
 // Global Middleware
 app.use(cors());
+
+app.use(express.static(path.join(__dirname, '../FrontEnd')));
 app.use(express.json());
+
+app.use(session({
+    secret: process.env.SESSION_SECRET || 'pshub-secret',
+    resave: false,
+    saveUninitialized: false,
+    cookie: { maxAge: 1000 * 60 * 60 * 24 }
+}));
+
 
 // Cloud Database Connection
 mongoose.connect(process.env.MONGO_URI)
@@ -35,6 +48,9 @@ app.use('/api/auth', authRoutes);
 
 // 3. Game Routes
 app.use('/api/games', gameRoutes);
+
+app.use('/api/rentals', rentalRoutes);
+app.use('/api/users', userRoutes);
 
 // Ignition Switch
 app.listen(PORT, () => {
