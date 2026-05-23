@@ -4,7 +4,7 @@ const cors = require('cors');
 const dotenv = require('dotenv');
 const path = require('path');
 const authRoutes = require('./Routes/authRoutes');
-const gameRoutes = require('./routes/gameRoutes'); // Keeps architecture modular
+const gameRoutes = require('./routes/gameRoutes');
 
 // Load environment variables securely
 dotenv.config({ path: path.resolve(__dirname, '.env') });
@@ -33,7 +33,7 @@ app.get('/', (req, res) => {
 // 2. Authentication Routes (Register/Login)
 app.use('/api/auth', authRoutes);
 
-// 3. Game Routes (Handles all game requests seamlessly)
+// 3. Game Routes
 app.use('/api/games', gameRoutes);
 
 // Ignition Switch
