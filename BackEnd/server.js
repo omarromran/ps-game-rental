@@ -27,17 +27,7 @@ mongoose.connect(process.env.MONGO_URI)
 // 🚀 API ROUTES (For your frontend to call)
 // ==========================================
 
-// 1. Fetch all games from the database
-app.get('/api/games', async (req, res) => {
-  try {
-    const games = await Game.find();
-    res.json(games);
-  } catch (err) {
-    res.status(500).json({ error: "Failed to fetch games from the database." });
-  }
-});
-
-// 2. Core Base Route (Just to check if the server is alive)
+// 1. Core Base Route (Just to check if the server is alive)
 app.get('/', (req, res) => {
   res.json({ message: "Welcome to the PlayStation Rental Hub API!" });
 });
