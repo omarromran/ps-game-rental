@@ -5,7 +5,8 @@ const jwt = require('jsonwebtoken');
 // 📝 REGISTER USER / STORE
 exports.register = async (req, res) => {
   try {
-    const { name, email, password, role, storeID } = req.body;
+    // Standardized to use 'username' and safely destructured storeID
+    const { username, email, password, role, storeID } = req.body;
 
     // Check if user already exists
     const userExists = await User.findOne({ email });
@@ -22,9 +23,9 @@ exports.register = async (req, res) => {
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
-    // Save user to Atlas database
+    // Save user to Atlas database (Cleans up storeID for non-store users)
     const newUser = new User({
-      name,
+      username,
       email,
       password: hashedPassword,
       role,
@@ -63,13 +64,13 @@ exports.login = async (req, res) => {
       { expiresIn: '1d' }
     );
 
-    // Send data back to frontend dashboard
+    // Send data back to frontend dashboard using standardized username
     res.status(200).json({
-      message: `Welcome back, ${user.name}!`,
+      message: `Welcome back, ${user.username}!`,
       token,
       user: {
         id: user._id,
-        name: user.name,
+        username: user.username,
         email: user.email,
         role: user.role,
         storeID: user.storeID
