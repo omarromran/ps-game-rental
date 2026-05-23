@@ -4,9 +4,7 @@ const cors = require('cors');
 const dotenv = require('dotenv');
 const path = require('path');
 const authRoutes = require('./Routes/authRoutes');
-
-// Import your models
-const Game = require('./models/Game');
+const gameRoutes = require('./routes/gameRoutes');
 
 // Load environment variables securely
 dotenv.config({ path: path.resolve(__dirname, '.env') });
@@ -27,23 +25,16 @@ mongoose.connect(process.env.MONGO_URI)
 // 🚀 API ROUTES (For your frontend to call)
 // ==========================================
 
-// 1. Fetch all games from the database
-app.get('/api/games', async (req, res) => {
-  try {
-    const games = await Game.find();
-    res.json(games);
-  } catch (err) {
-    res.status(500).json({ error: "Failed to fetch games from the database." });
-  }
-});
-
-// 2. Core Base Route (Just to check if the server is alive)
+// 1. Core Base Route (Just to check if the server is alive)
 app.get('/', (req, res) => {
   res.json({ message: "Welcome to the PlayStation Rental Hub API!" });
 });
 
-// 3. Authentication Routes (Register/Login)
+// 2. Authentication Routes (Register/Login)
 app.use('/api/auth', authRoutes);
+
+// 3. Game Routes
+app.use('/api/games', gameRoutes);
 
 // Ignition Switch
 app.listen(PORT, () => {
