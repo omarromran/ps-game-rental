@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const dotenv = require('dotenv');
 const path = require('path');
+const authRoutes = require('./Routes/authRoutes');
 
 // Import your models
 const Game = require('./models/Game');
@@ -40,6 +41,9 @@ app.get('/api/games', async (req, res) => {
 app.get('/', (req, res) => {
   res.json({ message: "Welcome to the PlayStation Rental Hub API!" });
 });
+
+// 3. Authentication Routes (Register/Login)
+app.use('/api/auth', authRoutes);
 
 // Ignition Switch
 app.listen(PORT, () => {
