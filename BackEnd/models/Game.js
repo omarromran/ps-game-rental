@@ -15,6 +15,6 @@ const gameSchema = new mongoose.Schema({
   releaseYear: { type: Number },
   pegi: { type: Number },
   description: { type: String }
-}, { timestamps: true });
+}, { timestamps: true, collection: 'Games' });
 
 module.exports = mongoose.model('Game', gameSchema);
