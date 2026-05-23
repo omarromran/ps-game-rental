@@ -4,9 +4,7 @@ const cors = require('cors');
 const dotenv = require('dotenv');
 const path = require('path');
 const authRoutes = require('./Routes/authRoutes');
-
-// Import your models
-const Game = require('./models/Game');
+const gameRoutes = require('./routes/gameRoutes'); // Keeps architecture modular
 
 // Load environment variables securely
 dotenv.config({ path: path.resolve(__dirname, '.env') });
@@ -32,8 +30,11 @@ app.get('/', (req, res) => {
   res.json({ message: "Welcome to the PlayStation Rental Hub API!" });
 });
 
-// 3. Authentication Routes (Register/Login)
+// 2. Authentication Routes (Register/Login)
 app.use('/api/auth', authRoutes);
+
+// 3. Game Routes (Handles all game requests seamlessly)
+app.use('/api/games', gameRoutes);
 
 // Ignition Switch
 app.listen(PORT, () => {
