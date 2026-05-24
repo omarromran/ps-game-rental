@@ -17,16 +17,36 @@ async function loadDB() {
     }
     if (!storedWishlist) storedWishlist = localStorage.getItem('pshub_wishlist');
 
-    if (storedCart) cart = JSON.parse(storedCart);
-    if (storedWishlist) wishlist = JSON.parse(storedWishlist);
-
-    try {
-        const response = await fetch('http://localhost:8080/api/games');
-        const data = await response.json();
-        inventory = data;
-    } catch (error) {
-        console.error("Error loading games from backend:", error);
+    if (storedCart) {
+        try { cart = JSON.parse(storedCart) || []; } catch(e) { cart = []; }
     }
+    if (storedWishlist) {
+        try {
+            let raw = JSON.parse(storedWishlist) || [];
+            wishlist = raw.map(w => (typeof w === 'string' ? w : (w.gameID || w.id || w._id || ''))).filter(Boolean);
+        } catch(e) { wishlist = []; }
+    }
+
+    // Use server-provided games if available, otherwise fetch from API
+    if (typeof window.serverGames !== 'undefined' && window.serverGames && window.serverGames.length) {
+        inventory = window.serverGames;
+    } else {
+        try {
+            const response = await fetch('http://localhost:8080/api/games');
+            const data = await response.json();
+            inventory = Array.isArray(data) ? data : [];
+        } catch (error) {
+            console.error("Error loading games from backend:", error);
+            inventory = [];
+        }
+    }
+
+    // Normalize inventory fields
+    inventory = inventory.map(g => ({
+        ...g,
+        pricePerDay: parseFloat(g.pricePerDay) || 0,
+        img: g.img || 'photos/placeholder.png'
+    }));
 
     applyFilters();
 }
@@ -40,6 +60,14 @@ function loadCurrentUser() {
     const userLink = document.getElementById('user-name-link');
     const loginBtn = document.querySelector('.login-btn');
     if (!userLink) return;
+    
+    // If server already rendered a username (not 'Guest'), don't override it
+    const currentText = userLink.textContent.trim();
+    if (currentText && currentText !== 'Guest') {
+        if (loginBtn) loginBtn.style.display = 'none';
+        return;
+    }
+    
     const stored = localStorage.getItem('currentUser');
     if (stored) {
         const user = JSON.parse(stored);
@@ -53,20 +81,23 @@ function loadCurrentUser() {
 }
 
 function applyFilters() {
-    const search = document.getElementById('mainSearch').value.toLowerCase();
-    const minP = parseFloat(document.getElementById('minPrice').value) || 0;
-    const maxP = parseFloat(document.getElementById('maxPrice').value) || Infinity;
+    const searchEl = document.getElementById('mainSearch');
+    const minEl = document.getElementById('minPrice');
+    const maxEl = document.getElementById('maxPrice');
+    const search = (searchEl && searchEl.value) ? String(searchEl.value).toLowerCase() : '';
+    const minP = minEl ? (parseFloat(minEl.value) || 0) : 0;
+    const maxP = maxEl ? (parseFloat(maxEl.value) || Infinity) : Infinity;
 
     const platforms = Array.from(document.querySelectorAll('#platform-filters input:checked')).map(i => i.value);
     const categories = Array.from(document.querySelectorAll('#category-filters input:checked')).map(i => i.value);
 
     const filtered = inventory.filter(g => {
-        const matchesSearch = g.title.toLowerCase().includes(search) || (g.gameID && g.gameID.toLowerCase().includes(search));
+        const matchesSearch = (!search) || ((g.title || '').toLowerCase().includes(search) || (g.gameID && String(g.gameID).toLowerCase().includes(search)));
         const matchesPlatform = platforms.length === 0 || platforms.includes(g.platform);
         const matchesCategory = categories.length === 0 || categories.includes(g.category);
         const matchesPrice = g.pricePerDay >= minP && g.pricePerDay <= maxP;
         const matchesStore = !activeStoreFilter || g.storeID === activeStoreFilter;
-        const isAvailable = g.status === 'Available';
+        const isAvailable = !g.status || g.status === 'Available';
 
         return matchesSearch && matchesPlatform && matchesCategory && matchesPrice && matchesStore && isAvailable;
     });
@@ -99,7 +130,8 @@ function renderInventory(data) {
         const buttonText = isInCart ? "In Cart" : "Add to Cart";
         const buttonClass = isInCart ? "add-btn in-cart" : "add-btn";
 
-        const isInWishlist = wishlist.includes(game.gameID);
+        const gid = String(game.gameID || game.id || game._id || '');
+        const isInWishlist = wishlist.includes(gid);
         const heartIcon = isInWishlist ? "❤️" : "🤍";
 
         card.innerHTML = `
@@ -108,7 +140,7 @@ function renderInventory(data) {
             <div class="game-info"> 
                 <h3>${game.title}</h3>
                 <p style="font-size: 0.8rem; color: #888; margin: 0;">${game.platform}</p>
-                <div class="price" style="font-weight: bold; margin: 5px 0;">${game.pricePerDay} EGP</div>
+                    <div class="price" style="font-weight: bold; margin: 5px 0;">${(game.pricePerDay || 0)} EGP</div>
                 <button class="${buttonClass}" onclick="event.stopPropagation(); addToCart('${game.gameID}')">
                     ${buttonText}
                 </button>
@@ -143,7 +175,7 @@ function renderCart() {
     let total = 0;
     if (cartList) {
         cartList.innerHTML = cart.map(item => {
-            total += item.pricePerDay;
+            total += parseFloat(item.pricePerDay) || 0;
             return `
                 <div class="cart-item">
                     <img src="${item.img}" style="width:40px; height:60px; object-fit:cover; border-radius:4px;">
@@ -204,9 +236,12 @@ function checkout() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    document.getElementById('mainSearch').addEventListener('input', applyFilters);
-    document.getElementById('minPrice').addEventListener('input', applyFilters);
-    document.getElementById('maxPrice').addEventListener('input', applyFilters);
+    const ms = document.getElementById('mainSearch');
+    const min = document.getElementById('minPrice');
+    const max = document.getElementById('maxPrice');
+    if (ms) ms.addEventListener('input', applyFilters);
+    if (min) min.addEventListener('input', applyFilters);
+    if (max) max.addEventListener('input', applyFilters);
 });
 
 function index() {

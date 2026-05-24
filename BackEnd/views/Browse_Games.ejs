@@ -18,9 +18,13 @@
                 🛒 <span id="cart-count">0</span>
             </div>
             <div class="user-profile">
-                <a id="user-name-link" class="user-name" href="/gamerDashboard"
-                    style="text-decoration:none; color:inherit;"></a>
-                <a href="/login" class="login-btn">Login</a>
+                <% if (typeof user !== 'undefined' && user) { %>
+                    <a id="user-name-link" class="user-name" href="/gamerDashboard" style="text-decoration:none; color:inherit;"><%= user.username %></a>
+                    <button id="logout-btn" style="background: none; border: none; color: inherit; cursor: pointer; font-size: 0.9rem; margin-left: 10px;">Logout</button>
+                <% } else { %>
+                    <a id="user-name-link" class="user-name" href="/login" style="text-decoration:none; color:inherit;">Guest</a>
+                    <a href="/login" class="login-btn">Login</a>
+                <% } %>
                 <div class="avatar"></div>
             </div>
         </div>
@@ -55,7 +59,6 @@
                     <label><input type="checkbox" value="Platform" onchange="applyFilters()"> Platform</label>
                 </div>
             </div>
-            <button class="reset-btn" onclick="resetDatabase()">Reset All Data</button>
 
         </div>
     </div>
@@ -63,9 +66,24 @@
     <main class="store-container">
         <div class="inventory-header">
             <h1 id="view-title">All Games</h1>
-            <span id="item-count">0 games found</span>
+            <span id="item-count"><%= (typeof games !== 'undefined' && games && games.length) ? (games.length + ' games found') : '0 games found' %></span>
         </div>
-        <div class="game-grid" id="game-grid"></div>
+        <div class="game-grid" id="game-grid">
+            <% if (typeof games !== 'undefined' && games && games.length) { %>
+                <% games.forEach(function(game){ %>
+                    <div class="game-card" style="cursor:pointer" onclick="window.location.href='/game_description?id=<%= game._id %>'">
+                        <img src="<%= game.img || 'photos/placeholder.png' %>" alt="<%= game.title %>">
+                        <div class="wishlist-btn" onclick="event.stopPropagation(); toggleWishlist('<%= game.gameID || game._id %>')">🤍</div>
+                        <div class="game-info">
+                            <h3><%= game.title %></h3>
+                            <p style="font-size: 0.8rem; color: #888; margin: 0;"><%= game.platform %></p>
+                            <div class="price" style="font-weight: bold; margin: 5px 0;"><%= (game.pricePerDay || 0) %> EGP</div>
+                            <button class="add-btn" onclick="event.stopPropagation(); addToCart('<%= game.gameID || game._id %>')">Add to Cart</button>
+                        </div>
+                    </div>
+                <% }) %>
+            <% } %>
+        </div>
     </main>
 
     <div id="cart-sidebar" class="cart-sidebar">

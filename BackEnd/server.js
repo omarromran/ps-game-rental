@@ -91,6 +91,29 @@ const pageViews = [
   'approveLenders'
 ];
 pageViews.forEach((view) => {
+  if (view === 'Browse_Games') {
+    const Game = require('./models/Game');
+    app.get(`/${view}`, async (req, res) => {
+      try {
+        const games = await Game.find({ status: 'Available' }).lean();
+        return res.render(view, { games, user: req.session.user || null });
+      } catch (err) {
+        console.error('Error rendering Browse_Games:', err);
+        return res.render(view, { games: [], user: req.session.user || null });
+      }
+    });
+    app.get(`/${view}.html`, async (req, res) => {
+      try {
+        const games = await Game.find({ status: 'Available' }).lean();
+        return res.render(view, { games, user: req.session.user || null });
+      } catch (err) {
+        console.error('Error rendering Browse_Games:', err);
+        return res.render(view, { games: [], user: req.session.user || null });
+      }
+    });
+    return;
+  }
+
   app.get(`/${view}`, (req, res) => res.render(view));
   app.get(`/${view}.html`, (req, res) => res.render(view));
 });
