@@ -11,7 +11,6 @@ const userRoutes = require('./Routes/userRoutes');
 
 // Load environment variables securely
 dotenv.config({ path: path.resolve(__dirname, '.env') });
-
 const app = express();
 const PORT = process.env.PORT || 8080;
 
