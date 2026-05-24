@@ -1,103 +1,131 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PSHUB | Browse Games</title>
-    <link rel="stylesheet" href="cssFiles/BrowseGames.css">
-    <link rel="icon" href="photos/images.png">
-    <script src="jsFiles/Browse_Games.js" defer></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Browse Games</title>
+  <link rel="stylesheet" href="/css/style.css" />
 </head>
-
 <body>
-    <header class="navbar">
-        <div class="logo" onclick="index()">PS<span>HUB</span></div>
-        <div class="header-right">
-            <div class="cart-icon" onclick="toggleCart()">
-                🛒 <span id="cart-count">0</span>
+
+  <h1>Available Games</h1>
+
+  <!-- ── Search and filter bar ─────────────────────────── -->
+  <div class="filters">
+
+    <input
+      type="text"
+      id="search-input"
+      placeholder="Search games..."
+      onkeyup="filterGames()"
+    />
+
+    <select id="platform-filter" onchange="filterGames()">
+      <option value="all">All Platforms</option>
+      <option value="PS4">PS4</option>
+      <option value="PS5">PS5</option>
+    </select>
+
+    <select id="category-filter" onchange="filterGames()">
+      <option value="all">All Categories</option>
+      <option value="Action">Action</option>
+      <option value="RPG">RPG</option>
+      <option value="Sports">Sports</option>
+      <option value="Racing">Racing</option>
+      <option value="Horror">Horror</option>
+    </select>
+
+  </div>
+
+  <!-- ── Games grid ─────────────────────────────────────── -->
+  <div class="games-grid" id="games-grid">
+
+    <% if (games.length === 0) { %>
+
+      <p class="no-games">No games available right now.</p>
+
+    <% } else { %>
+
+      <% games.forEach(game => { %>
+
+        <div
+          class="game-card"
+          data-title="<%= game.title.toLowerCase() %>"
+          data-platform="<%= game.platform %>"
+          data-category="<%= game.category %>"
+        >
+
+          <!-- ── Cover image ──────────────────────────── -->
+          <!--
+            Priority order for the image:
+            1. First image in the Cloudinary images[] array
+            2. The single img field (old behaviour)
+            3. A placeholder if neither exists
+          -->
+          <img
+            src="<%= (game.images && game.images.length > 0) ? game.images[0] : (game.img || '/images/placeholder.jpg') %>"
+            alt="<%= game.title %>"
+            class="game-cover"
+          />
+
+          <!-- ── Game info ────────────────────────────── -->
+          <div class="game-info">
+
+            <h2 class="game-title"><%= game.title %></h2>
+
+            <div class="game-meta">
+              <span class="badge platform"><%= game.platform %></span>
+              <span class="badge category"><%= game.category %></span>
             </div>
-            <div class="user-profile">
-                <% if (typeof user !== 'undefined' && user) { %>
-                    <a id="user-name-link" class="user-name" href="/gamerDashboard" style="text-decoration:none; color:inherit;"><%= user.username %></a>
-                    <button id="logout-btn" style="background: none; border: none; color: inherit; cursor: pointer; font-size: 0.9rem; margin-left: 10px;">Logout</button>
-                <% } else { %>
-                    <a id="user-name-link" class="user-name" href="/login" style="text-decoration:none; color:inherit;">Guest</a>
-                    <a href="/login" class="login-btn">Login</a>
-                <% } %>
-                <div class="avatar"></div>
-            </div>
-        </div>
-    </header>
 
-    <div class="toolbar">
-
-        <div class="search-container">
-            <input type="text" id="mainSearch" placeholder="Search title or ID...">
-        </div>
-
-        <div class="filter-group">
-            <div class="price-inputs">
-                <input type="number" id="minPrice" placeholder="Min EGP">
-                <input type="number" id="maxPrice" placeholder="Max EGP">
-            </div>
-
-            <div class="dropdown">
-                <button class="drop-btn">Platform ▾</button>
-                <div class="dropdown-content" id="platform-filters">
-                    <label><input type="checkbox" value="PS5" onchange="applyFilters()"> PS5</label>
-                    <label><input type="checkbox" value="PS4" onchange="applyFilters()"> PS4</label>
-                </div>
-            </div>
-
-            <div class="dropdown">
-                <button class="drop-btn">Genre ▾</button>
-                <div class="dropdown-content" id="category-filters">
-                    <label><input type="checkbox" value="Action" onchange="applyFilters()"> Action</label>
-                    <label><input type="checkbox" value="FPS" onchange="applyFilters()"> FPS</label>
-                    <label><input type="checkbox" value="Telltale" onchange="applyFilters()"> Telltale</label>
-                    <label><input type="checkbox" value="Platform" onchange="applyFilters()"> Platform</label>
-                </div>
-            </div>
-
-        </div>
-    </div>
-
-    <main class="store-container">
-        <div class="inventory-header">
-            <h1 id="view-title">All Games</h1>
-            <span id="item-count"><%= (typeof games !== 'undefined' && games && games.length) ? (games.length + ' games found') : '0 games found' %></span>
-        </div>
-        <div class="game-grid" id="game-grid">
-            <% if (typeof games !== 'undefined' && games && games.length) { %>
-                <% games.forEach(function(game){ %>
-                    <div class="game-card" style="cursor:pointer" onclick="window.location.href='/game_description?id=<%= game._id %>'">
-                        <img src="<%= game.img || 'photos/placeholder.png' %>" alt="<%= game.title %>">
-                        <div class="wishlist-btn" onclick="event.stopPropagation(); toggleWishlist('<%= game.gameID || game._id %>')">🤍</div>
-                        <div class="game-info">
-                            <h3><%= game.title %></h3>
-                            <p style="font-size: 0.8rem; color: #888; margin: 0;"><%= game.platform %></p>
-                            <div class="price" style="font-weight: bold; margin: 5px 0;"><%= (game.pricePerDay || 0) %> EGP</div>
-                            <button class="add-btn" onclick="event.stopPropagation(); addToCart('<%= game.gameID || game._id %>')">Add to Cart</button>
-                        </div>
-                    </div>
-                <% }) %>
+            <% if (game.developer) { %>
+              <p class="game-developer">By <%= game.developer %></p>
             <% } %>
-        </div>
-    </main>
 
-    <div id="cart-sidebar" class="cart-sidebar">
-        <div class="cart-header">
-            <h2>Your Cart</h2>
-            <button class="close-btn" onclick="toggleCart(false)">×</button>
+            <% if (game.description) { %>
+              <p class="game-description"><%= game.description %></p>
+            <% } %>
+
+            <div class="game-footer">
+              <span class="price"><%= game.pricePerDay %> EGP / day</span>
+              <a href="/games/<%= game._id %>" class="btn-details">View Details</a>
+            </div>
+
+          </div>
         </div>
-        <div id="cart-items" class="cart-items-container"></div>
-        <div class="cart-footer">
-            <div class="total">Total: <span id="cart-total">0.00</span> EGP</div>
-            <button class="checkout-btn" onclick="checkout()">Checkout</button>
-        </div>
-    </div>
+
+      <% }) %>
+
+    <% } %>
+
+  </div>
+
+  <!-- ── Client-side search and filter ─────────────────── -->
+  <script>
+    function filterGames() {
+      const searchValue  = document.getElementById('search-input').value.toLowerCase();
+      const platformValue = document.getElementById('platform-filter').value;
+      const categoryValue = document.getElementById('category-filter').value;
+
+      const cards = document.querySelectorAll('.game-card');
+
+      cards.forEach(card => {
+        const title    = card.dataset.title;
+        const platform = card.dataset.platform;
+        const category = card.dataset.category;
+
+        const matchesSearch   = title.includes(searchValue);
+        const matchesPlatform = platformValue === 'all' || platform === platformValue;
+        const matchesCategory = categoryValue === 'all' || category === categoryValue;
+
+        if (matchesSearch && matchesPlatform && matchesCategory) {
+          card.style.display = 'block';
+        } else {
+          card.style.display = 'none';
+        }
+      });
+    }
+  </script>
 
 </body>
-
 </html>

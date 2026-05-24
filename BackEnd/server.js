@@ -46,6 +46,10 @@ app.use(session({
     cookie: { maxAge: 1000 * 60 * 60 * 24 } // 1 day
 }));
 
+app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname, 'views'));
+app.use(express.static(path.join(__dirname, 'public'))); // for your CSS and images
+
 // ==========================================
 // ☁️ CLOUD DATABASE CONNECTION
 // ==========================================

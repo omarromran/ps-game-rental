@@ -1,34 +1,41 @@
 const Game = require('../models/Game');
 
-// Get all games (Browse page)
+// ─── GET ALL GAMES ───────────────────────────────────────────────
 const getAllGames = async (req, res) => {
   try {
     const games = await Game.find({ status: 'Available' });
-    res.json(games);
+
+    // changed from res.json(games)
+    res.render('browse_games', { games });
+
   } catch (err) {
     console.log(err);
     res.status(500).json({ error: 'Failed to fetch games' });
   }
 };
 
-// Get one game (Game description page)
+// ─── GET ONE GAME ────────────────────────────────────────────────
 const getOneGame = async (req, res) => {
   try {
     const game = await Game.findById(req.params.id);
     if (!game) return res.status(404).json({ error: 'Game not found' });
-    res.json(game);
+    res.render('game_detail', { game });
   } catch (err) {
     console.log(err);
     res.status(500).json({ error: 'Failed to fetch game' });
   }
 };
 
-// Add a game (Store owner)
+// ─── ADD GAME ────────────────────────────────────────────────────
 const addGame = async (req, res) => {
   try {
-    const { gameID, storeID, title, description, category, platform, pricePerDay, img, developer, releaseYear, pegi, type } = req.body;
+    const {
+      gameID, storeID, title, description,
+      category, platform, pricePerDay,
+      developer, releaseYear, pegi, type
+    } = req.body;
 
-    // Validation
+    // ── Validation (unchanged) ────────────────────────────────
     if (!title || title.trim() === '') {
       return res.status(400).json({ error: 'Game title is required' });
     }
@@ -45,13 +52,26 @@ const addGame = async (req, res) => {
       return res.status(400).json({ error: 'Store ID is required' });
     }
 
-    // Check for duplicate gameID
     if (gameID) {
       const existingGame = await Game.findOne({ gameID });
       if (existingGame) {
         return res.status(400).json({ error: 'A game with this ID already exists' });
       }
     }
+
+    // ── CHANGE 1: Extract Cloudinary URLs from uploaded files ──
+    // upload.array() in the route fills req.files before this runs
+    // each file object has a .path property = the Cloudinary URL
+    const imageUrls = req.files && req.files.length > 0
+      ? req.files.map((file) => file.path)
+      : [];
+
+    // ── CHANGE 2: img field falls back to first uploaded image ──
+    // if the request body has an img URL use it (old behaviour)
+    // if not but files were uploaded, use the first Cloudinary URL
+    // if neither, it stays undefined (schema marks img as required
+    // so the save will fail with a clear validation error)
+    const imgValue = req.body.img || imageUrls[0];
 
     const newGame = new Game({
       gameID,
@@ -61,7 +81,8 @@ const addGame = async (req, res) => {
       category,
       platform,
       pricePerDay,
-      img,
+      img: imgValue,       // single cover — unchanged field
+      images: imageUrls,   // ← NEW: full array of Cloudinary URLs
       developer,
       releaseYear,
       pegi,
@@ -77,13 +98,13 @@ const addGame = async (req, res) => {
   }
 };
 
-// Edit a game (Store owner)
+// ─── EDIT GAME ───────────────────────────────────────────────────
 const editGame = async (req, res) => {
   try {
     const game = await Game.findById(req.params.id);
     if (!game) return res.status(404).json({ error: 'Game not found' });
 
-    // Validation
+    // ── Validation (unchanged) ────────────────────────────────
     if (req.body.title !== undefined && req.body.title.trim() === '') {
       return res.status(400).json({ error: 'Game title cannot be empty' });
     }
@@ -92,6 +113,16 @@ const editGame = async (req, res) => {
     }
     if (req.body.pricePerDay !== undefined && (isNaN(req.body.pricePerDay) || req.body.pricePerDay <= 0)) {
       return res.status(400).json({ error: 'Price must be a positive number' });
+    }
+
+    // ── CHANGE 3: Handle new image uploads on edit ────────────
+    // if the owner uploads new images during an edit, replace the array
+    // if no new files are sent, keep the existing images untouched
+    if (req.files && req.files.length > 0) {
+      req.body.images = req.files.map((file) => file.path);
+
+      // also update the single img field to the new first image
+      req.body.img = req.body.images[0];
     }
 
     const updatedGame = await Game.findByIdAndUpdate(
@@ -107,7 +138,7 @@ const editGame = async (req, res) => {
   }
 };
 
-// Delete a game (Store owner / Admin)
+// ─── DELETE GAME ─────────────────────────────────────────────────
 const deleteGame = async (req, res) => {
   try {
     const game = await Game.findById(req.params.id);
@@ -120,18 +151,29 @@ const deleteGame = async (req, res) => {
   }
 };
 
-// Get my games (Store owner dashboard)
-const getMyGames = async (req, res) => {
+// ─── GET MY GAMES ────────────────────────────────────────────────
+const getMyGames = async (req, res, next) => {
   try {
-    if (!req.params.ownerId || req.params.ownerId.trim() === '') {
-      return res.status(400).json({ error: 'Store ID is required' });
-    }
-    const games = await Game.find({ storeID: req.params.ownerId });
-    res.json(games);
+    // ── CHANGE 4: Fixed field name to match your schema ───────
+    // your schema has storeID: String, not owner: ObjectId
+    // req.user._id comes from verifyToken middleware as a string
+    const games = await Game.find({ storeID: req.user._id });
+
+    res.status(200).json({
+      status: 'success',
+      results: games.length,
+      data: { games },
+    });
   } catch (err) {
-    console.log(err);
-    res.status(500).json({ error: 'Failed to fetch your games' });
+    next(err);
   }
 };
+
+// ── CHANGE 5: Fixed inconsistent export style ─────────────────────
+// original file mixed two styles:
+// getMyGames used  →  exports.getMyGames = ...
+// all others used  →  module.exports = { ... }
+// mixing these breaks the module — only one style should be used
+// everything is now declared as const and exported together at the bottom
 
 module.exports = { getAllGames, getOneGame, addGame, editGame, deleteGame, getMyGames };

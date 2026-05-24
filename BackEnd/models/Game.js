@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 const gameSchema = new mongoose.Schema({
-  gameID: { type: String, required: true }, // Removed 'unique' so different stores can use their own IDs
+  gameID: { type: String, required: true },
   storeID: { type: String, required: true },
   customerID: { type: String, default: null },
   status: { type: String, required: true, default: 'Available', enum: ['Available', 'Rented', 'Maintenance'] },
@@ -11,6 +11,7 @@ const gameSchema = new mongoose.Schema({
   pricePerDay: { type: Number, required: true, min: 0 },
   category: { type: String, required: true },
   img: { type: String, required: true },
+  images: { type: [String], default: [] },   // ← Cloudinary uploaded images
   developer: { type: String },
   releaseYear: { type: Number },
   pegi: { type: Number },

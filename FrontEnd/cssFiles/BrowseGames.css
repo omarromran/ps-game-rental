@@ -351,3 +351,103 @@ input::-webkit-inner-spin-button {
     -webkit-appearance: none;
     margin: 0;
 }
+.games-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 1.5rem;
+  padding: 1.5rem;
+}
+
+.game-card {
+  border: 1px solid #e0e0e0;
+  border-radius: 10px;
+  overflow: hidden;
+  background: #fff;
+}
+
+.game-cover {
+  width: 100%;
+  height: 280px;
+  object-fit: cover;
+  display: block;
+}
+
+.game-info {
+  padding: 0.75rem 1rem;
+}
+
+.game-title {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.game-meta {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+.badge {
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: 4px;
+  background: #f0f0f0;
+  color: #333;
+}
+
+.badge.platform {
+  background: #e8f0fe;
+  color: #1a56db;
+}
+
+.game-description {
+  font-size: 13px;
+  color: #555;
+  margin-bottom: 10px;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.game-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 10px;
+}
+
+.price {
+  font-weight: 600;
+  color: #1a56db;
+}
+
+.btn-details {
+  text-decoration: none;
+  background: #1a56db;
+  color: #fff;
+  padding: 5px 12px;
+  border-radius: 6px;
+  font-size: 13px;
+}
+
+.filters {
+  display: flex;
+  gap: 1rem;
+  padding: 1rem 1.5rem;
+}
+
+.filters input,
+.filters select {
+  padding: 8px 12px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+.no-games {
+  grid-column: 1 / -1;
+  text-align: center;
+  color: #888;
+  padding: 3rem 0;
+}
