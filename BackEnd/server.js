@@ -34,6 +34,10 @@ app.use(cors());
 app.use(express.json()); 
 app.use(express.static(path.join(__dirname, '../FrontEnd')));
 
+// EJS view engine setup for converted front-end pages
+app.set('views', path.join(__dirname, '../FrontEnd'));
+app.set('view engine', 'ejs');
+
 // Express Session Configuration (Maintained for your teammates)
 app.use(session({
     secret: process.env.SESSION_SECRET || 'pshub-secret',
@@ -73,9 +77,25 @@ app.use('/api/games', gameRoutes);
 app.use('/api/rentals', rentalRoutes);
 app.use('/api/users', userRoutes);
 
+// Render converted EJS front-end pages from their original HTML endpoints
+const pageViews = [
+  'index',
+  'login',
+  'signup',
+  'Browse_Games',
+  'game_description',
+  'Checkout',
+  'gamerDashboard',
+  'storedashboard',
+  'adminDashboard',
+  'approveLenders'
+];
+pageViews.forEach((view) => {
+  app.get(`/${view}.html`, (req, res) => res.render(view));
+});
+
 // ==========================================
 // 🛰️ IGNITION SWITCH
-// ==========================================
 app.listen(PORT, () => {
   console.log(`🚀 Server is flying high on http://localhost:${PORT}`);
 });
