@@ -10,7 +10,7 @@ const {
   getMyGames,
 } = require('../Controllers/gameController');
 
-const { verifyToken, restrictTo } = require('../middleware/authMiddleware');
+const { protect, restrictTo } = require('../middleware/authMiddleware');
 const upload = require('../middleware/upload');
 
 // ─── PUBLIC ROUTES ───────────────────────────────────────────────
@@ -23,22 +23,22 @@ router.get('/:id', getOneGame);
 // Must be logged in as a business owner
 
 // Get my own games — owner ID comes from the token, NOT the URL
-router.get('/my/games', verifyToken, restrictTo('business'), getMyGames);
+router.get('/my/games', protect, restrictTo('business'), getMyGames);
 
 // Add a game with image upload
 router.post(
   '/',
-  verifyToken,
+  protect,
   restrictTo('business'),
   upload.array('images', 5),
   addGame
 );
 
 // Edit a game
-router.put('/:id', verifyToken, restrictTo('business'), editGame);
+router.put('/:id', protect, restrictTo('business'), editGame);
 
 // Delete a game
-router.delete('/:id', verifyToken, restrictTo('business'), deleteGame);
+router.delete('/:id', protect, restrictTo('business'), deleteGame);
 
 module.exports = router;
-console.log({ getAllGames, getOneGame, addGame, editGame, deleteGame, getMyGames, verifyToken, restrictTo });
+console.log({ getAllGames, getOneGame, addGame, editGame, deleteGame, getMyGames, protect, restrictTo });
