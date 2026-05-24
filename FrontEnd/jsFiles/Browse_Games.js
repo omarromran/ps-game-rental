@@ -4,7 +4,6 @@ let wishlist = [];
 let activeStoreFilter = null;
 
 async function loadDB() {
-    let storedGames = localStorage.getItem('pshub_inventory');
     let storedCart = localStorage.getItem('pshub_cart');
     let storedWishlist;
     const currentUserStr = localStorage.getItem('currentUser');
@@ -21,19 +20,14 @@ async function loadDB() {
     if (storedCart) cart = JSON.parse(storedCart);
     if (storedWishlist) wishlist = JSON.parse(storedWishlist);
 
-    if (!storedGames || JSON.parse(storedGames).length === 0) {
-        try {
-            const response = await fetch('browseGames.json');
-            const data = await response.json();
-
-            inventory = data;
-            localStorage.setItem('pshub_inventory', JSON.stringify(inventory));
-        } catch (error) {
-            console.error("Error loading JSON:", error);
-        }
-    } else {
-        inventory = JSON.parse(storedGames);
+    try {
+        const response = await fetch('http://localhost:8080/api/games');
+        const data = await response.json();
+        inventory = data;
+    } catch (error) {
+        console.error("Error loading games from backend:", error);
     }
+
     applyFilters();
 }
 
@@ -67,12 +61,12 @@ function applyFilters() {
     const categories = Array.from(document.querySelectorAll('#category-filters input:checked')).map(i => i.value);
 
     const filtered = inventory.filter(g => {
-        const matchesSearch = g.title.toLowerCase().includes(search) || g.gameID.toLowerCase().includes(search);
+        const matchesSearch = g.title.toLowerCase().includes(search) || (g.gameID && g.gameID.toLowerCase().includes(search));
         const matchesPlatform = platforms.length === 0 || platforms.includes(g.platform);
         const matchesCategory = categories.length === 0 || categories.includes(g.category);
-        const matchesPrice = g.price >= minP && g.price <= maxP;
+        const matchesPrice = g.pricePerDay >= minP && g.pricePerDay <= maxP;
         const matchesStore = !activeStoreFilter || g.storeID === activeStoreFilter;
-        const isAvailable = g.status === 'available';
+        const isAvailable = g.status === 'Available';
 
         return matchesSearch && matchesPlatform && matchesCategory && matchesPrice && matchesStore && isAvailable;
     });
@@ -114,7 +108,7 @@ function renderInventory(data) {
             <div class="game-info"> 
                 <h3>${game.title}</h3>
                 <p style="font-size: 0.8rem; color: #888; margin: 0;">${game.platform}</p>
-                <div class="price" style="font-weight: bold; margin: 5px 0;">${game.price} EGP</div>
+                <div class="price" style="font-weight: bold; margin: 5px 0;">${game.pricePerDay} EGP</div>
                 <button class="${buttonClass}" onclick="event.stopPropagation(); addToCart('${game.gameID}')">
                     ${buttonText}
                 </button>
@@ -122,7 +116,6 @@ function renderInventory(data) {
         `;
         gallery.appendChild(card);
     });
-
 }
 
 function addToCart(id) {
@@ -150,11 +143,11 @@ function renderCart() {
     let total = 0;
     if (cartList) {
         cartList.innerHTML = cart.map(item => {
-            total += item.price;
+            total += item.pricePerDay;
             return `
                 <div class="cart-item">
                     <img src="${item.img}" style="width:40px; height:60px; object-fit:cover; border-radius:4px;">
-                    <div style="flex:1; font-size:0.85rem; color:white; margin-left:10px;">${item.title}<br>${item.price} EGP</div>
+                    <div style="flex:1; font-size:0.85rem; color:white; margin-left:10px;">${item.title}<br>${item.pricePerDay} EGP</div>
                     <button onclick="removeFromCart('${item.gameID}')" style="background:none; border:none; cursor:pointer; color:white;">🗑️</button>
                 </div>
             `;
@@ -173,7 +166,6 @@ function toggleCart(open) {
 }
 
 function saveDB() {
-    localStorage.setItem('pshub_inventory', JSON.stringify(inventory));
     localStorage.setItem('pshub_cart', JSON.stringify(cart));
 
     const currentUserStr = localStorage.getItem('currentUser');

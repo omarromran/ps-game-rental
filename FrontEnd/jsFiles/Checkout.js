@@ -1,5 +1,4 @@
 let cart = [];
-let inventory = [];
 
 function loadCurrentUser() {
     const userLink = document.querySelector('.user-name');
@@ -16,7 +15,6 @@ function loadCurrentUser() {
 function initCheckout() {
     loadCurrentUser();
     const savedCart = localStorage.getItem('pshub_cart');
-    const savedInv = localStorage.getItem('pshub_inventory');
 
     if (!savedCart || JSON.parse(savedCart).length === 0) {
         alert("Your cart is empty!");
@@ -25,8 +23,6 @@ function initCheckout() {
     }
 
     cart = JSON.parse(savedCart);
-    inventory = JSON.parse(savedInv);
-
     renderCheckoutList();
 }
 
@@ -38,15 +34,27 @@ function renderCheckoutList() {
     let total = 0;
 
     listDiv.innerHTML = cart.map(item => {
-        total += item.price;
+        total += item.pricePerDay;
         return `
             <div class="horizontal-item">
                 <img src="${item.img}" alt="${item.title}">
                 <div class="item-info">
                     <div class="item-title">${item.title}</div>
-                    <div class="item-store">${item.storeID.toUpperCase()}</div>
+                    <div class="item-store">${item.storeID ? item.storeID.toUpperCase() : ''}</div>
+                    <div class="item-days">
+                        <label style="color:#aaa; font-size:0.85rem;">Rental days:</label>
+                        <input 
+                            type="number" 
+                            id="days-${item._id}" 
+                            value="1" 
+                            min="1" 
+                            max="30" 
+                            style="width:60px; margin-left:8px; padding:4px; border-radius:4px; border:1px solid #444; background:#1a1a2e; color:white;"
+                            onchange="updateTotal()"
+                        >
+                    </div>
                 </div>
-                <div class="item-price">${item.price.toFixed(2)} EGP</div>
+                <div class="item-price" id="price-${item._id}">${item.pricePerDay.toFixed(2)} EGP/day</div>
             </div>
         `;
     }).join('');
@@ -55,7 +63,40 @@ function renderCheckoutList() {
     totalEl.innerText = total.toFixed(2);
 }
 
-function processOrder() {
+function updateTotal() {
+    let total = 0;
+    cart.forEach(item => {
+        const daysInput = document.getElementById(`days-${item._id}`);
+        const days = parseInt(daysInput ? daysInput.value : 1) || 1;
+        total += item.pricePerDay * days;
+    });
+    document.getElementById('subtotal').innerText = total.toFixed(2);
+    document.getElementById('final-total').innerText = total.toFixed(2);
+}
+
+function showError(message) {
+    let errorEl = document.getElementById('checkout-error');
+    if (!errorEl) {
+        errorEl = document.createElement('p');
+        errorEl.id = 'checkout-error';
+        errorEl.style.color = 'red';
+        errorEl.style.fontSize = '0.85rem';
+        errorEl.style.marginBottom = '10px';
+        const confirmBtn = document.querySelector('.confirm-btn');
+        confirmBtn.parentNode.insertBefore(errorEl, confirmBtn);
+    }
+    errorEl.textContent = message;
+    errorEl.style.display = 'block';
+}
+
+function hideError() {
+    const errorEl = document.getElementById('checkout-error');
+    if (errorEl) errorEl.style.display = 'none';
+}
+
+async function processOrder() {
+    hideError();
+
     const storedUser = localStorage.getItem("currentUser");
     if (!storedUser) {
         window.location.href = 'login.html';
@@ -68,16 +109,29 @@ function processOrder() {
     const phone = phoneInput.value.trim();
     const address = addressInput.value.trim();
 
+    // Frontend validation
     const egPhoneRegex = /^01[0125][0-9]{8}$/;
 
+    if (!phone) {
+        showError("Phone number is required.");
+        phoneInput.style.borderColor = "#ff4444";
+        return;
+    }
+
     if (!egPhoneRegex.test(phone)) {
-        alert("Please enter a valid Egyptian phone number (11 digits starting with 01).");
+        showError("Please enter a valid Egyptian phone number (e.g. 01xxxxxxxxx).");
         phoneInput.style.borderColor = "#ff4444";
         return;
     }
 
     if (!address) {
-        alert("Please provide a delivery address.");
+        showError("Delivery address is required.");
+        addressInput.style.borderColor = "#ff4444";
+        return;
+    }
+
+    if (address.length < 10) {
+        showError("Please enter a complete delivery address.");
         addressInput.style.borderColor = "#ff4444";
         return;
     }
@@ -85,53 +139,70 @@ function processOrder() {
     phoneInput.style.borderColor = "#333";
     addressInput.style.borderColor = "#333";
 
-    cart.forEach(cartItem => {
-        const itemIdx = inventory.findIndex(invItem => invItem.gameID === cartItem.gameID);
-        if (itemIdx !== -1) {
-            const currentUser = JSON.parse(localStorage.getItem("currentUser"));
+    const token = localStorage.getItem('token');
 
-            inventory[itemIdx].status = "rented";
+    // Process each cart item as a rental
+    try {
+        for (const item of cart) {
+            const daysInput = document.getElementById(`days-${item._id}`);
+            const days = parseInt(daysInput ? daysInput.value : 1) || 1;
 
-inventory[itemIdx].rental = {
-    status: "active",
-    start: new Date().toLocaleDateString(),
-    end: "—",
-    owner: inventory[itemIdx].storeID
-};
+            if (days < 1 || days > 30) {
+                showError(`Rental days must be between 1 and 30 for "${item.title}".`);
+                return;
+            }
 
-inventory[itemIdx].customerID = currentUser.userID;
-inventory[itemIdx].customerPhone = phone;
-inventory[itemIdx].customerAddress = address;
+            const response = await fetch("http://localhost:8080/api/rentals/checkout", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                },
+                body: JSON.stringify({
+                    gameId: item._id,
+                    days,
+                    phone,
+                    address
+                })
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                showError(data.error || `Failed to rent "${item.title}".`);
+                return;
+            }
         }
-    });
 
-    localStorage.setItem('pshub_inventory', JSON.stringify(inventory));
-    localStorage.removeItem('pshub_cart');
+        // All rentals successful
+        localStorage.removeItem('pshub_cart');
 
-    
-    const currentUser = JSON.parse(localStorage.getItem("currentUser"));
-    const userName = currentUser ? (currentUser.name || currentUser.username || 'User') : 'User';
-    const successMsg = document.getElementById('success-message');
-    if (successMsg) {
-        successMsg.textContent = `${userName}, your rental is ready.`;
+        const currentUser = JSON.parse(localStorage.getItem("currentUser"));
+        const userName = currentUser ? (currentUser.username || 'User') : 'User';
+        const successMsg = document.getElementById('success-message');
+        if (successMsg) {
+            successMsg.textContent = `${userName}, your rental is confirmed!`;
+        }
+
+        const overlay = document.getElementById('success-overlay');
+        if (overlay) {
+            overlay.style.display = 'flex';
+        }
+
+        setTimeout(() => {
+            window.location.href = 'Browse_Games.html';
+        }, 3000);
+
+    } catch (error) {
+        console.error("Checkout error:", error);
+        showError("Error connecting to server. Make sure the backend is running.");
     }
-
-    const overlay = document.getElementById('success-overlay');
-    if (overlay) {
-        overlay.style.display = 'flex';
-    } else {
-        alert("Order Confirmed!");
-    }
-
-    setTimeout(() => {
-        window.location.href = 'Browse_Games.html';
-    }, 3000);
 }
 
 document.addEventListener('DOMContentLoaded', () => {
     const phoneInput = document.getElementById('phone');
     if (phoneInput) {
-        phoneInput.addEventListener('input', function (e) {
+        phoneInput.addEventListener('input', function () {
             this.value = this.value.replace(/[^0-9]/g, '');
         });
     }

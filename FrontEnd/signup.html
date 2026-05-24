@@ -18,113 +18,142 @@
 
             <div class="input-group">
                 <i class="fa-solid fa-user"></i>
-                <input type="text" id="name-input" placeholder="Full Name" required>
+                <input type="text" id="username-input" placeholder="Username">
             </div>
 
             <div class="input-group">
                 <i class="fa-solid fa-envelope"></i>
-                <input type="email" name="email" id="email-input" placeholder="Email" required>
-            </div>
-
-            <div class="input-group">
-                <i class="fa-solid fa-user"></i>
-                <input type="text" id="username-input" placeholder="Username" required>
+                <input type="text" name="email" id="email-input" placeholder="Email">
             </div>
 
             <div class="input-group">
                 <i class="fa-solid fa-lock"></i>
-                <input type="password" id="password-input" placeholder="Password" required>
+                <input type="password" id="password-input" placeholder="Password">
             </div>
 
             <div class="input-group">
                 <i class="fa-solid fa-lock"></i>
-                <input type="password" id="confirm-password-input" placeholder="Confirm Password" required>
+                <input type="password" id="confirm-password-input" placeholder="Confirm Password">
             </div>
 
             <div class="account-type">
                 <label>
-                    <input type="radio" name="account-type" value="customer" checked>
-                    Customer
+                    <input type="radio" name="account-type" value="Gamer" checked>
+                    Gamer
                 </label>
-
                 <label>
-                    <input type="radio" name="account-type" value="business">
-                    Business
+                    <input type="radio" name="account-type" value="Store">
+                    Store Owner
                 </label>
             </div>
 
-            <button type="submit">Sign Up</button>
+            <div class="input-group" id="storeID-group" style="display:none;">
+                <i class="fa-solid fa-store"></i>
+                <input type="text" id="storeID-input" placeholder="Store ID Code">
+            </div>
 
+            <p id="error-msg" style="color:red; font-size:0.85rem; display:none; margin-bottom:10px;"></p>
+
+            <button type="submit">Sign Up</button>
             <p>Already have an account? <a href="login.html">Log In</a></p>
         </form>
     </div>
 
     <script>
+        // Show/hide storeID field based on account type
+        document.querySelectorAll('input[name="account-type"]').forEach(radio => {
+            radio.addEventListener('change', () => {
+                const storeGroup = document.getElementById("storeID-group");
+                if (radio.value === "Store" && radio.checked) {
+                    storeGroup.style.display = "flex";
+                } else {
+                    storeGroup.style.display = "none";
+                }
+            });
+        });
+
         document.getElementById("signup-form").addEventListener("submit", async e => {
             e.preventDefault();
 
-            const name = document.getElementById("name-input").value.trim();
-            const email = document.getElementById("email-input").value.trim();
             const username = document.getElementById("username-input").value.trim();
+            const email = document.getElementById("email-input").value.trim();
             const password = document.getElementById("password-input").value;
             const confirmPassword = document.getElementById("confirm-password-input").value;
-            const type = document.querySelector('input[name="account-type"]:checked').value;
+            const role = document.querySelector('input[name="account-type"]:checked').value;
+            const storeID = document.getElementById("storeID-input").value.trim();
+            const errorMsg = document.getElementById("error-msg");
 
+            errorMsg.style.display = "none";
+            errorMsg.textContent = "";
+
+            // Frontend validation
+            if (!username) {
+                errorMsg.textContent = "Username is required.";
+                errorMsg.style.display = "block";
+                return;
+            }
+            if (username.length < 3) {
+                errorMsg.textContent = "Username must be at least 3 characters.";
+                errorMsg.style.display = "block";
+                return;
+            }
             if (!/^\S+$/.test(username)) {
-                alert("Username must not contain spaces.");
+                errorMsg.textContent = "Username must not contain spaces.";
+                errorMsg.style.display = "block";
                 return;
             }
-
-            if (!/^[^ ]+@[^ ]+\.[a-z]{2,3}$/.test(email)) {
-                alert("Please enter a valid email.");
+            if (!email) {
+                errorMsg.textContent = "Email is required.";
+                errorMsg.style.display = "block";
                 return;
             }
-
+            if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                errorMsg.textContent = "Please enter a valid email address.";
+                errorMsg.style.display = "block";
+                return;
+            }
+            if (!password) {
+                errorMsg.textContent = "Password is required.";
+                errorMsg.style.display = "block";
+                return;
+            }
+            if (password.length < 6) {
+                errorMsg.textContent = "Password must be at least 6 characters.";
+                errorMsg.style.display = "block";
+                return;
+            }
             if (password !== confirmPassword) {
-                alert("Passwords do not match!");
+                errorMsg.textContent = "Passwords do not match.";
+                errorMsg.style.display = "block";
+                return;
+            }
+            if (role === "Store" && !storeID) {
+                errorMsg.textContent = "Store ID is required for store accounts.";
+                errorMsg.style.display = "block";
                 return;
             }
 
             try {
-                let users = JSON.parse(localStorage.getItem("users")) || [];
+                const res = await fetch("http://localhost:8080/api/auth/register", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ username, email, password, role, storeID })
+                });
 
-                if (!users.length) {
-                    const res = await fetch("users.json");
-                    const data = await res.json();
-                    users = data.users || [];
-                    localStorage.setItem("users", JSON.stringify(users));
-                }
+                const data = await res.json();
 
-                if (users.some(u => u.username === username)) {
-                    alert("Username already taken!");
+                if (!res.ok) {
+                    errorMsg.textContent = data.message || "Registration failed.";
+                    errorMsg.style.display = "block";
                     return;
                 }
 
-                if (users.some(u => u.email === email)) {
-                    alert("Email already registered!");
-                    return;
-                }
-
-                const userID = users.length ? Math.max(...users.map(u => u.userID)) + 1 : 1;
-
-                const newUser = {
-                    userID,
-                    name,
-                    username,
-                    email,
-                    password,
-                    type,
-                    status: type === "business" ? "pending" : "active"
-                };
-
-                users.push(newUser);
-                localStorage.setItem("users", JSON.stringify(users));
-
-                alert("Account created successfully!");
+                alert("Account created successfully! Please log in.");
                 window.location.href = "login.html";
 
-            } catch {
-                alert("Error accessing user data. Make sure you are using Live Server.");
+            } catch (err) {
+                errorMsg.textContent = "Cannot connect to server. Make sure the backend is running.";
+                errorMsg.style.display = "block";
             }
         });
     </script>

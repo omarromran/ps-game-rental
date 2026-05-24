@@ -2,26 +2,61 @@ const User = require('../models/User');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
+// Email format checker
+const isValidEmail = (email) => {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+};
 
 exports.register = async (req, res) => {
   try {
     const { username, email, password, role, storeID } = req.body;
 
-    const userExists = await User.findOne({ email });
-    if (userExists) {
+    // Validation
+    if (!username || username.trim() === '') {
+      return res.status(400).json({ message: 'Username is required' });
+    }
+    if (username.trim().length < 3) {
+      return res.status(400).json({ message: 'Username must be at least 3 characters' });
+    }
+    if (!email || email.trim() === '') {
+      return res.status(400).json({ message: 'Email is required' });
+    }
+    if (!isValidEmail(email)) {
+      return res.status(400).json({ message: 'Please enter a valid email address' });
+    }
+    if (!password || password.trim() === '') {
+      return res.status(400).json({ message: 'Password is required' });
+    }
+    if (password.length < 6) {
+      return res.status(400).json({ message: 'Password must be at least 6 characters' });
+    }
+    if (!role || role.trim() === '') {
+      return res.status(400).json({ message: 'Role is required' });
+    }
+    if (!['Gamer', 'Store', 'Admin'].includes(role)) {
+      return res.status(400).json({ message: 'Role must be Gamer, Store, or Admin' });
+    }
+    if (role === 'Store' && !storeID) {
+      return res.status(400).json({ message: 'Store accounts require a unique storeID code' });
+    }
+
+    // Check duplicates
+    const emailExists = await User.findOne({ email });
+    if (emailExists) {
       return res.status(400).json({ message: 'Email is already registered' });
     }
 
-    if (role === 'Store' && !storeID) {
-      return res.status(400).json({ message: 'Store accounts require a unique storeID code' });
+    const usernameExists = await User.findOne({ username });
+    if (usernameExists) {
+      return res.status(400).json({ message: 'Username is already taken' });
     }
 
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
     const newUser = new User({
-      username,
-      email,
+      username: username.trim(),
+      email: email.trim().toLowerCase(),
       password: hashedPassword,
       role,
       storeID: role === 'Store' ? storeID : undefined
@@ -35,14 +70,29 @@ exports.register = async (req, res) => {
   }
 };
 
-
 exports.login = async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    const user = await User.findOne({ email });
+    // Validation
+    if (!email || email.trim() === '') {
+      return res.status(400).json({ message: 'Email is required' });
+    }
+    if (!isValidEmail(email)) {
+      return res.status(400).json({ message: 'Please enter a valid email address' });
+    }
+    if (!password || password.trim() === '') {
+      return res.status(400).json({ message: 'Password is required' });
+    }
+
+    const user = await User.findOne({ email: email.trim().toLowerCase() });
     if (!user) {
       return res.status(400).json({ message: 'Invalid email or password credentials' });
+    }
+
+    // Check if suspended
+    if (user.suspended) {
+      return res.status(403).json({ message: 'Your account has been suspended. Contact support.' });
     }
 
     const isMatch = await bcrypt.compare(password, user.password);
@@ -75,15 +125,14 @@ exports.login = async (req, res) => {
   }
 };
 
-
 exports.logout = (req, res) => {
-    req.session.destroy();
-    res.json({ message: 'Logged out successfully' });
+  req.session.destroy();
+  res.json({ message: 'Logged out successfully' });
 };
 
 exports.getMe = (req, res) => {
-    if (!req.session.user) {
-        return res.status(401).json({ error: 'Not logged in' });
-    }
-    res.json(req.session.user);
+  if (!req.session.user) {
+    return res.status(401).json({ error: 'Not logged in' });
+  }
+  res.json(req.session.user);
 };
