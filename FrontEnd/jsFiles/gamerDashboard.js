@@ -118,7 +118,7 @@ function showSection(sectionId, btn) {
 function logout() {
     if (confirm("Are you sure you want to log out?")) {
         sessionStorage.removeItem("loggedInUsername");
-        window.location.href = "login.html";
+        window.location.href = "/login";
     }
 }
 
@@ -243,7 +243,7 @@ function renderWishlist() {
 
 
 function goToGameDescription(gameID) {
-    window.location.href = `game_description.html?id=${gameID}`;
+    window.location.href = `/game_description?id=${gameID}`;
 }
 
 
@@ -375,7 +375,7 @@ document.getElementById("logout-btn")?.addEventListener("click", async (e) => {
 
     // 3. Kick them out to the login screen
     alert("Logged out successfully!");
-    window.location.href = "login.html";
+    window.location.href = "/login";
 });
 
 document.addEventListener("DOMContentLoaded", async () => {

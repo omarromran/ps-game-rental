@@ -55,7 +55,7 @@
             <p id="error-msg" style="color:red; font-size:0.85rem; display:none; margin-bottom:10px;"></p>
 
             <button type="submit">Sign Up</button>
-            <p>Already have an account? <a href="login.html">Log In</a></p>
+            <p>Already have an account? <a href="/login">Log In</a></p>
         </form>
     </div>
 
@@ -149,7 +149,7 @@
                 }
 
                 alert("Account created successfully! Please log in.");
-                window.location.href = "login.html";
+                window.location.href = "/login";
 
             } catch (err) {
                 errorMsg.textContent = "Cannot connect to server. Make sure the backend is running.";

@@ -13,7 +13,7 @@ document.addEventListener("DOMContentLoaded", () => {
         logoutBtn.addEventListener("click", () => {
             if (confirm("Are you sure you want to logout?")) {
                 localStorage.removeItem("currentUser");
-                window.location.href = "login.html";
+                window.location.href = "/login";
             }
         });
     }
@@ -288,5 +288,5 @@ document.getElementById("logout-btn")?.addEventListener("click", async (e) => {
 
     // 3. Kick them out to the login screen
     alert("Logged out successfully!");
-    window.location.href = "login.html";
+    window.location.href = "/login";
 });

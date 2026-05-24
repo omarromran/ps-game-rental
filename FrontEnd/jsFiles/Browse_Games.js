@@ -93,7 +93,7 @@ function renderInventory(data) {
         const card = document.createElement('div');
         card.className = 'game-card';
         card.style.cursor = 'pointer';
-        card.onclick = () => window.location.href = `game_description.html?id=${game.gameID}`;
+        card.onclick = () => window.location.href = `/game_description?id=${game.gameID}`;
 
         const isInCart = cart.some(item => item.gameID === game.gameID);
         const buttonText = isInCart ? "In Cart" : "Add to Cart";
@@ -200,7 +200,7 @@ function resetDatabase() {
 function checkout() {
     if (cart.length === 0) { alert("Your cart is empty!"); return; }
     saveDB();
-    window.location.href = 'Checkout.html';
+    window.location.href = '/Checkout';
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -210,7 +210,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 function index() {
-    window.location.href = 'index.html';
+    window.location.href = '/index';
 }
 
 // ==========================================
@@ -236,5 +236,5 @@ document.getElementById("logout-btn")?.addEventListener("click", async (e) => {
 
     // 3. Kick them out to the login screen
     alert("Logged out successfully!");
-    window.location.href = "login.html";
+    window.location.href = "/login";
 });

@@ -30,7 +30,7 @@ async function loadGame() {
     const page = document.getElementById('desc-page');
 
     if (!game) {
-        page.innerHTML = `<p style="color:#888">Game not found. <a href="Browse_Games.html" style="color:#00439c">Go back</a></p>`;
+        page.innerHTML = `<p style="color:#888">Game not found. <a href="/Browse_Games" style="color:#00439c">Go back</a></p>`;
         return;
     }
 
@@ -47,7 +47,7 @@ async function loadGame() {
             <h3>Also available from</h3>
             <div class="store-chips">
                 <span class="store-chip current">🏪 ${game.storeID} — ${game.price.toFixed(2)} EGP (current)</span>
-                ${others.map(o => `<a class="store-chip" href="game_description.html?id=${o.gameID}">🏪 ${o.storeID} — ${o.price.toFixed(2)} EGP</a>`).join('')}
+                ${others.map(o => `<a class="store-chip" href="/game_description?id=${o.gameID}">🏪 ${o.storeID} — ${o.price.toFixed(2)} EGP</a>`).join('')}
             </div>
         </div>` : '';
 
@@ -80,7 +80,7 @@ async function loadGame() {
             <div class="desc-price">${game.price.toFixed(2)} EGP</div>
 
             <div class="btn-row">
-                <button class="btn-back" onclick="window.location.href='Browse_Games.html'">← Back to Browse</button>
+                <button class="btn-back" onclick="window.location.href='/Browse_Games'">← Back to Browse</button>
                 <button class="btn-cart ${inCart ? 'in-cart' : ''}" id="cart-btn" onclick="addToCart()">
                     ${inCart ? '✓ In Cart' : '+ Add to Cart'}
                 </button>
@@ -173,7 +173,7 @@ function renderSimilar(inventory, current) {
         return;
     }
     grid.innerHTML = similar.map(g => `
-        <div class="similar-card" onclick="window.location.href='game_description.html?id=${g.gameID}'">
+        <div class="similar-card" onclick="window.location.href='/game_description?id=${g.gameID}'">
             <img src="${g.img}" alt="${g.title}">
             <div class="similar-label">
                 <div>${g.title}</div>
@@ -208,7 +208,7 @@ loadCurrentUser();
 loadGame();
 
 function index() {
-    window.location.href = 'index.html';
+    window.location.href = '/index';
 }
 
 function renderCart() {
@@ -251,7 +251,7 @@ function removeFromCart(id) {
 function checkout() {
     if (cart.length === 0) { alert("Your cart is empty!"); return; }
     localStorage.setItem('pshub_cart', JSON.stringify(cart));
-    window.location.href = 'Checkout.html';
+    window.location.href = '/Checkout';
 }
 
 function toggleCart(open) {

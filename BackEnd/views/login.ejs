@@ -29,7 +29,7 @@
             <p id="error-msg" style="color:red; font-size:0.85rem; display:none;"></p>
 
             <button type="submit">Log In</button>
-            <p>Don't have an account? <a href="signup.html">Sign Up</a></p>
+            <p>Don't have an account? <a href="/signup">Sign Up</a></p>
 
         </form>
     </div>
@@ -92,9 +92,9 @@
                 alert(`Welcome back, ${data.user.username}!`);
 
                 const role = data.user.role;
-                if (role === "Admin") window.location.href = "adminDashboard.html";
-                else if (role === "Store") window.location.href = "storedashboard.html";
-                else if (role === "Gamer") window.location.href = "Browse_Games.html";
+                if (role === "Admin") window.location.href = "/adminDashboard";
+                else if (role === "Store") window.location.href = "/storedashboard";
+                else if (role === "Gamer") window.location.href = "/Browse_Games";
                 else {
                     errorMsg.textContent = "User role not recognized.";
                     errorMsg.style.display = "block";

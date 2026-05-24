@@ -20,7 +20,7 @@ function initCheckout() {
 
     if (!savedCart || JSON.parse(savedCart).length === 0) {
         alert("Your cart is empty!");
-        window.location.href = 'Browse_Games.html';
+        window.location.href = '/Browse_Games';
         return;
     }
 
@@ -58,7 +58,7 @@ function renderCheckoutList() {
 function processOrder() {
     const storedUser = localStorage.getItem("currentUser");
     if (!storedUser) {
-        window.location.href = 'login.html';
+        window.location.href = '/login';
         return;
     }
 
@@ -124,7 +124,7 @@ inventory[itemIdx].customerAddress = address;
     }
 
     setTimeout(() => {
-        window.location.href = 'Browse_Games.html';
+        window.location.href = '/Browse_Games';
     }, 3000);
 }
 

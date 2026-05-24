@@ -7,7 +7,7 @@ const navigateToSection = (id, btn) => {
     document.querySelectorAll(".sidebar nav button").forEach(b => b.classList.remove("active"));
     if (btn) btn.classList.add("active");
 };
-const logout = () => confirm("Log out?") && (window.location.href = "login.html");
+const logout = () => confirm("Log out?") && (window.location.href = "/login");
 const handleDataReset = () => confirm("Reset data?") && (localStorage.clear(), init());
 
 const loadData = async (key) => {
@@ -39,7 +39,7 @@ const updateDashboard = () => {
     const totalVal = games.reduce((s, g) => s + (Number(g.price) || 0), 0);
     const stats = [
         { t: "Total Users", v: users.length },
-        { t: "Pending Users", v: users.filter(u => u.status === "pending").length, l: "approveLenders.html" },
+        { t: "Pending Users", v: users.filter(u => u.status === "pending").length, l: "/approveLenders" },
         { t: "Total Games", v: games.length },
         { t: "Total Price Value", v: totalVal.toFixed(2) + " EGP" }
     ];
