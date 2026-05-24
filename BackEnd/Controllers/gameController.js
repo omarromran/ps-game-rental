@@ -6,7 +6,7 @@ const getAllGames = async (req, res) => {
     const games = await Game.find({ status: 'Available' });
 
     // changed from res.json(games)
-    res.render('browse_games', { games });
+   res.json(games);
 
   } catch (err) {
     console.log(err);
@@ -19,7 +19,7 @@ const getOneGame = async (req, res) => {
   try {
     const game = await Game.findById(req.params.id);
     if (!game) return res.status(404).json({ error: 'Game not found' });
-    res.render('game_detail', { game });
+   res.json(game);
   } catch (err) {
     console.log(err);
     res.status(500).json({ error: 'Failed to fetch game' });
