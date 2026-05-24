@@ -6,21 +6,39 @@ const checkout = async (req, res) => {
     try {
         const { gameId, days } = req.body;
 
+        // Validation
         if (!req.session.user) {
             return res.status(401).json({ error: 'You must be logged in to rent' });
         }
-
-        if (!gameId || !days || days < 1) {
-            return res.status(400).json({ error: 'Game ID and number of days are required' });
+        if (!gameId || gameId.trim() === '') {
+            return res.status(400).json({ error: 'Game ID is required' });
+        }
+        if (!days) {
+            return res.status(400).json({ error: 'Number of days is required' });
+        }
+        if (isNaN(days) || days < 1) {
+            return res.status(400).json({ error: 'Number of days must be at least 1' });
+        }
+        if (days > 30) {
+            return res.status(400).json({ error: 'Maximum rental period is 30 days' });
         }
 
         const game = await Game.findById(gameId);
         if (!game) {
             return res.status(404).json({ error: 'Game not found' });
         }
-
         if (game.status !== 'Available') {
             return res.status(400).json({ error: 'Game is not available for rent' });
+        }
+
+        // Check if user already has an active rental for this game
+        const existingRental = await Rental.findOne({
+            customer: req.session.user._id,
+            game: gameId,
+            status: 'active'
+        });
+        if (existingRental) {
+            return res.status(400).json({ error: 'You already have an active rental for this game' });
         }
 
         const startDate = new Date();
@@ -42,7 +60,10 @@ const checkout = async (req, res) => {
         await rental.save();
 
         // Mark game as rented
-        await Game.findByIdAndUpdate(gameId, { status: 'Rented', customerID: req.session.user._id });
+        await Game.findByIdAndUpdate(gameId, {
+            status: 'Rented',
+            customerID: req.session.user._id
+        });
 
         res.status(201).json({
             message: 'Rental confirmed!',
@@ -79,6 +100,10 @@ const returnGame = async (req, res) => {
     try {
         if (!req.session.user) {
             return res.status(401).json({ error: 'Not logged in' });
+        }
+
+        if (!req.params.id) {
+            return res.status(400).json({ error: 'Rental ID is required' });
         }
 
         const rental = await Rental.findById(req.params.id);

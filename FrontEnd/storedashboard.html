@@ -79,11 +79,11 @@
                 <form id="addGameForm">
                     <div class="form-group">
                         <label>Game Title</label>
-                        <input type="text" id="gameTitle" required>
+                        <input type="text" id="gameTitle">
                     </div>
                     <div class="form-group">
                         <label>Platform</label>
-                        <select id="platform" required>
+                        <select id="platform">
                             <option value="">Select Platform</option>
                             <option value="PS5">PlayStation 5</option>
                             <option value="PS4">PlayStation 4</option>
@@ -91,7 +91,7 @@
                     </div>
                     <div class="form-group">
                         <label>Genre</label>
-                        <select id="genre" required>
+                        <select id="genre">
                             <option value="">Select Genre</option>
                             <option value="Action">Action</option>
                             <option value="RPG">RPG</option>
@@ -101,12 +101,13 @@
                     </div>
                     <div class="form-group">
                         <label>Daily Price (EGP)</label>
-                        <input type="number" id="dailyPrice" required>
+                        <input type="number" id="dailyPrice">
                     </div>
                     <div class="form-group">
                         <label>Description</label>
                         <textarea id="description"></textarea>
                     </div>
+                    <p id="form-error-msg" style="color:red; font-size:0.85rem; display:none; margin-bottom:10px;"></p>
                     <button type="submit" class="submit-btn">Add Game</button>
                 </form>
             </section>
