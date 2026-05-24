@@ -41,12 +41,14 @@ exports.register = async (req, res) => {
     }
 
     // Check duplicates
-    const emailExists = await User.findOne({ email });
+    const normalizedEmail = email.trim().toLowerCase();
+    const emailExists = await User.findOne({ email: normalizedEmail });
     if (emailExists) {
       return res.status(400).json({ message: 'Email is already registered' });
     }
 
-    const usernameExists = await User.findOne({ username });
+    const normalizedUsername = username.trim();
+    const usernameExists = await User.findOne({ username: normalizedUsername });
     if (usernameExists) {
       return res.status(400).json({ message: 'Username is already taken' });
     }
@@ -125,9 +127,13 @@ exports.login = async (req, res) => {
   }
 };
 
+// 🚪 POST /api/auth/logout (Stateless JWT Version)
 exports.logout = (req, res) => {
-  req.session.destroy();
-  res.json({ message: 'Logged out successfully' });
+  // Since JWT tokens are stored on the client side, the server just sends a success 
+  // confirmation instructing the frontend application to delete its stored token.
+  res.status(200).json({ 
+    message: 'Logged out successfully. Please remove your token from storage.' 
+  });
 };
 
 exports.getMe = (req, res) => {

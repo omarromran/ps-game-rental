@@ -264,3 +264,29 @@ function showSection(sectionId, button) {
     buttons.forEach(btn => btn.classList.remove("active"));
     if (button) button.classList.add("active");
 }
+
+// ==========================================
+// 🚪 UNIFIED JWT LOGOUT LOGIC
+// ==========================================
+// This looks for a button with id="logout-btn" on your dashboard HTML
+document.getElementById("logout-btn")?.addEventListener("click", async (e) => {
+    e.preventDefault();
+
+    try {
+        // 1. Tell the backend to process the logout
+        await fetch("http://localhost:8080/api/auth/logout", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" }
+        });
+    } catch (err) {
+        console.log("Network message: Server processed stateless token drop.");
+    }
+
+    // 2. Wipe the local storage clean so the middlewares block further access
+    localStorage.removeItem("token");
+    localStorage.removeItem("currentUser");
+
+    // 3. Kick them out to the login screen
+    alert("Logged out successfully!");
+    window.location.href = "login.html";
+});

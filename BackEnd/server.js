@@ -3,55 +3,79 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const dotenv = require('dotenv');
 const path = require('path');
-const authRoutes = require('./Routes/authRoutes');
-const gameRoutes = require('./routes/gameRoutes');
-const session = require('express-session');
-const rentalRoutes = require('./Routes/rentalRoutes');
-const userRoutes = require('./Routes/userRoutes');
+const session = require('express-session'); // Kept safe for your team!
+
+// ==========================================
+// ⚙️ CONFIGURATIONS & INITIALIZATION
+// ==========================================
 
 // Load environment variables securely
 dotenv.config({ path: path.resolve(__dirname, '.env') });
+
+// Initialize Express App
 const app = express();
 const PORT = process.env.PORT || 8080;
 
-// Global Middleware
+// ==========================================
+// 📁 IMPORT ROUTERS & MIDDLEWARE
+// ==========================================
+const authRoutes = require('./Routes/authRoutes');
+const gameRoutes = require('./routes/gameRoutes');
+const rentalRoutes = require('./Routes/rentalRoutes');
+const userRoutes = require('./Routes/userRoutes');
+
+// Import your custom security gatekeepers
+const { protect, restrictTo } = require('./Middleware/authMiddleware'); 
+
+// ==========================================
+// 🔌 GLOBAL MIDDLEWARE & SESSIONS
+// ==========================================
 app.use(cors());
-
+app.use(express.json()); 
 app.use(express.static(path.join(__dirname, '../FrontEnd')));
-app.use(express.json());
 
+// Express Session Configuration (Maintained for your teammates)
 app.use(session({
     secret: process.env.SESSION_SECRET || 'pshub-secret',
     resave: false,
     saveUninitialized: false,
-    cookie: { maxAge: 1000 * 60 * 60 * 24 }
+    cookie: { maxAge: 1000 * 60 * 60 * 24 } // 1 day
 }));
 
-
-// Cloud Database Connection
+// ==========================================
+// ☁️ CLOUD DATABASE CONNECTION
+// ==========================================
 mongoose.connect(process.env.MONGO_URI)
   .then(() => console.log('🎮 SUCCESS: Connected securely to PS Rental Hub Cloud Database!'))
   .catch((err) => console.error('❌ DATABASE CONNECTION ERROR:', err));
 
 // ==========================================
-// 🚀 API ROUTES (For your frontend to call)
+// 🚀 API ROUTES 
 // ==========================================
 
-// 1. Core Base Route (Just to check if the server is alive)
+// 1. Core Base Route (Server health check)
 app.get('/', (req, res) => {
   res.json({ message: "Welcome to the PlayStation Rental Hub API!" });
 });
 
-// 2. Authentication Routes (Register/Login)
+// 2. Security Guard Verification Test Route
+// (Moved here safely *below* app initialization so it doesn't crash!)
+app.get('/api/test/admin-dashboard', protect, restrictTo('Admin'), (req, res) => {
+  res.status(200).json({
+    message: `Welcome to the Secret Admin Dashboard, ${req.user.username}! Your token is perfectly valid.`,
+    user: req.user
+  });
+});
+
+// 3. Main Business Domain Routes
 app.use('/api/auth', authRoutes);
-
-// 3. Game Routes
 app.use('/api/games', gameRoutes);
-
 app.use('/api/rentals', rentalRoutes);
 app.use('/api/users', userRoutes);
 
-// Ignition Switch
+// ==========================================
+// 🛰️ IGNITION SWITCH
+// ==========================================
 app.listen(PORT, () => {
   console.log(`🚀 Server is flying high on http://localhost:${PORT}`);
 });

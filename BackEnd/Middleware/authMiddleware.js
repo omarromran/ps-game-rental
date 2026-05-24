@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken');
-const User = require('../Models/User'); // Ensure 'Models' matches your user schema folder casing!
+const User = require('../models/User');
 
 // 🔒 GATEKEEPER 1: Verify the user is logged in
 exports.protect = async (req, res, next) => {
