@@ -35,8 +35,9 @@ app.use(express.json());
 app.use(express.static(path.join(__dirname, '../FrontEnd')));
 
 // EJS view engine setup for converted front-end pages
-app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname, 'views'));
+app.use(express.static(path.join(__dirname, "../FrontEnd")));
 
 // Express Session Configuration (Maintained for your teammates)
 app.use(session({

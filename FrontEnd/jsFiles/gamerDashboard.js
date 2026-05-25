@@ -1,384 +1,740 @@
 let users = [];
 let games = [];
 
+// ==========================================
+// 👤 CURRENT USER
+// ==========================================
 const currentUsername =
     sessionStorage.getItem("loggedInUsername") ||
-    JSON.parse(localStorage.getItem("currentUser"))?.username ||
+    JSON.parse(localStorage.getItem("currentUser") || "null")?.username ||
     null;
 
+// ==========================================
+// 👤 GET CURRENT USER
+// ==========================================
 function getCurrentUser() {
+
     const stored = localStorage.getItem("users");
+
     if (!stored) return null;
-    const fresh = JSON.parse(stored);
+
+    let fresh = [];
+
+    try {
+        fresh = JSON.parse(stored);
+    } catch {
+        fresh = [];
+    }
+
     return fresh.find(u => u.username === currentUsername) || null;
 }
 
+// ==========================================
+// ❤️ WISHLIST
+// ==========================================
 function getWishlist() {
+
     const user = getCurrentUser();
+
     return user?.wishlist || [];
 }
 
 function saveWishlist(list) {
+
     const stored = localStorage.getItem("users");
+
     if (!stored) return;
+
     const fresh = JSON.parse(stored);
-    const idx = fresh.findIndex(u => u.username === currentUsername);
+
+    const idx = fresh.findIndex(
+        u => u.username === currentUsername
+    );
+
     if (idx === -1) return;
+
     fresh[idx].wishlist = list;
-    localStorage.setItem("users", JSON.stringify(fresh));
+
+    localStorage.setItem(
+        "users",
+        JSON.stringify(fresh)
+    );
+
     users = fresh;
 }
 
+// ==========================================
+// 💾 SAVE HELPERS
+// ==========================================
 function saveUsersToStorage() {
-    localStorage.setItem("users", JSON.stringify(users));
+
+    localStorage.setItem(
+        "users",
+        JSON.stringify(users)
+    );
 }
 
 function saveGamesToStorage() {
-    localStorage.setItem("pshub_inventory", JSON.stringify(games));
+
+    localStorage.setItem(
+        "pshub_inventory",
+        JSON.stringify(games)
+    );
 }
 
+// ==========================================
+// 📦 LOAD DATA
+// ==========================================
 async function loadData() {
+
+    // USERS
     const savedUsers = localStorage.getItem("users");
+
     if (savedUsers) {
-        try { users = JSON.parse(savedUsers) || []; }
-        catch { users = []; }
+
+        try {
+            users = JSON.parse(savedUsers) || [];
+        } catch {
+            users = [];
+        }
+
     } else {
-        const res = await fetch("users.json");
-        const data = await res.json();
-        users = data.users || data;
-        saveUsersToStorage();
+
+        try {
+
+            const res = await fetch("/users.json");
+
+            const data = await res.json();
+
+            users = data.users || data;
+
+            saveUsersToStorage();
+
+        } catch (err) {
+
+            console.error("Users JSON failed:", err);
+
+            users = [];
+        }
     }
 
+    // GAMES
     const savedGames = localStorage.getItem("pshub_inventory");
+
     if (savedGames) {
-        try { games = JSON.parse(savedGames) || []; }
-        catch { games = []; }
+
+        try {
+            games = JSON.parse(savedGames) || [];
+        } catch {
+            games = [];
+        }
+
     } else {
-        const res = await fetch("browseGames.json");
-        const data = await res.json();
-        games = data.games || data;
-        saveGamesToStorage();
+
+        try {
+
+            const res = await fetch("/browseGames.json");
+
+            const data = await res.json();
+
+            games = data.games || data;
+
+            saveGamesToStorage();
+
+        } catch (err) {
+
+            console.error("Games JSON failed:", err);
+
+            games = [];
+        }
     }
 
+    // DEFAULT VALUES
     games.forEach(g => {
-        g.inWishlist = false;
+
+        g.inWishlist = g.inWishlist || false;
+
         g.rental = g.rental || null;
+
         g.review = g.review || null;
     });
 
-
+    // BACKUP
     if (!localStorage.getItem("backup_users")) {
-        localStorage.setItem("backup_users", JSON.stringify(users));
+
+        localStorage.setItem(
+            "backup_users",
+            JSON.stringify(users)
+        );
     }
 
     if (!localStorage.getItem("backup_games")) {
-        localStorage.setItem("backup_games", JSON.stringify(games));
+
+        localStorage.setItem(
+            "backup_games",
+            JSON.stringify(games)
+        );
     }
 
     refreshUI();
 }
 
-
+// ==========================================
+// 🔄 RESET DATABASE
+// ==========================================
 async function resetDatabase() {
-    if (!confirm("Reset data to original JSON?")) return;
+
+    if (!confirm("Reset data to original JSON?"))
+        return;
 
     try {
-        const usersRes = await fetch("users.json");
-        const gamesRes = await fetch("browseGames.json");
+
+        const usersRes = await fetch("/users.json");
+
+        const gamesRes = await fetch("/browseGames.json");
 
         const usersData = await usersRes.json();
+
         const gamesData = await gamesRes.json();
 
-        const freshUsers = usersData.users || usersData;
-        const freshGames = gamesData.games || gamesData;
+        const freshUsers =
+            usersData.users || usersData;
 
-        localStorage.setItem("users", JSON.stringify(freshUsers));
-        localStorage.setItem("pshub_inventory", JSON.stringify(freshGames));
+        const freshGames =
+            gamesData.games || gamesData;
+
+        localStorage.setItem(
+            "users",
+            JSON.stringify(freshUsers)
+        );
+
+        localStorage.setItem(
+            "pshub_inventory",
+            JSON.stringify(freshGames)
+        );
 
         location.reload();
+
     } catch (e) {
-        alert("Reset failed: JSON files not loading");
+
+        alert("Reset failed.");
+
         console.error(e);
     }
 }
 
+// ==========================================
+// 📑 SHOW SECTIONS
+// ==========================================
 function showSection(sectionId, btn) {
-    document.querySelectorAll("main > section")
-        .forEach(s => s.style.display = "none");
+
+    document
+        .querySelectorAll("main > section")
+        .forEach(s => {
+            s.style.display = "none";
+        });
 
     const sec = document.getElementById(sectionId);
-    if (sec) sec.style.display = "block";
 
-    document.querySelectorAll(".sidebar nav button")
-        .forEach(b => b.classList.remove("active"));
+    if (sec) {
+        sec.style.display = "block";
+    }
 
-    if (btn) btn.classList.add("active");
-}
+    document
+        .querySelectorAll(".sidebar nav button")
+        .forEach(b => {
+            b.classList.remove("active");
+        });
 
-function logout() {
-    if (confirm("Are you sure you want to log out?")) {
-        sessionStorage.removeItem("loggedInUsername");
-        window.location.href = "/login";
+    if (btn) {
+        btn.classList.add("active");
     }
 }
 
+// ==========================================
+// 🚪 LOGOUT
+// ==========================================
+function logout() {
+
+    if (!confirm("Are you sure you want to log out?"))
+        return;
+
+    // frontend session
+    sessionStorage.removeItem("loggedInUsername");
+
+    // jwt session
+    localStorage.removeItem("token");
+
+    localStorage.removeItem("currentUser");
+
+    window.location.href = "/login";
+}
+
+// ==========================================
+// 🔄 REFRESH UI
+// ==========================================
 function refreshUI() {
+
     renderDashboard();
+
     renderWishlist();
+
     renderRentals();
+
     renderProfile();
 }
 
+// ==========================================
+// 🎮 HELPERS
+// ==========================================
 function gameName(game) {
-    return game.title || "Unknown Game";
+
+    return game?.title || "Unknown Game";
 }
 
 function gameCategory(game) {
-    return game.category || "Unknown";
+
+    return game?.category || "Unknown";
 }
 
-
+// ==========================================
+// 📊 DASHBOARD
+// ==========================================
 function renderDashboard() {
+
     const user = getCurrentUser();
+
     if (!user) return;
 
-
     const activeRentals = games.filter(g =>
-        g.rental?.status === "active" && g.customerID === user.userID
+        g.rental?.status === "active" &&
+        g.customerID === user.userID
     );
 
     const wishlistIds = getWishlist();
+
     const availableWishlist = games.filter(g =>
-        wishlistIds.includes(g.gameID) && g.status === "available"
+        wishlistIds.includes(g.gameID) &&
+        g.status === "available"
     );
 
+    const cards =
+        document.getElementById("dashboard-cards");
 
-    const cards = document.getElementById("dashboard-cards");
     if (cards) {
+
         cards.innerHTML = `
-            <div class="card"><h3>Active Rentals</h3><p>${activeRentals.length}</p></div>
-            <div class="card"><h3>Wishlist</h3><p>${availableWishlist.length}</p></div>
+            <div class="card">
+                <h3>Active Rentals</h3>
+                <p>${activeRentals.length}</p>
+            </div>
+
+            <div class="card">
+                <h3>Wishlist</h3>
+                <p>${availableWishlist.length}</p>
+            </div>
         `;
     }
 
+    const tbody =
+        document.getElementById("activity-body");
 
-    const tbody = document.getElementById("activity-body");
     if (!tbody) return;
 
     let activityHtml = "";
 
-
     activeRentals.forEach(game => {
-        activityHtml += `<tr><td>🎮 Rented: **${game.title}**</td></tr>`;
-    });
 
+        activityHtml += `
+            <tr>
+                <td>🎮 Rented: ${game.title}</td>
+            </tr>
+        `;
+    });
 
     availableWishlist.forEach(game => {
-        activityHtml += `<tr><td>❤️ Wishlist: **${game.title}**</td></tr>`;
+
+        activityHtml += `
+            <tr>
+                <td>❤️ Wishlist: ${game.title}</td>
+            </tr>
+        `;
     });
 
-
     games.forEach(game => {
-        if (game.review && game.customerID === user.userID) {
-            activityHtml += `<tr><td>⭐ Reviewed: **${game.title}**</td></tr>`;
+
+        if (
+            game.review &&
+            game.customerID === user.userID
+        ) {
+
+            activityHtml += `
+                <tr>
+                    <td>⭐ Reviewed: ${game.title}</td>
+                </tr>
+            `;
         }
     });
 
-    tbody.innerHTML = activityHtml || "<tr><td>No recent activity found.</td></tr>";
+    tbody.innerHTML =
+        activityHtml ||
+        "<tr><td>No recent activity found.</td></tr>";
 }
 
-
+// ==========================================
+// ❤️ ADD TO WISHLIST
+// ==========================================
 function addToWishlist(gameID) {
+
     let list = getWishlist();
 
     if (!list.includes(gameID)) {
+
         list.push(gameID);
+
         saveWishlist(list);
+
         showToast("Added to wishlist!");
     }
 
     renderWishlist();
+
     renderDashboard();
 }
 
+// ==========================================
+// ❌ REMOVE WISHLIST
+// ==========================================
 function removeFromWishlist(gameID) {
-    let list = getWishlist().filter(id => id !== gameID);
+
+    let list =
+        getWishlist().filter(id => id !== gameID);
+
     saveWishlist(list);
 
     showToast("Removed from wishlist.");
+
     renderWishlist();
+
     renderDashboard();
 }
 
-
+// ==========================================
+// ❤️ RENDER WISHLIST
+// ==========================================
 function renderWishlist() {
-    const container = document.getElementById("wishlist-container");
+
+    const container =
+        document.getElementById("wishlist-container");
+
     if (!container) return;
 
     let wishlistIds = getWishlist();
 
     const availableGames = games.filter(g =>
-        wishlistIds.includes(g.gameID) && g.status === "available"
+        wishlistIds.includes(g.gameID) &&
+        g.status === "available"
     );
 
     container.innerHTML = "";
 
     if (availableGames.length === 0) {
-        container.innerHTML = "<p>No wishlist items available.</p>";
+
+        container.innerHTML =
+            "<p>No wishlist items available.</p>";
+
         return;
     }
 
     availableGames.forEach(game => {
+
         container.innerHTML += `
             <div class="wishlist-card">
-                <img src="${game.img}" style="width:60px">
+
+                <img
+                    src="${game.img}"
+                    style="width:60px"
+                    alt="${game.title}"
+                >
+
                 <h3>${gameName(game)}</h3>
+
                 <p>${gameCategory(game)}</p>
+
                 <p>${game.price} EGP</p>
-                <button onclick="goToGameDescription('${game.gameID}')">Rent</button>
+
+                <button onclick="goToGameDescription('${game.gameID}')">
+                    Rent
+                </button>
+
+                <button onclick="removeFromWishlist('${game.gameID}')">
+                    Remove
+                </button>
+
             </div>
         `;
     });
 }
 
-
+// ==========================================
+// 🎮 GAME DESCRIPTION
+// ==========================================
 function goToGameDescription(gameID) {
-    window.location.href = `/game_description?id=${gameID}`;
+
+    window.location.href =
+        `/game_description?id=${gameID}`;
 }
 
-
+// ==========================================
+// 🎮 RENTALS
+// ==========================================
 function renderRentals() {
-    const active = document.getElementById("active-rentals");
-    const completed = document.getElementById("completed-rentals");
+
+    const active =
+        document.getElementById("active-rentals");
+
+    const completed =
+        document.getElementById("completed-rentals");
+
     if (!active || !completed) return;
 
     const user = getCurrentUser();
+
     if (!user) return;
 
     active.innerHTML = "";
+
     completed.innerHTML = "";
 
     games.forEach(game => {
-        if (!game.rental || game.customerID !== user.userID) return;
+
+        if (
+            !game.rental ||
+            game.customerID !== user.userID
+        ) return;
 
         const html = `
             <div class="game-card">
+
                 <h3>${gameName(game)}</h3>
+
                 <p>${game.rental.owner || ""}</p>
-                <p>${game.rental.start} → ${game.rental.end || ""}</p>
+
+                <p>
+                    ${game.rental.start || ""}
+                    →
+                    ${game.rental.end || ""}
+                </p>
+
                 <span>${game.rental.status}</span>
-                ${game.rental.status === "active"
-                ? `<button onclick="returnGame('${game.gameID}')">Return</button>`
-                : ""
-            }
+
+                ${
+                    game.rental.status === "active"
+                    ?
+                    `<button onclick="returnGame('${game.gameID}')">
+                        Return
+                    </button>`
+                    :
+                    ""
+                }
+
             </div>
         `;
 
         if (game.rental.status === "active") {
+
             active.innerHTML += html;
+
         } else {
+
             completed.innerHTML += html;
         }
     });
+
+    if (!active.innerHTML) {
+        active.innerHTML = "<p>No active rentals.</p>";
+    }
+
+    if (!completed.innerHTML) {
+        completed.innerHTML = "<p>No completed rentals.</p>";
+    }
 }
 
+// ==========================================
+// 👤 PROFILE
+// ==========================================
 function renderProfile() {
+
     const user = getCurrentUser();
+
     if (!user) return;
 
-    const initials = user.name.split(" ").map(n => n[0]).join("").toUpperCase().slice(0, 2);
-    document.getElementById("avatar").innerText = initials;
-    document.getElementById("nameText").innerText = user.name;
-    document.getElementById("emailText").innerText = user.email;
-    document.getElementById("usernameText").innerText = user.username;
-    document.getElementById("phoneText").innerText = user.phone || "N/A";
-    document.getElementById("memberSince").innerText = user.memberSince || "-";
+    const initials = (user.name || "U")
+        .split(" ")
+        .map(n => n[0])
+        .join("")
+        .toUpperCase()
+        .slice(0, 2);
+
+    document.getElementById("avatar").innerText =
+        initials;
+
+    document.getElementById("nameText").innerText =
+        user.name || "Unknown";
+
+    document.getElementById("emailText").innerText =
+        user.email || "No Email";
+
+    document.getElementById("usernameText").innerText =
+        user.username || "Unknown";
+
+    document.getElementById("phoneText").innerText =
+        user.phone || "N/A";
+
+    document.getElementById("memberSince").innerText =
+        user.memberSince || "-";
 
     const count = games.filter(g =>
-        g.rental?.status === "completed" && g.customerID === user.userID
+        g.rental?.status === "completed" &&
+        g.customerID === user.userID
     ).length;
-    document.getElementById("totalRentals").innerText = `${count} Games`;
+
+    document.getElementById("totalRentals").innerText =
+        `${count} Games`;
 }
 
+// ==========================================
+// ✏️ EDIT PROFILE
+// ==========================================
 function editProfile() {
+
     toggleEdit(true);
 }
 
 function saveProfile() {
+
     const stored = localStorage.getItem("users");
+
     if (!stored) return;
+
     const fresh = JSON.parse(stored);
-    const idx = fresh.findIndex(u => u.username === currentUsername);
+
+    const idx = fresh.findIndex(
+        u => u.username === currentUsername
+    );
+
     if (idx === -1) return;
-    fresh[idx].name = document.getElementById("nameInput").value;
-    fresh[idx].email = document.getElementById("emailInput").value;
-    fresh[idx].phone = document.getElementById("phoneInput").value;
-    localStorage.setItem("users", JSON.stringify(fresh));
+
+    fresh[idx].name =
+        document.getElementById("nameInput").value;
+
+    fresh[idx].email =
+        document.getElementById("emailInput").value;
+
+    fresh[idx].phone =
+        document.getElementById("phoneInput").value;
+
+    localStorage.setItem(
+        "users",
+        JSON.stringify(fresh)
+    );
+
     users = fresh;
+
     renderProfile();
+
     toggleEdit(false);
+
     showToast("Profile saved!");
 }
 
 function toggleEdit(editing) {
+
     const user = getCurrentUser();
+
     if (editing && user) {
-        document.getElementById("nameInput").value = user.name || "";
-        document.getElementById("emailInput").value = user.email || "";
-        document.getElementById("usernameInput").value = user.username || "";
-        document.getElementById("phoneInput").value = user.phone || "";
+
+        document.getElementById("nameInput").value =
+            user.name || "";
+
+        document.getElementById("emailInput").value =
+            user.email || "";
+
+        document.getElementById("usernameInput").value =
+            user.username || "";
+
+        document.getElementById("phoneInput").value =
+            user.phone || "";
     }
-    ["name", "email", "username", "phone"].forEach(id => {
-        document.getElementById(id + "Text").style.display = editing ? "none" : "block";
-        document.getElementById(id + "Input").style.display = editing ? "block" : "none";
-    });
-    document.getElementById("editBtn").style.display = editing ? "none" : "block";
-    document.getElementById("saveBtn").style.display = editing ? "block" : "none";
+
+    ["name", "email", "username", "phone"]
+        .forEach(id => {
+
+            document.getElementById(id + "Text")
+                .style.display =
+                editing ? "none" : "block";
+
+            document.getElementById(id + "Input")
+                .style.display =
+                editing ? "block" : "none";
+        });
+
+    document.getElementById("editBtn")
+        .style.display =
+        editing ? "none" : "block";
+
+    document.getElementById("saveBtn")
+        .style.display =
+        editing ? "block" : "none";
 }
 
+// ==========================================
+// 🔁 RETURN GAME
+// ==========================================
 function returnGame(gameID) {
-    const game = games.find(g => g.gameID === gameID);
+
+    const game =
+        games.find(g => g.gameID === gameID);
+
     if (game?.rental) {
+
         game.rental.status = "completed";
+
         game.status = "available";
+
         saveGamesToStorage();
 
+        const updatedWishlist =
+            getWishlist().filter(id => id !== gameID);
 
-        const updatedWishlist = getWishlist().filter(id => id !== gameID);
         saveWishlist(updatedWishlist);
 
         refreshUI();
+
         showToast(`${gameName(game)} returned!`);
     }
 }
 
 // ==========================================
-// 🚪 UNIFIED JWT LOGOUT LOGIC
+// 🍞 TOAST
 // ==========================================
-// This looks for a button with id="logout-btn" on your dashboard HTML
-document.getElementById("logout-btn")?.addEventListener("click", async (e) => {
-    e.preventDefault();
+function showToast(message) {
 
-    try {
-        // 1. Tell the backend to process the logout
-        await fetch("http://localhost:8080/api/auth/logout", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" }
-        });
-    } catch (err) {
-        console.log("Network message: Server processed stateless token drop.");
+    alert(message);
+}
+
+// ==========================================
+// 🚀 START
+// ==========================================
+document.addEventListener(
+    "DOMContentLoaded",
+    async () => {
+
+        await loadData();
+
+        showSection(
+            "dashboard",
+            document.querySelector(".sidebar nav button")
+        );
     }
-
-    // 2. Wipe the local storage clean so the middlewares block further access
-    localStorage.removeItem("token");
-    localStorage.removeItem("currentUser");
-
-    // 3. Kick them out to the login screen
-    alert("Logged out successfully!");
-    window.location.href = "/login";
-});
-
-document.addEventListener("DOMContentLoaded", async () => {
-    await loadData();
-    showSection("dashboard", document.querySelector(".sidebar nav button"));
-});
+);

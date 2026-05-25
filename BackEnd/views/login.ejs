@@ -93,7 +93,7 @@
 
                 const role = data.user.role;
                 if (role === "Admin") window.location.href = "/adminDashboard";
-                else if (role === "Store") window.location.href = "/storedashboard";
+                else if (role === "Store") window.location.href = "/storeDashboard";
                 else if (role === "Gamer") window.location.href = "/Browse_Games";
                 else {
                     errorMsg.textContent = "User role not recognized.";

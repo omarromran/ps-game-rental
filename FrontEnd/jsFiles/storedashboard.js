@@ -1,20 +1,28 @@
 let gameInventory = [];
+let currentEditGameId = null;
 
 document.addEventListener("DOMContentLoaded", () => {
     initializeData();
 
     const form = document.getElementById("addGameForm");
     if (form) {
-        form.addEventListener("submit", addGame);
+        form.addEventListener("submit", handleGameFormSubmit);
     }
 
     const logoutBtn = document.getElementById("logoutBtn");
     if (logoutBtn) {
-        logoutBtn.addEventListener("click", () => {
-            if (confirm("Are you sure you want to logout?")) {
-                localStorage.removeItem("currentUser");
-                window.location.href = "/login";
+        logoutBtn.addEventListener("click", async () => {
+            if (!confirm("Are you sure you want to logout?")) return;
+
+            try {
+                await fetch("/api/auth/logout", { method: "POST" });
+            } catch (err) {
+                console.warn("Logout request failed, continuing to clear client session.", err);
             }
+
+            localStorage.removeItem("token");
+            localStorage.removeItem("currentUser");
+            window.location.href = "/login";
         });
     }
 });
@@ -28,17 +36,54 @@ function getCurrentStoreID() {
     return null;
 }
 
+function startGameEdit(gameId) {
+    const game = gameInventory.find(g => g._id === gameId);
+    if (!game) return;
+
+    currentEditGameId = gameId;
+    const formTitle = document.getElementById('gameFormTitle');
+    const submitButton = document.getElementById('submitGameButton');
+    const cancelButton = document.getElementById('cancelEditButton');
+    const imageInput = document.getElementById('images');
+    const editGameId = document.getElementById('editGameId');
+
+    if (formTitle) formTitle.textContent = 'Edit Game';
+    if (submitButton) submitButton.textContent = 'Save Changes';
+    if (cancelButton) cancelButton.style.display = 'inline-block';
+    if (imageInput) imageInput.required = false;
+    if (editGameId) editGameId.value = gameId;
+
+    document.getElementById('gameTitle').value = game.title || '';
+    document.getElementById('platform').value = game.platform || '';
+    document.getElementById('genre').value = game.category || '';
+    document.getElementById('dailyPrice').value = game.pricePerDay || '';
+    document.getElementById('description').value = game.description || '';
+
+    showSection('addGame');
+}
+
 async function initializeData() {
-    const storeID = getCurrentStoreID();
-    if (!storeID) {
-        console.error("No store ID found for current user");
+    const token = localStorage.getItem('token');
+    if (!token) {
+        console.error("No auth token found for current user");
         return;
     }
 
     try {
-        const response = await fetch(`http://localhost:8080/api/games/my/${storeID}`);
+        const response = await fetch("/api/games/my/games", {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
+
+        if (!response.ok) {
+            const error = await response.json().catch(() => ({}));
+            console.error("Failed to load games:", error.message || response.statusText);
+            return;
+        }
+
         const data = await response.json();
-        gameInventory = data;
+        gameInventory = Array.isArray(data.data?.games ? data.data.games : data) ? (data.data?.games || data) : [];
         loadGamesTable();
         updateDashboardStats();
         fetchActivityLog();
@@ -94,6 +139,9 @@ function loadGamesTable() {
             <td>${Number(game.pricePerDay).toLocaleString()} EGP</td>
             <td><span class="status-badge">${game.status}</span></td>
             <td>
+                <button onclick="startGameEdit('${game._id}')" style="background:none; border:none; color:#007bff; cursor:pointer; margin-right:8px;">
+                    <i class="fas fa-edit"></i> Edit
+                </button>
                 <button onclick="deleteGame('${game._id}')" style="background:none; border:none; color:#ff4444; cursor:pointer;">
                     <i class="fas fa-trash"></i> Delete
                 </button>
@@ -141,13 +189,13 @@ function hideFormError() {
     if (errorEl) errorEl.style.display = "none";
 }
 
-async function addGame(e) {
+async function handleGameFormSubmit(e) {
     e.preventDefault();
     hideFormError();
 
     const storeID = getCurrentStoreID();
     if (!storeID) {
-        showFormError("You must be logged in as a store owner to add games.");
+        showFormError("You must be logged in as a store owner to save games.");
         return;
     }
 
@@ -156,6 +204,8 @@ async function addGame(e) {
     const category = document.getElementById("genre").value;
     const pricePerDay = document.getElementById("dailyPrice").value;
     const description = document.getElementById("description").value.trim();
+    const imageInput = document.getElementById('images');
+    const files = imageInput?.files || [];
 
     // Frontend validation
     if (!title) {
@@ -187,35 +237,49 @@ async function addGame(e) {
         return;
     }
 
-    const newGame = {
-        gameID: "G" + Date.now(),
-        storeID,
-        title,
-        platform,
-        category,
-        pricePerDay: parseFloat(pricePerDay),
-        description,
-        img: "photos/default.jpg"
-    };
+    const formData = new FormData();
+    if (!currentEditGameId) {
+        formData.append('gameID', 'G' + Date.now());
+        if (storeID) formData.append('storeID', storeID);
+    }
+    formData.append('title', title);
+    formData.append('platform', platform);
+    formData.append('category', category);
+    formData.append('pricePerDay', parseFloat(pricePerDay));
+    formData.append('description', description);
+
+    for (let i = 0; i < files.length; i++) {
+        formData.append('images', files[i]);
+    }
 
     try {
-        const response = await fetch("http://localhost:8080/api/games/add", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(newGame)
+        const token = localStorage.getItem('token');
+        const url = currentEditGameId ? `/api/games/${currentEditGameId}` : "/api/games";
+        const method = currentEditGameId ? "PUT" : "POST";
+        const response = await fetch(url, {
+            method,
+            headers: {
+                Authorization: token ? `Bearer ${token}` : undefined
+            },
+            body: formData
         });
 
         const data = await response.json();
 
         if (response.ok) {
-            gameInventory.push(data);
-            e.target.reset();
+            if (currentEditGameId) {
+                gameInventory = gameInventory.map(game => game._id === data._id ? data : game);
+                cancelGameEdit();
+            } else {
+                gameInventory.push(data);
+                e.target.reset();
+            }
             hideFormError();
             loadGamesTable();
             updateDashboardStats();
-            alert("Game added successfully!");
+            alert(currentEditGameId ? "Game updated successfully!" : "Game added successfully!");
         } else {
-            showFormError(data.error || "Failed to add game.");
+            showFormError(data.error || data.message || "Failed to add game.");
         }
     } catch (error) {
         console.error("Error adding game:", error);
@@ -226,8 +290,12 @@ async function addGame(e) {
 async function deleteGame(id) {
     if (confirm("Delete this game?")) {
         try {
-            const response = await fetch(`http://localhost:8080/api/games/${id}`, {
-                method: "DELETE"
+            const token = localStorage.getItem('token');
+const response = await fetch(`/api/games/${id}`, {
+                method: "DELETE",
+                headers: {
+                    Authorization: token ? `Bearer ${token}` : undefined
+                }
             });
 
             if (response.ok) {
@@ -265,28 +333,3 @@ function showSection(sectionId, button) {
     if (button) button.classList.add("active");
 }
 
-// ==========================================
-// 🚪 UNIFIED JWT LOGOUT LOGIC
-// ==========================================
-// This looks for a button with id="logout-btn" on your dashboard HTML
-document.getElementById("logout-btn")?.addEventListener("click", async (e) => {
-    e.preventDefault();
-
-    try {
-        // 1. Tell the backend to process the logout
-        await fetch("http://localhost:8080/api/auth/logout", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" }
-        });
-    } catch (err) {
-        console.log("Network message: Server processed stateless token drop.");
-    }
-
-    // 2. Wipe the local storage clean so the middlewares block further access
-    localStorage.removeItem("token");
-    localStorage.removeItem("currentUser");
-
-    // 3. Kick them out to the login screen
-    alert("Logged out successfully!");
-    window.location.href = "/login";
-});

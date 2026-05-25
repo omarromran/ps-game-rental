@@ -4,53 +4,173 @@ let wishlist = [];
 let activeStoreFilter = null;
 
 async function loadDB() {
-    let storedCart = localStorage.getItem('pshub_cart');
+
+    // =========================
+    // LOAD CART
+    // =========================
+    let storedCart =
+        localStorage.getItem("pshub_cart");
+
     let storedWishlist;
-    const currentUserStr = localStorage.getItem('currentUser');
+
+    const currentUserStr =
+        localStorage.getItem("currentUser");
+
     if (currentUserStr) {
-        const currentUser = JSON.parse(currentUserStr);
-        const users = JSON.parse(localStorage.getItem('users') || '[]');
-        const userObj = users.find(u => u.username === currentUser.username);
+
+        const currentUser =
+            JSON.parse(currentUserStr);
+
+        const users =
+            JSON.parse(
+                localStorage.getItem("users") || "[]"
+            );
+
+        const userObj = users.find(
+            u => u.username === currentUser.username
+        );
+
         if (userObj && userObj.wishlist) {
-            storedWishlist = JSON.stringify(userObj.wishlist);
+
+            storedWishlist =
+                JSON.stringify(userObj.wishlist);
         }
     }
-    if (!storedWishlist) storedWishlist = localStorage.getItem('pshub_wishlist');
 
+    if (!storedWishlist) {
+
+        storedWishlist =
+            localStorage.getItem("pshub_wishlist");
+    }
+
+    // =========================
+    // CART
+    // =========================
     if (storedCart) {
-        try { cart = JSON.parse(storedCart) || []; } catch(e) { cart = []; }
-    }
-    if (storedWishlist) {
-        try {
-            let raw = JSON.parse(storedWishlist) || [];
-            wishlist = raw.map(w => (typeof w === 'string' ? w : (w.gameID || w.id || w._id || ''))).filter(Boolean);
-        } catch(e) { wishlist = []; }
-    }
 
-    // Use server-provided games if available, otherwise fetch from API
-    if (typeof window.serverGames !== 'undefined' && window.serverGames && window.serverGames.length) {
-        inventory = window.serverGames;
-    } else {
         try {
-            const response = await fetch('http://localhost:8080/api/games');
-            const data = await response.json();
-            inventory = Array.isArray(data) ? data : [];
-        } catch (error) {
-            console.error("Error loading games from backend:", error);
-            inventory = [];
+
+            cart = JSON.parse(storedCart) || [];
+
+        } catch (e) {
+
+            cart = [];
         }
     }
 
-    // Normalize inventory fields
+    // =========================
+    // WISHLIST
+    // =========================
+    if (storedWishlist) {
+
+        try {
+
+            let raw =
+                JSON.parse(storedWishlist) || [];
+
+            wishlist = raw.map(w =>
+                typeof w === "string"
+                    ? w
+                    : (
+                        w.gameID ||
+                        w.id ||
+                        w._id ||
+                        ""
+                    )
+            ).filter(Boolean);
+
+        } catch (e) {
+
+            wishlist = [];
+        }
+    }
+
+    // =========================
+    // LOAD GAMES FROM BACKEND
+    // =========================
+    try {
+
+        const response =
+            await fetch("/api/games");
+
+        const data =
+            await response.json();
+
+        console.log("Games from backend:", data);
+
+        inventory =
+            Array.isArray(data)
+            ? data
+            : (data.games || []);
+
+    } catch (error) {
+
+        console.error(
+            "Error loading games:",
+            error
+        );
+
+        inventory = [];
+    }
+
+    // =========================
+    // NORMALIZE DATABASE FIELDS
+    // =========================
     inventory = inventory.map(g => ({
+
         ...g,
-        pricePerDay: parseFloat(g.pricePerDay) || 0,
-        img: g.img || 'photos/placeholder.png'
+
+        // universal ID
+        gameID:
+            String(
+                g.gameID ||
+                g._id ||
+                g.id ||
+                ""
+            ),
+
+        // title
+        title:
+            g.title || "Unknown Game",
+
+        // image
+        img:
+            g.img ||
+            g.image ||
+            (
+                g.images &&
+                g.images.length > 0
+            ? g.images[0]
+            : "/photos/placeholder.png"
+            ),
+
+        // price
+        pricePerDay:
+            parseFloat(
+                g.pricePerDay ||
+                g.price ||
+                0
+            ),
+
+        // normalize status
+        status:
+            (
+                g.status ||
+                "available"
+            ).toLowerCase(),
+
+        // platform/category fallback
+        platform:
+            g.platform || "PS5",
+
+        category:
+            g.category || "Unknown"
     }));
+
+    console.log("Normalized inventory:", inventory);
 
     applyFilters();
 }
-
 window.onload = function () {
     loadCurrentUser();
     loadDB();
@@ -81,31 +201,106 @@ function loadCurrentUser() {
 }
 
 function applyFilters() {
-    const searchEl = document.getElementById('mainSearch');
-    const minEl = document.getElementById('minPrice');
-    const maxEl = document.getElementById('maxPrice');
-    const search = (searchEl && searchEl.value) ? String(searchEl.value).toLowerCase() : '';
-    const minP = minEl ? (parseFloat(minEl.value) || 0) : 0;
-    const maxP = maxEl ? (parseFloat(maxEl.value) || Infinity) : Infinity;
 
-    const platforms = Array.from(document.querySelectorAll('#platform-filters input:checked')).map(i => i.value);
-    const categories = Array.from(document.querySelectorAll('#category-filters input:checked')).map(i => i.value);
+    const searchEl =
+        document.getElementById("mainSearch");
+
+    const minEl =
+        document.getElementById("minPrice");
+
+    const maxEl =
+        document.getElementById("maxPrice");
+
+    const search =
+        (
+            searchEl &&
+            searchEl.value
+        )
+        ? String(searchEl.value).toLowerCase()
+        : "";
+
+    const minP =
+        minEl
+        ? (
+            parseFloat(minEl.value) || 0
+        )
+        : 0;
+
+    const maxP =
+        maxEl
+        ? (
+            parseFloat(maxEl.value) || Infinity
+        )
+        : Infinity;
+
+    const platforms =
+        Array.from(
+            document.querySelectorAll(
+                "#platform-filters input:checked"
+            )
+        ).map(i => i.value);
+
+    const categories =
+        Array.from(
+            document.querySelectorAll(
+                "#category-filters input:checked"
+            )
+        ).map(i => i.value);
 
     const filtered = inventory.filter(g => {
-        const matchesSearch = (!search) || ((g.title || '').toLowerCase().includes(search) || (g.gameID && String(g.gameID).toLowerCase().includes(search)));
-        const matchesPlatform = platforms.length === 0 || platforms.includes(g.platform);
-        const matchesCategory = categories.length === 0 || categories.includes(g.category);
-        const matchesPrice = g.pricePerDay >= minP && g.pricePerDay <= maxP;
-        const matchesStore = !activeStoreFilter || g.storeID === activeStoreFilter;
-        const isAvailable = !g.status || g.status === 'Available';
 
-        return matchesSearch && matchesPlatform && matchesCategory && matchesPrice && matchesStore && isAvailable;
+        const matchesSearch =
+            !search ||
+            (
+                g.title.toLowerCase().includes(search)
+                ||
+                g.gameID.toLowerCase().includes(search)
+            );
+
+        const matchesPlatform =
+            platforms.length === 0
+            ||
+            platforms.includes(g.platform);
+
+        const matchesCategory =
+            categories.length === 0
+            ||
+            categories.includes(g.category);
+
+        const matchesPrice =
+            g.pricePerDay >= minP &&
+            g.pricePerDay <= maxP;
+
+        const matchesStore =
+            !activeStoreFilter ||
+            g.storeID === activeStoreFilter;
+
+        // FIXED STATUS CHECK
+        const isAvailable =
+            g.status === "available" ||
+            g.status === "";
+
+        return (
+            matchesSearch &&
+            matchesPlatform &&
+            matchesCategory &&
+            matchesPrice &&
+            matchesStore &&
+            isAvailable
+        );
     });
 
-    const itemCount = document.getElementById('item-count');
-    if (itemCount) itemCount.innerText = `${filtered.length} games found`;
+    const itemCount =
+        document.getElementById("item-count");
+
+    if (itemCount) {
+
+        itemCount.innerText =
+            `${filtered.length} games found`;
+    }
 
     renderInventory(filtered);
+
     renderCart();
 }
 
@@ -121,27 +316,28 @@ function renderInventory(data) {
     }
 
     data.forEach(game => {
+        const gid = String(game.gameID || game._id || game.id || '');
         const card = document.createElement('div');
         card.className = 'game-card';
         card.style.cursor = 'pointer';
-        card.onclick = () => window.location.href = `/game_description?id=${game.gameID}`;
+        card.onclick = () => window.location.href = `/game_description?id=${gid}`;
 
-        const isInCart = cart.some(item => item.gameID === game.gameID);
+        const isInCart = cart.some(item => item.gameID === gid);
         const buttonText = isInCart ? "In Cart" : "Add to Cart";
         const buttonClass = isInCart ? "add-btn in-cart" : "add-btn";
 
-        const gid = String(game.gameID || game.id || game._id || '');
         const isInWishlist = wishlist.includes(gid);
         const heartIcon = isInWishlist ? "❤️" : "🤍";
 
         card.innerHTML = `
-            <img src="${game.img}" alt="${game.title}">
-            <div class="wishlist-btn" onclick="event.stopPropagation(); toggleWishlist('${game.gameID}')">${heartIcon}</div>
+            <img src="${game.img}" alt="${game.title}" style="width: 100%; height: auto; object-fit: cover;">
+            <div class="wishlist-btn" onclick="event.stopPropagation(); toggleWishlist('${gid}')">${heartIcon}</div>
             <div class="game-info"> 
                 <h3>${game.title}</h3>
                 <p style="font-size: 0.8rem; color: #888; margin: 0;">${game.platform}</p>
-                    <div class="price" style="font-weight: bold; margin: 5px 0;">${(game.pricePerDay || 0)} EGP</div>
-                <button class="${buttonClass}" onclick="event.stopPropagation(); addToCart('${game.gameID}')">
+                <p style="font-size: 0.75rem; color: #666; margin: 3px 0;">${game.category || ''}</p>
+                <div class="price" style="font-weight: bold; margin: 5px 0;">${(game.pricePerDay || 0)} EGP/day</div>
+                <button class="${buttonClass}" onclick="event.stopPropagation(); addToCart('${gid}')">
                     ${buttonText}
                 </button>
             </div>
@@ -151,8 +347,8 @@ function renderInventory(data) {
 }
 
 function addToCart(id) {
-    const item = inventory.find(g => g.gameID === id);
-    if (item && !cart.some(c => c.gameID === id)) {
+    const item = inventory.find(g => String(g.gameID || g._id || g.id || '') === String(id));
+    if (item && !cart.some(c => String(c.gameID || c._id || c.id || '') === String(id))) {
         cart.push(item);
         saveDB();
         applyFilters();
@@ -160,7 +356,7 @@ function addToCart(id) {
 }
 
 function removeFromCart(id) {
-    cart = cart.filter(c => c.gameID !== id);
+    cart = cart.filter(c => String(c.gameID || c._id || c.id || '') !== String(id));
     saveDB();
     applyFilters();
 }
@@ -215,10 +411,11 @@ function saveDB() {
 }
 
 function toggleWishlist(id) {
-    if (wishlist.includes(id)) {
-        wishlist = wishlist.filter(wId => wId !== id);
+    const normalizedId = String(id || '');
+    if (wishlist.includes(normalizedId)) {
+        wishlist = wishlist.filter(wId => wId !== normalizedId);
     } else {
-        wishlist.push(id);
+        wishlist.push(normalizedId);
     }
     saveDB();
     applyFilters();

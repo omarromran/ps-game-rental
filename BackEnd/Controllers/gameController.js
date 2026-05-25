@@ -30,9 +30,17 @@ const getOneGame = async (req, res) => {
 const addGame = async (req, res) => {
   try {
     const {
-      gameID, storeID, title, description,
-      category, platform, pricePerDay,
-      developer, releaseYear, pegi, type
+      gameID: incomingGameID,
+      storeID: incomingStoreID,
+      title,
+      description,
+      category,
+      platform,
+      pricePerDay,
+      developer,
+      releaseYear,
+      pegi,
+      type
     } = req.body;
 
     // ── Validation (unchanged) ────────────────────────────────
@@ -48,29 +56,26 @@ const addGame = async (req, res) => {
     if (!pricePerDay || isNaN(pricePerDay) || pricePerDay <= 0) {
       return res.status(400).json({ error: 'Price must be a positive number' });
     }
+
+    const storeID = incomingStoreID || req.user.storeID || req.user._id.toString();
     if (!storeID || storeID.trim() === '') {
       return res.status(400).json({ error: 'Store ID is required' });
     }
 
-    if (gameID) {
-      const existingGame = await Game.findOne({ gameID });
-      if (existingGame) {
-        return res.status(400).json({ error: 'A game with this ID already exists' });
-      }
+    const gameID = incomingGameID && incomingGameID.trim() !== ''
+      ? incomingGameID.trim()
+      : `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
+
+    const existingGame = await Game.findOne({ gameID });
+    if (existingGame) {
+      return res.status(400).json({ error: 'A game with this ID already exists' });
     }
 
-    // ── CHANGE 1: Extract Cloudinary URLs from uploaded files ──
-    // upload.array() in the route fills req.files before this runs
-    // each file object has a .path property = the Cloudinary URL
+    // ── Extract Cloudinary URLs from uploaded files ────────────
     const imageUrls = req.files && req.files.length > 0
       ? req.files.map((file) => file.path)
       : [];
 
-    // ── CHANGE 2: img field falls back to first uploaded image ──
-    // if the request body has an img URL use it (old behaviour)
-    // if not but files were uploaded, use the first Cloudinary URL
-    // if neither, it stays undefined (schema marks img as required
-    // so the save will fail with a clear validation error)
     const imgValue = req.body.img || imageUrls[0];
 
     const newGame = new Game({
@@ -81,8 +86,8 @@ const addGame = async (req, res) => {
       category,
       platform,
       pricePerDay,
-      img: imgValue,       // single cover — unchanged field
-      images: imageUrls,   // ← NEW: full array of Cloudinary URLs
+      img: imgValue,
+      images: imageUrls,
       developer,
       releaseYear,
       pegi,
