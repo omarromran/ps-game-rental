@@ -264,14 +264,31 @@ async function handleGameFormSubmit(e) {
             body: formData
         });
 
-        const data = await response.json();
+        let data;
+        const contentType = response.headers.get("content-type");
+        if (contentType && contentType.includes("application/json")) {
+            data = await response.json();
+        } else {
+            const text = await response.text();
+
+            console.log("FULL SERVER RESPONSE:");
+            console.log(text);
+
+            throw new Error(`Server error (${response.status}): ${text}`);
+        }
 
         if (response.ok) {
             if (currentEditGameId) {
-                gameInventory = gameInventory.map(game => game._id === data._id ? data : game);
+                const updatedGame = data.data || data;
+
+                gameInventory = gameInventory.map(game =>
+                    game._id === updatedGame._id
+                        ? updatedGame
+                        : game
+                );
                 cancelGameEdit();
             } else {
-                gameInventory.push(data);
+                gameInventory.push(data.data || data);
                 e.target.reset();
             }
             hideFormError();
@@ -279,11 +296,11 @@ async function handleGameFormSubmit(e) {
             updateDashboardStats();
             alert(currentEditGameId ? "Game updated successfully!" : "Game added successfully!");
         } else {
-            showFormError(data.error || data.message || "Failed to add game.");
+            showFormError(data.error || data.message || `Failed to add game (status ${response.status}).`);
         }
     } catch (error) {
         console.error("Error adding game:", error);
-        showFormError("Error connecting to server. Make sure the backend is running.");
+        showFormError(error.message || "Error connecting to server. Make sure the backend is running.");
     }
 }
 
@@ -291,7 +308,7 @@ async function deleteGame(id) {
     if (confirm("Delete this game?")) {
         try {
             const token = localStorage.getItem('token');
-const response = await fetch(`/api/games/${id}`, {
+            const response = await fetch(`/api/games/${id}`, {
                 method: "DELETE",
                 headers: {
                     Authorization: token ? `Bearer ${token}` : undefined

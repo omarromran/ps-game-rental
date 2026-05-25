@@ -14,7 +14,9 @@ const storage = new CloudinaryStorage({
   cloudinary: cloudinary,
   params: {
     folder: 'ps-rental/games',
-    allowed_formats: ['jpg', 'jpeg', 'png', 'webp'],
+    format: async (req, file) => {
+      return 'png';
+    },
     transformation: [{ width: 800, height: 1000, crop: 'limit' }],
   },
 });
@@ -26,7 +28,10 @@ const fileFilter = (req, file, cb) => {
   if (allowedTypes.includes(file.mimetype)) {
     cb(null, true);
   } else {
-    cb(new Error('Only JPG, PNG, and WEBP images are allowed'), false);
+    return cb(
+      new Error('Only JPG, PNG, and WEBP images are allowed'),
+      false
+    );
   }
 };
 

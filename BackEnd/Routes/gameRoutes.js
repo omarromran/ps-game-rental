@@ -62,6 +62,10 @@ router.post(
   protect,
   restrictTo('Store'),
   upload.array('images', 5),
+  (req, res, next) => {
+    console.log('UPLOAD FILES:', req.files);
+    next();
+  },
   addGame
 );
 

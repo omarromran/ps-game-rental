@@ -6,29 +6,36 @@ const getAllGames = async (req, res) => {
     const games = await Game.find({ status: 'Available' });
 
     // changed from res.json(games)
-   res.json(games);
+    res.json(games);
 
   } catch (err) {
     console.log(err);
     res.status(500).json({ error: 'Failed to fetch games' });
   }
 };
-
 // ─── GET ONE GAME ────────────────────────────────────────────────
 const getOneGame = async (req, res) => {
   try {
     const game = await Game.findById(req.params.id);
     if (!game) return res.status(404).json({ error: 'Game not found' });
-   res.json(game);
+    res.json(game);
   } catch (err) {
     console.log(err);
     res.status(500).json({ error: 'Failed to fetch game' });
   }
 };
-
 // ─── ADD GAME ────────────────────────────────────────────────────
 const addGame = async (req, res) => {
   try {
+    console.log("FILES:");
+    console.log(req.files);
+
+    console.log("BODY:");
+    console.log(req.body);
+    console.log("REQ BODY:", req.body);
+    console.log("REQ FILES:", req.files);
+    console.log("REQ USER:", req.user);
+
     const {
       gameID: incomingGameID,
       storeID: incomingStoreID,
@@ -47,36 +54,76 @@ const addGame = async (req, res) => {
     if (!title || title.trim() === '') {
       return res.status(400).json({ error: 'Game title is required' });
     }
+
     if (!platform || !['PS4', 'PS5'].includes(platform)) {
       return res.status(400).json({ error: 'Platform must be PS4 or PS5' });
     }
+
     if (!category || category.trim() === '') {
       return res.status(400).json({ error: 'Category is required' });
     }
+
     if (!pricePerDay || isNaN(pricePerDay) || pricePerDay <= 0) {
       return res.status(400).json({ error: 'Price must be a positive number' });
     }
 
-    const storeID = incomingStoreID || req.user.storeID || req.user._id.toString();
+    // ── NEW FIX: require at least one uploaded image ──────────
+    if (!req.files || req.files.length === 0) {
+      return res.status(400).json({
+        error: 'At least one image is required'
+      });
+    }
+
+    const storeID =
+      incomingStoreID ||
+      req.user.storeID ||
+      req.user._id.toString();
+
     if (!storeID || storeID.trim() === '') {
       return res.status(400).json({ error: 'Store ID is required' });
     }
 
-    const gameID = incomingGameID && incomingGameID.trim() !== ''
-      ? incomingGameID.trim()
-      : `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
+    const gameID =
+      incomingGameID && incomingGameID.trim() !== ''
+        ? incomingGameID.trim()
+        : `${Date.now().toString(36)}-${Math.random()
+          .toString(36)
+          .slice(2, 8)}`;
 
     const existingGame = await Game.findOne({ gameID });
+
     if (existingGame) {
-      return res.status(400).json({ error: 'A game with this ID already exists' });
+      return res.status(400).json({
+        error: 'A game with this ID already exists'
+      });
     }
 
+    // ── FIXED IMAGE EXTRACTION ────────────────────────────────
+    // ── Extract Cloudinary URLs from uploaded files ────────────
     // ── Extract Cloudinary URLs from uploaded files ────────────
     const imageUrls = req.files && req.files.length > 0
-      ? req.files.map((file) => file.path)
+      ? req.files.map((file) => {
+
+        console.log("UPLOADED FILE OBJECT:");
+        console.log(file);
+
+        return (
+          file.path ||
+          file.secure_url ||
+          file.url ||
+          null
+        );
+      }).filter(Boolean)
       : [];
 
-    const imgValue = req.body.img || imageUrls[0];
+    // ensure at least one image exists
+    if (imageUrls.length === 0) {
+      return res.status(400).json({
+        error: 'Image upload failed. No image URL was returned.'
+      });
+    }
+
+    const imgValue = imageUrls[0];
 
     const newGame = new Game({
       gameID,
@@ -85,7 +132,7 @@ const addGame = async (req, res) => {
       description,
       category,
       platform,
-      pricePerDay,
+      pricePerDay: Number(pricePerDay),
       img: imgValue,
       images: imageUrls,
       developer,
@@ -94,15 +141,21 @@ const addGame = async (req, res) => {
       type
     });
 
-    await newGame.save();
-    res.status(201).json(newGame);
+    const savedGame = await newGame.save();
 
+    console.log("SAVED GAME:");
+    console.log(savedGame);
+
+    res.status(201).json(savedGame);
   } catch (err) {
-    console.log(err);
-    res.status(500).json({ error: 'Failed to add game' });
+
+    console.log('ADD GAME ERROR:', err);
+
+    res.status(500).json({
+      error: err.message || 'Failed to add game'
+    });
   }
 };
-
 // ─── EDIT GAME ───────────────────────────────────────────────────
 const editGame = async (req, res) => {
   try {
@@ -142,7 +195,6 @@ const editGame = async (req, res) => {
     res.status(500).json({ error: 'Failed to update game' });
   }
 };
-
 // ─── DELETE GAME ─────────────────────────────────────────────────
 const deleteGame = async (req, res) => {
   try {
@@ -155,7 +207,6 @@ const deleteGame = async (req, res) => {
     res.status(500).json({ error: 'Failed to delete game' });
   }
 };
-
 // ─── GET MY GAMES ────────────────────────────────────────────────
 const getMyGames = async (req, res, next) => {
   try {
@@ -173,12 +224,4 @@ const getMyGames = async (req, res, next) => {
     next(err);
   }
 };
-
-// ── CHANGE 5: Fixed inconsistent export style ─────────────────────
-// original file mixed two styles:
-// getMyGames used  →  exports.getMyGames = ...
-// all others used  →  module.exports = { ... }
-// mixing these breaks the module — only one style should be used
-// everything is now declared as const and exported together at the bottom
-
 module.exports = { getAllGames, getOneGame, addGame, editGame, deleteGame, getMyGames };

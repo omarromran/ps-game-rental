@@ -4,7 +4,7 @@ const cors = require('cors');
 const dotenv = require('dotenv');
 const path = require('path');
 const session = require('express-session'); // Kept safe for your team!
-
+const multer = require('multer');
 // ==========================================
 // ⚙️ CONFIGURATIONS & INITIALIZATION
 // ==========================================
@@ -25,13 +25,13 @@ const rentalRoutes = require('./Routes/rentalRoutes');
 const userRoutes = require('./Routes/userRoutes');
 
 // Import your custom security gatekeepers
-const { protect, restrictTo } = require('./Middleware/authMiddleware'); 
+const { protect, restrictTo } = require('./Middleware/authMiddleware');
 
 // ==========================================
 // 🔌 GLOBAL MIDDLEWARE & SESSIONS
 // ==========================================
 app.use(cors());
-app.use(express.json()); 
+app.use(express.json());
 app.use(express.static(path.join(__dirname, '../FrontEnd')));
 
 // EJS view engine setup for converted front-end pages
@@ -41,10 +41,10 @@ app.use(express.static(path.join(__dirname, "../FrontEnd")));
 
 // Express Session Configuration (Maintained for your teammates)
 app.use(session({
-    secret: process.env.SESSION_SECRET || 'pshub-secret',
-    resave: false,
-    saveUninitialized: false,
-    cookie: { maxAge: 1000 * 60 * 60 * 24 } // 1 day
+  secret: process.env.SESSION_SECRET || 'pshub-secret',
+  resave: false,
+  saveUninitialized: false,
+  cookie: { maxAge: 1000 * 60 * 60 * 24 } // 1 day
 }));
 
 app.set('view engine', 'ejs');
@@ -122,7 +122,59 @@ pageViews.forEach((view) => {
   app.get(`/${view}`, (req, res) => res.render(view));
   app.get(`/${view}.html`, (req, res) => res.render(view));
 });
+// ==========================================
+// 🚨 GLOBAL ERROR HANDLER
+// ==========================================
 
+app.use((err, req, res, next) => {
+
+  console.error('GLOBAL ERROR:', err);
+
+  // Multer upload errors
+  if (err instanceof multer.MulterError) {
+    return res.status(400).json({
+      error: err.message
+    });
+  }
+
+  // Cloudinary/file validation errors
+  if (err.message) {
+    return res.status(400).json({
+      error: err.message
+    });
+  }
+
+  res.status(500).json({
+    error: 'Internal Server Error'
+  });
+});
+
+app.use((err, req, res, next) => {
+
+  console.error('FULL ERROR:', err);
+
+  res.status(500).json({
+    error: err.message,
+    stack: err.stack
+  });
+});
+// ==========================================
+// 🚨 GLOBAL ERROR HANDLER
+// ==========================================
+
+app.use((err, req, res, next) => {
+
+  console.error("========== FULL SERVER ERROR ==========");
+  console.error(err);
+  console.error("=======================================");
+
+  res.status(500).json({
+    success: false,
+    message: err.message,
+    stack: err.stack,
+    error: err
+  });
+});
 // ==========================================
 // 🛰️ IGNITION SWITCH
 app.listen(PORT, () => {
