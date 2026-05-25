@@ -130,7 +130,7 @@ const approveStore = async (req, res) => {
         const user = await User.findById(req.params.id);
         if (!user) return res.status(404).json({ error: 'User not found' });
 
-        if (user.role !== 'Store') {
+        if (user.role !== 'StoreOwner') {
             return res.status(400).json({ error: 'This user is not a store owner' });
         }
 
