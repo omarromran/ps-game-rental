@@ -47,11 +47,6 @@
                 </label>
             </div>
 
-            <div class="input-group" id="storeID-group" style="display:none;">
-                <i class="fa-solid fa-store"></i>
-                <input type="text" id="storeID-input" placeholder="Store ID Code">
-            </div>
-
             <p id="error-msg" style="color:red; font-size:0.85rem; display:none; margin-bottom:10px;"></p>
 
             <button type="submit">Sign Up</button>
@@ -60,17 +55,7 @@
     </div>
 
     <script>
-        // Show/hide storeID field based on account type
-        document.querySelectorAll('input[name="account-type"]').forEach(radio => {
-            radio.addEventListener('change', () => {
-                const storeGroup = document.getElementById("storeID-group");
-                if (radio.value === "Store" && radio.checked) {
-                    storeGroup.style.display = "flex";
-                } else {
-                    storeGroup.style.display = "none";
-                }
-            });
-        });
+        // account type selection remains for role assignment; storeID will be generated server-side for Store accounts
 
         document.getElementById("signup-form").addEventListener("submit", async e => {
             e.preventDefault();
@@ -80,7 +65,6 @@
             const password = document.getElementById("password-input").value;
             const confirmPassword = document.getElementById("confirm-password-input").value;
             const role = document.querySelector('input[name="account-type"]:checked').value;
-            const storeID = document.getElementById("storeID-input").value.trim();
             const errorMsg = document.getElementById("error-msg");
 
             errorMsg.style.display = "none";
@@ -127,17 +111,13 @@
                 errorMsg.style.display = "block";
                 return;
             }
-            if (role === "Store" && !storeID) {
-                errorMsg.textContent = "Store ID is required for store accounts.";
-                errorMsg.style.display = "block";
-                return;
-            }
+            // no client-side requirement for storeID; server creates it automatically
 
             try {
                 const res = await fetch("http://localhost:8080/api/auth/register", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ username, email, password, role, storeID })
+                    body: JSON.stringify({ username, email, password, role })
                 });
 
                 const data = await res.json();

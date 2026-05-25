@@ -2,122 +2,634 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GameLend Dashboard</title>
-    <link rel="stylesheet" href="cssFiles/dashboard.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script defer src="jsFiles/gamerDashboard.js"></script>
-    <link rel="icon" href="photos/images.png">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Gamer Dashboard</title>
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="/cssFiles/dashboard.css" />
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+    <!-- Favicon -->
+    <link rel="icon" href="/photos/images.png" />
+
+    <!-- JS -->
+    <script defer src="/jsFiles/gamerDashboard.js"></script>
 </head>
 
 <body>
 
     <div class="dashboard-wrapper">
 
+        <!-- SIDEBAR -->
         <aside class="sidebar">
+
             <h2>GAMER</h2>
+
             <nav>
-                <button onclick="showSection('dashboard', this)" class="active">
-                    <i class="fas fa-home"></i> Dashboard
+
+                <button
+                    class="nav-btn active"
+                    onclick="showSection('dashboard', this)"
+                >
+                    <i class="fas fa-home"></i>
+                    Dashboard
                 </button>
-                <button onclick="showSection('my-rentals', this)">
-                    <i class="fas fa-gamepad"></i> My Rentals
+
+                <button
+                    class="nav-btn"
+                    onclick="showSection('my-rentals', this)"
+                >
+                    <i class="fas fa-gamepad"></i>
+                    My Rentals
                 </button>
-                <button onclick="showSection('wishlist', this)">
-                    <i class="fas fa-heart"></i> Wishlist
+
+                <button
+                    class="nav-btn"
+                    onclick="showSection('wishlist', this)"
+                >
+                    <i class="fas fa-heart"></i>
+                    Wishlist
                 </button>
-                <button onclick="showSection('profile', this)">
-                    <i class="fas fa-user"></i> Profile
+
+                <button
+                    class="nav-btn"
+                    onclick="showSection('profile', this)"
+                >
+                    <i class="fas fa-user"></i>
+                    Profile
                 </button>
+
             </nav>
 
-            <button class="logout" onclick="resetDatabase()"
-                style="margin-bottom: 10px; background-color: #ff9800; border-color: #ff9800; color: white;">
-                <i class="fas fa-sync-alt"></i> Reset Data
+            <button class="logout" onclick="logout()">
+                <i class="fas fa-sign-out-alt"></i>
+                Logout
             </button>
 
-            <button class="logout" onclick="logout()">
-                <i class="fas fa-sign-out-alt"></i> Logout
-            </button>
         </aside>
 
-
+        <!-- MAIN CONTENT -->
         <main>
 
-            <section id="dashboard">
-                <div class="card-container" id="dashboard-cards"></div>
+            <!-- DASHBOARD -->
+            <section id="dashboard" class="dashboard-section active-section">
 
-                <h2 style="margin-top: 30px;">Recent Activity</h2>
+                <div
+                    class="card-container"
+                    id="dashboard-cards"
+                >
+                    <!-- Cards inserted dynamically -->
+                </div>
+
+                <h2 style="margin-top:30px;">
+                    Recent Activity
+                </h2>
 
                 <table id="activity-table">
-                    <tbody id="activity-body"></tbody>
+
+                    <thead>
+                        <tr>
+                            <th>Game</th>
+                            <th>Status</th>
+                            <th>Date</th>
+                        </tr>
+                    </thead>
+
+                    <tbody id="activity-body">
+
+                        <tr>
+                            <td colspan="3">
+                                No recent activity found.
+                            </td>
+                        </tr>
+
+                    </tbody>
+
                 </table>
 
             </section>
 
-            <section id="my-rentals">
+            <!-- MY RENTALS -->
+            <section
+                id="my-rentals"
+                class="dashboard-section"
+                style="display:none;"
+            >
+
                 <h2>My Rentals</h2>
 
-                <p>Active</p>
-                <div class="games-grid" id="active-rentals"></div>
+                <h3>Active Rentals</h3>
 
-                <p>Completed</p>
-                <div class="games-grid" id="completed-rentals"></div>
+                <div
+                    class="games-grid"
+                    id="active-rentals"
+                >
+                    <p>No active rentals.</p>
+                </div>
+
+                <h3>Completed Rentals</h3>
+
+                <div
+                    class="games-grid"
+                    id="completed-rentals"
+                >
+                    <p>No completed rentals.</p>
+                </div>
+
             </section>
 
+            <!-- WISHLIST -->
+            <section
+                id="wishlist"
+                class="dashboard-section"
+                style="display:none;"
+            >
 
-            <section id="wishlist">
                 <h2>Wishlist</h2>
 
-                <div class="wishlist-grid" id="wishlist-container"></div>
+                <div
+                    class="wishlist-grid"
+                    id="wishlist-container"
+                >
+                    <p>Your wishlist is empty.</p>
+                </div>
+
             </section>
 
-            <section id="profile">
-                <h2 class="page-title">Profile</h2>
+            <!-- PROFILE -->
+            <section
+                id="profile"
+                class="dashboard-section"
+                style="display:none;"
+            >
+
+                <h2 class="page-title">
+                    Profile
+                </h2>
+
                 <div class="profile-container compact">
 
+                    <!-- TOP PROFILE -->
                     <div class="profile-top">
-                        <div class="profile-avatar" id="avatar"></div>
-                        <div class="profile-info">
-                            <h3 id="nameText"></h3>
-                            <input id="nameInput" type="text" style="display:none;">
-                            <p id="emailText"></p>
-                            <input id="emailInput" type="email" style="display:none;">
+
+                        <div
+                            class="profile-avatar"
+                            id="avatar"
+                        >
+                            U
                         </div>
+
+                        <div class="profile-info">
+
+                            <h3 id="nameText">
+                                User Name
+                            </h3>
+
+                            <input
+                                id="nameInput"
+                                type="text"
+                                style="display:none;"
+                            />
+
+                            <p id="emailText">
+                                user@email.com
+                            </p>
+
+                            <input
+                                id="emailInput"
+                                type="email"
+                                style="display:none;"
+                            />
+
+                        </div>
+
                     </div>
 
+                    <!-- USERNAME -->
                     <div class="profile-item">
-                        <span class="profile-key">Username</span>
-                        <span class="profile-val" id="usernameText"></span>
-                        <input id="usernameInput" type="text" style="display:none;">
+
+                        <span class="profile-key">
+                            Username
+                        </span>
+
+                        <span
+                            class="profile-val"
+                            id="usernameText"
+                        >
+                            username
+                        </span>
+
+                        <input
+                            id="usernameInput"
+                            type="text"
+                            style="display:none;"
+                        />
+
                     </div>
 
+                    <!-- PHONE -->
                     <div class="profile-item">
-                        <span class="profile-key">Phone</span>
-                        <span class="profile-val" id="phoneText"></span>
-                        <input id="phoneInput" type="text" style="display:none;">
+
+                        <span class="profile-key">
+                            Phone
+                        </span>
+
+                        <span
+                            class="profile-val"
+                            id="phoneText"
+                        >
+                            Not Added
+                        </span>
+
+                        <input
+                            id="phoneInput"
+                            type="text"
+                            style="display:none;"
+                        />
+
                     </div>
 
+                    <!-- MEMBER SINCE -->
                     <div class="profile-item">
-                        <span class="profile-key">Member Since</span>
-                        <span class="profile-val" id="memberSince">-</span>
+
+                        <span class="profile-key">
+                            Member Since
+                        </span>
+
+                        <span
+                            class="profile-val"
+                            id="memberSince"
+                        >
+                            -
+                        </span>
+
                     </div>
 
+                    <!-- TOTAL RENTALS -->
                     <div class="profile-item">
-                        <span class="profile-key">Total Rentals</span>
-                        <span class="profile-val" id="totalRentals">0 Games</span>
+
+                        <span class="profile-key">
+                            Total Rentals
+                        </span>
+
+                        <span
+                            class="profile-val"
+                            id="totalRentals"
+                        >
+                            0 Games
+                        </span>
+
                     </div>
 
+                    <!-- ACTION BUTTONS -->
                     <div style="margin-top:15px;">
-                        <button onclick="editProfile()" id="editBtn">Edit Profile</button>
-                        <button onclick="saveProfile()" id="saveBtn" style="display:none;">Save</button>
+
+                        <button
+                            onclick="editProfile()"
+                            id="editBtn"
+                        >
+                            Edit Profile
+                        </button>
+
+                        <button
+                            onclick="saveProfile()"
+                            id="saveBtn"
+                            style="display:none;"
+                        >
+                            Save
+                        </button>
+
                     </div>
 
                 </div>
+
             </section>
 
         </main>
+
+    </div>
+
+</body>
+
+</html><!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Gamer Dashboard</title>
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="/cssFiles/dashboard.css" />
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+    <!-- Favicon -->
+    <link rel="icon" href="/photos/images.png" />
+
+    <!-- JS -->
+    <script defer src="/jsFiles/gamerDashboard.js"></script>
+</head>
+
+<body>
+
+    <div class="dashboard-wrapper">
+
+        <!-- SIDEBAR -->
+        <aside class="sidebar">
+
+            <h2>GAMER</h2>
+
+            <nav>
+
+                <button
+                    class="nav-btn active"
+                    onclick="showSection('dashboard', this)"
+                >
+                    <i class="fas fa-home"></i>
+                    Dashboard
+                </button>
+
+                <button
+                    class="nav-btn"
+                    onclick="showSection('my-rentals', this)"
+                >
+                    <i class="fas fa-gamepad"></i>
+                    My Rentals
+                </button>
+
+                <button
+                    class="nav-btn"
+                    onclick="showSection('wishlist', this)"
+                >
+                    <i class="fas fa-heart"></i>
+                    Wishlist
+                </button>
+
+                <button
+                    class="nav-btn"
+                    onclick="showSection('profile', this)"
+                >
+                    <i class="fas fa-user"></i>
+                    Profile
+                </button>
+
+            </nav>
+
+            <button class="logout" onclick="logout()">
+                <i class="fas fa-sign-out-alt"></i>
+                Logout
+            </button>
+
+        </aside>
+
+        <!-- MAIN CONTENT -->
+        <main>
+
+            <!-- DASHBOARD -->
+            <section id="dashboard" class="dashboard-section active-section">
+
+                <div
+                    class="card-container"
+                    id="dashboard-cards"
+                >
+                    <!-- Cards inserted dynamically -->
+                </div>
+
+                <h2 style="margin-top:30px;">
+                    Recent Activity
+                </h2>
+
+                <table id="activity-table">
+
+                    <thead>
+                        <tr>
+                            <th>Game</th>
+                            <th>Status</th>
+                            <th>Date</th>
+                        </tr>
+                    </thead>
+
+                    <tbody id="activity-body">
+
+                        <tr>
+                            <td colspan="3">
+                                No recent activity found.
+                            </td>
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
+            </section>
+
+            <!-- MY RENTALS -->
+            <section
+                id="my-rentals"
+                class="dashboard-section"
+                style="display:none;"
+            >
+
+                <h2>My Rentals</h2>
+
+                <h3>Active Rentals</h3>
+
+                <div
+                    class="games-grid"
+                    id="active-rentals"
+                >
+                    <p>No active rentals.</p>
+                </div>
+
+                <h3>Completed Rentals</h3>
+
+                <div
+                    class="games-grid"
+                    id="completed-rentals"
+                >
+                    <p>No completed rentals.</p>
+                </div>
+
+            </section>
+
+            <!-- WISHLIST -->
+            <section
+                id="wishlist"
+                class="dashboard-section"
+                style="display:none;"
+            >
+
+                <h2>Wishlist</h2>
+
+                <div
+                    class="wishlist-grid"
+                    id="wishlist-container"
+                >
+                    <p>Your wishlist is empty.</p>
+                </div>
+
+            </section>
+
+            <!-- PROFILE -->
+            <section
+                id="profile"
+                class="dashboard-section"
+                style="display:none;"
+            >
+
+                <h2 class="page-title">
+                    Profile
+                </h2>
+
+                <div class="profile-container compact">
+
+                    <!-- TOP PROFILE -->
+                    <div class="profile-top">
+
+                        <div
+                            class="profile-avatar"
+                            id="avatar"
+                        >
+                            U
+                        </div>
+
+                        <div class="profile-info">
+
+                            <h3 id="nameText">
+                                User Name
+                            </h3>
+
+                            <input
+                                id="nameInput"
+                                type="text"
+                                style="display:none;"
+                            />
+
+                            <p id="emailText">
+                                user@email.com
+                            </p>
+
+                            <input
+                                id="emailInput"
+                                type="email"
+                                style="display:none;"
+                            />
+
+                        </div>
+
+                    </div>
+
+                    <!-- USERNAME -->
+                    <div class="profile-item">
+
+                        <span class="profile-key">
+                            Username
+                        </span>
+
+                        <span
+                            class="profile-val"
+                            id="usernameText"
+                        >
+                            username
+                        </span>
+
+                        <input
+                            id="usernameInput"
+                            type="text"
+                            style="display:none;"
+                        />
+
+                    </div>
+
+                    <!-- PHONE -->
+                    <div class="profile-item">
+
+                        <span class="profile-key">
+                            Phone
+                        </span>
+
+                        <span
+                            class="profile-val"
+                            id="phoneText"
+                        >
+                            Not Added
+                        </span>
+
+                        <input
+                            id="phoneInput"
+                            type="text"
+                            style="display:none;"
+                        />
+
+                    </div>
+
+                    <!-- MEMBER SINCE -->
+                    <div class="profile-item">
+
+                        <span class="profile-key">
+                            Member Since
+                        </span>
+
+                        <span
+                            class="profile-val"
+                            id="memberSince"
+                        >
+                            -
+                        </span>
+
+                    </div>
+
+                    <!-- TOTAL RENTALS -->
+                    <div class="profile-item">
+
+                        <span class="profile-key">
+                            Total Rentals
+                        </span>
+
+                        <span
+                            class="profile-val"
+                            id="totalRentals"
+                        >
+                            0 Games
+                        </span>
+
+                    </div>
+
+                    <!-- ACTION BUTTONS -->
+                    <div style="margin-top:15px;">
+
+                        <button
+                            onclick="editProfile()"
+                            id="editBtn"
+                        >
+                            Edit Profile
+                        </button>
+
+                        <button
+                            onclick="saveProfile()"
+                            id="saveBtn"
+                            style="display:none;"
+                        >
+                            Save
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+        </main>
+
     </div>
 
 </body>

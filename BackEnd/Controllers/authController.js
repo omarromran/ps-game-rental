@@ -9,7 +9,7 @@ const isValidEmail = (email) => {
 
 exports.register = async (req, res) => {
   try {
-    const { username, email, password, role, storeID } = req.body;
+    const { username, email, password, role } = req.body;
 
     // Validation
     if (!username || username.trim() === '') {
@@ -36,9 +36,16 @@ exports.register = async (req, res) => {
     if (!['Gamer', 'Store', 'Admin'].includes(role)) {
       return res.status(400).json({ message: 'Role must be Gamer, Store, or Admin' });
     }
-    if (role === 'Store' && !storeID) {
-      return res.status(400).json({ message: 'Store accounts require a unique storeID code' });
-    }
+    // If role is Store, generate a unique storeID automatically
+    const generateUniqueStoreID = async () => {
+      let id;
+      while (true) {
+        id = `STORE-${Date.now().toString(36)}-${Math.random().toString(36).slice(2,8)}`;
+        const exists = await User.findOne({ storeID: id });
+        if (!exists) break;
+      }
+      return id;
+    };
 
     // Check duplicates
     const normalizedEmail = email.trim().toLowerCase();
@@ -56,12 +63,14 @@ exports.register = async (req, res) => {
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
+    const assignedStoreID = role === 'Store' ? await generateUniqueStoreID() : undefined;
+
     const newUser = new User({
       username: username.trim(),
       email: email.trim().toLowerCase(),
       password: hashedPassword,
       role,
-      storeID: role === 'Store' ? storeID : undefined
+      storeID: assignedStoreID
     });
 
     await newUser.save();
@@ -114,6 +123,7 @@ exports.login = async (req, res) => {
       message: `Welcome back, ${user.username}!`,
       token,
       user: {
+        _id: user._id,
         id: user._id,
         username: user.username,
         email: user.email,
