@@ -20,7 +20,7 @@ const PORT = process.env.PORT || 8080;
 // 📁 IMPORT ROUTERS & MIDDLEWARE
 // ==========================================
 const authRoutes = require('./Routes/authRoutes');
-const gameRoutes = require('./routes/gameRoutes');
+const gameRoutes = require('./Routes/gameRoutes');
 const rentalRoutes = require('./Routes/rentalRoutes');
 const userRoutes = require('./Routes/userRoutes');
 
