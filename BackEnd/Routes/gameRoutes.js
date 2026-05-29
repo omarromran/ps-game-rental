@@ -23,7 +23,7 @@ const Game = require('../models/Game');
 router.get('/browseGames', async (req, res) => {
   try {
 
-    const games = await Game.find();
+    const games = await Game.find({ status: 'Available' });
 
     res.render('browseGames', {
       games,

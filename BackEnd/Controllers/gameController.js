@@ -3,11 +3,15 @@ const Game = require('../models/Game');
 // ─── GET ALL GAMES ───────────────────────────────────────────────
 const getAllGames = async (req, res) => {
   try {
-    // Support optional status filter via query param (e.g. ?status=Available)
+    // By default, only return games that are available for browsing.
+    // If ?status=all is explicitly provided, return every game.
     const filter = {};
-    if (req.query.status) {
+    if (req.query.status && req.query.status.toLowerCase() !== 'all') {
       filter.status = req.query.status;
+    } else if (!req.query.status) {
+      filter.status = 'Available';
     }
+
     const games = await Game.find(filter);
 
     res.json(games);

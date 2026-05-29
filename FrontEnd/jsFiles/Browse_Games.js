@@ -91,7 +91,7 @@ async function loadDB() {
     try {
 
         const response =
-            await fetch("/api/games");
+            await fetch("/api/games?status=Available");
 
         const data =
             await response.json();
