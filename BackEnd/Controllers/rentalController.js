@@ -1,3 +1,4 @@
+const mongoose = require('mongoose');
 const Rental = require('../models/Rental');
 const Game = require('../models/Game');
 

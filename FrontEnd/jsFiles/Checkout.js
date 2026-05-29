@@ -172,6 +172,7 @@ async function processOrder() {
     try {
         const response = await fetch('/api/rentals/checkout', {
             method: 'POST',
+            credentials: 'same-origin',
             headers: {
                 'Content-Type': 'application/json'
             },
