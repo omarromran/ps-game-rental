@@ -3,9 +3,13 @@ const Game = require('../models/Game');
 // ─── GET ALL GAMES ───────────────────────────────────────────────
 const getAllGames = async (req, res) => {
   try {
-    const games = await Game.find({ status: 'Available' });
+    // Support optional status filter via query param (e.g. ?status=Available)
+    const filter = {};
+    if (req.query.status) {
+      filter.status = req.query.status;
+    }
+    const games = await Game.find(filter);
 
-    // changed from res.json(games)
     res.json(games);
 
   } catch (err) {

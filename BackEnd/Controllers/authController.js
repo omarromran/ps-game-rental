@@ -36,16 +36,7 @@ exports.register = async (req, res) => {
     if (!['Gamer', 'Store', 'Admin'].includes(role)) {
       return res.status(400).json({ message: 'Role must be Gamer, Store, or Admin' });
     }
-    // If role is Store, generate a unique storeID automatically
-    const generateUniqueStoreID = async () => {
-      let id;
-      while (true) {
-        id = `STORE-${Date.now().toString(36)}-${Math.random().toString(36).slice(2,8)}`;
-        const exists = await User.findOne({ storeID: id });
-        if (!exists) break;
-      }
-      return id;
-    };
+    // Store ID will be set after saving user (no custom generation needed)    };
 
     // Check duplicates
     const normalizedEmail = email.trim().toLowerCase();
@@ -63,17 +54,32 @@ exports.register = async (req, res) => {
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
-    const assignedStoreID = role === 'Store' ? await generateUniqueStoreID() : undefined;
+    // storeID will be set after user is saved
 
     const newUser = new User({
       username: username.trim(),
       email: email.trim().toLowerCase(),
       password: hashedPassword,
       role,
-      storeID: assignedStoreID
+
+      // Only stores need approval
+      approved: role !== 'Store'
     });
 
+    // Make storeID equal to user _id for stores
+    if (role === 'Store') {
+      newUser.storeID = newUser._id.toString();
+    }
+
     await newUser.save();
+
+    if (role === 'Store') {
+      return res.status(201).json({
+        message: 'Store registered successfully! Waiting for Admin approval before login.',
+        user: newUser
+      });
+    }
+
     res.status(201).json({ message: 'User registered successfully! Proceed to login.' });
 
   } catch (error) {
@@ -99,6 +105,13 @@ exports.login = async (req, res) => {
     const user = await User.findOne({ email: email.trim().toLowerCase() });
     if (!user) {
       return res.status(400).json({ message: 'Invalid email or password credentials' });
+    }
+
+    // Block unapproved stores
+    if (user.role === 'Store' && !user.approved) {
+      return res.status(403).json({
+        message: 'Your store account is waiting for admin approval.'
+      });
     }
 
     // Check if suspended
@@ -141,8 +154,8 @@ exports.login = async (req, res) => {
 exports.logout = (req, res) => {
   // Since JWT tokens are stored on the client side, the server just sends a success 
   // confirmation instructing the frontend application to delete its stored token.
-  res.status(200).json({ 
-    message: 'Logged out successfully. Please remove your token from storage.' 
+  res.status(200).json({
+    message: 'Logged out successfully. Please remove your token from storage.'
   });
 };
 
