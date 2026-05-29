@@ -108,12 +108,12 @@
 
                 <section id="addGame" style="display:none;">
                     <h2 id="gameFormTitle">List a New Game</h2>
-                    <form id="addGameForm" action="/api/games" method="POST" enctype="multipart/form-data">
+                    <form id="addGameForm" action="/api/games" method="POST" enctype="multipart/form-data" autocomplete="off">
                         <input type="hidden" id="editGameId" name="editGameId" value="">
 
                         <div class="form-group">
                             <label>Game Title</label>
-                            <input type="text" id="gameTitle" name="title" required>
+                            <input type="text" autocomplete="off" id="gameTitle" name="title" required>
                         </div>
 
                         <div class="form-group">
@@ -216,6 +216,10 @@
                                         </td>
                                     </tr>
                                     <% }) %>
+                                        <% } else { %>
+                                            <tr id="noGamesMessage">
+                                                <td colspan="6" style="text-align:center; padding:1rem;">You have no listed games yet.</td>
+                                            </tr>
                                         <% } %>
                         </tbody>
                     </table>

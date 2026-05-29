@@ -1,264 +1,326 @@
 let cart = JSON.parse(localStorage.getItem('pshub_cart') || '[]');
-const gameID = new URLSearchParams(window.location.search).get('id');
+let currentGame = null;
 let selectedStars = 0;
 
-function loadCurrentUser() {
-    const userLink = document.getElementById('user-name-link');
-    const loginBtn = document.querySelector('.login-btn');
-    if (!userLink) return;
-    const stored = localStorage.getItem('currentUser');
-    if (stored) {
-        const user = JSON.parse(stored);
-        userLink.textContent = user.name || user.username || 'My Account';
-        if (loginBtn) loginBtn.style.display = 'none';
-    } else {
-        userLink.textContent = 'Guest';
-        userLink.removeAttribute('href');
-        if (loginBtn) loginBtn.style.display = 'inline';
-    }
+const urlParams = new URLSearchParams(window.location.search);
+const gameId = urlParams.get('id');
+
+function getGameKey(game) {
+  if (!game) return '';
+  return String(game._id || game.gameID || game.id || '');
 }
 
+function getCurrentGameKey() {
+  return getGameKey(currentGame) || String(gameId || '');
+}
+
+function loadCurrentUser() {
+  const userLink = document.getElementById('user-name-link');
+  const loginBtn = document.querySelector('.login-btn');
+  if (!userLink) return;
+
+  const stored = localStorage.getItem('currentUser');
+  if (stored) {
+    const user = JSON.parse(stored);
+    userLink.textContent = user.name || user.username || 'My Account';
+    if (loginBtn) loginBtn.style.display = 'none';
+  } else {
+    userLink.textContent = 'Guest';
+    userLink.removeAttribute('href');
+    if (loginBtn) loginBtn.style.display = 'inline';
+  }
+}
+
+function syncCartFromStorage() {
+  const storedCart = localStorage.getItem('pshub_cart');
+  if (storedCart) {
+    try {
+      cart = JSON.parse(storedCart) || [];
+    } catch {
+      cart = [];
+    }
+  } else {
+    cart = [];
+  }
+  renderCart();
+
+  if (currentGame) {
+    const inCart = cart.some((c) => getGameKey(c) === getCurrentGameKey());
+    const btn = document.getElementById('cart-btn');
+    if (btn) {
+      btn.textContent = inCart ? '✓ In Cart' : '+ Add to Cart';
+      btn.classList.toggle('in-cart', inCart);
+    }
+  }
+}
+
+window.addEventListener('storage', (event) => {
+  if (event.key === 'currentUser' || event.key === 'token') {
+    loadCurrentUser();
+  }
+  if (event.key === 'pshub_cart') {
+    syncCartFromStorage();
+  }
+});
+
 async function loadGame() {
-    let inventory = JSON.parse(localStorage.getItem('pshub_inventory') || 'null');
-    if (!inventory) {
-        const res = await fetch('browseGames.json');
-        inventory = await res.json();
-        localStorage.setItem('pshub_inventory', JSON.stringify(inventory));
+  const page = document.getElementById('desc-page');
+  if (!gameId) {
+    if (page) {
+      page.innerHTML = `<p style="color:#888">No game selected. <a href="/Browse_Games" style="color:#00439c">Go back</a></p>`;
+    }
+    return;
+  }
+
+  try {
+    const response = await fetch(`/api/games/${encodeURIComponent(gameId)}`);
+    if (!response.ok) {
+      throw new Error(`Game not found (${response.status})`);
+    }
+    currentGame = await response.json();
+    if (!currentGame) {
+      throw new Error('No game data returned');
     }
 
-    const game = inventory.find(g => g.gameID === gameID);
-    const page = document.getElementById('desc-page');
-
-    if (!game) {
-        page.innerHTML = `<p style="color:#888">Game not found. <a href="/Browse_Games" style="color:#00439c">Go back</a></p>`;
-        return;
-    }
-
-    document.getElementById('hero-bg').style.backgroundImage = `url('${game.img}')`;
-    document.title = `PSHUB | ${game.title}`;
-
+    renderGamePage();
     renderCart();
+  } catch (error) {
+    console.error('Error loading game:', error);
+    if (page) {
+      page.innerHTML = `<p style="color:#888">Game not found. <a href="/Browse_Games" style="color:#00439c">Go back</a></p>`;
+    }
+  }
+}
 
-    const inCart = cart.some(c => c.gameID === game.gameID);
+function renderGamePage() {
+  if (!currentGame) return;
 
-    const others = inventory.filter(g => g.title === game.title && g.gameID !== game.gameID);
-    const othersHtml = others.length ? `
-        <div class="other-stores">
-            <h3>Also available from</h3>
-            <div class="store-chips">
-                <span class="store-chip current">🏪 ${game.storeID} — ${game.price.toFixed(2)} EGP (current)</span>
-                ${others.map(o => `<a class="store-chip" href="/game_description?id=${o.gameID}">🏪 ${o.storeID} — ${o.price.toFixed(2)} EGP</a>`).join('')}
-            </div>
-        </div>` : '';
+  const page = document.getElementById('desc-page');
+  if (!page) return;
 
-    page.innerHTML = `
-        <div class="desc-cover">
-            <img src="${game.img}" alt="${game.title}">
-        </div>
-        <div class="desc-info">
-            <div class="desc-tags">
-                <span class="tag tag-category">${game.category}</span>
-                <span class="tag tag-platform">${game.platform}</span>
-                <span class="tag tag-pegi">PEGI ${game.pegi || '?'}</span>
-            </div>
-            <h1 class="desc-title">${game.title}</h1>
-            <div class="desc-meta">
-                <span>🏢 ${game.developer || 'Unknown'}</span>
-                <span>📅 ${game.releaseYear || 'N/A'}</span>
-                <span>🆔 ${game.gameID}</span>
-                <span class="report-game" onclick="reportGame()" title="Report inappropriate content">🚩 Report</span>
-            </div>
-            <p class="desc-text">${game.description || 'No description available.'}</p>
+  const displayImg = currentGame.img || (currentGame.images && currentGame.images[0]) || '/photos/placeholder.png';
+  const pricePerDay = Number(currentGame.pricePerDay || currentGame.price || 0);
+  const title = currentGame.title || 'Unknown Game';
 
-            <div class="info-grid">
-                <div class="info-item"><span class="info-label">Developer</span><span class="info-val">${game.developer || '—'}</span></div>
-                <div class="info-item"><span class="info-label">Release Year</span><span class="info-val">${game.releaseYear || '—'}</span></div>
-                <div class="info-item"><span class="info-label">Platform</span><span class="info-val">${game.platform}</span></div>
-                <div class="info-item"><span class="info-label">Age Rating</span><span class="info-val">PEGI ${game.pegi || '?'}</span></div>
-            </div>
+  const heroBg = document.getElementById('hero-bg');
+  if (heroBg) heroBg.style.backgroundImage = `url('${displayImg}')`;
+  document.title = `PSHUB | ${title}`;
 
-            <div class="desc-price">${game.price.toFixed(2)} EGP</div>
+  const gameKey = getCurrentGameKey();
+  const inCart = cart.some((c) => getGameKey(c) === gameKey);
 
-            <div class="btn-row">
-                <button class="btn-back" onclick="window.location.href='/Browse_Games'">← Back to Browse</button>
-                <button class="btn-cart ${inCart ? 'in-cart' : ''}" id="cart-btn" onclick="addToCart()">
-                    ${inCart ? '✓ In Cart' : '+ Add to Cart'}
-                </button>
-            </div>
+  page.innerHTML = `
+    <div class="desc-cover">
+      <img src="${displayImg}" alt="${title}">
+    </div>
+    <div class="desc-info">
+      <div class="desc-tags">
+        <span class="tag tag-category">${currentGame.category || 'Unknown'}</span>
+        <span class="tag tag-platform">${currentGame.platform || 'N/A'}</span>
+        <span class="tag tag-pegi">PEGI ${currentGame.pegi || '?'}</span>
+      </div>
+      <h1 class="desc-title">${title}</h1>
+      <div class="desc-meta">
+        <span>🏢 ${currentGame.developer || 'Unknown Developer'}</span>
+        <span>📅 ${currentGame.releaseYear || 'N/A'}</span>
+        <span>🆔 ${currentGame._id || currentGame.gameID}</span>
+        <span class="report-game" onclick="reportGame()" title="Report inappropriate content">🚩 Report</span>
+      </div>
+      <p class="desc-text">${currentGame.description || 'No description available.'}</p>
+      <div class="info-grid">
+        <div class="info-item"><span class="info-label">Developer</span><span class="info-val">${currentGame.developer || '—'}</span></div>
+        <div class="info-item"><span class="info-label">Release Year</span><span class="info-val">${currentGame.releaseYear || '—'}</span></div>
+        <div class="info-item"><span class="info-label">Platform</span><span class="info-val">${currentGame.platform || '—'}</span></div>
+        <div class="info-item"><span class="info-label">Age Rating</span><span class="info-val">PEGI ${currentGame.pegi || '?'}</span></div>
+      </div>
+      <div class="desc-price">${pricePerDay.toFixed(2)} EGP / day</div>
+      <div class="btn-row">
+        <button class="btn-back" onclick="window.location.href='/Browse_Games'">← Back to Browse</button>
+        <button class="btn-cart ${inCart ? 'in-cart' : ''}" id="cart-btn" onclick="addToCart()">
+          ${inCart ? '✓ In Cart' : '+ Add to Cart'}
+        </button>
+      </div>
+    </div>
+  `;
 
-            ${othersHtml}
-        </div>`;
-
-    document.getElementById('reviews-section').style.display = 'block';
-    document.getElementById('similar-section').style.display = 'block';
-
-    renderReviews();
-    renderSimilar(inventory, game);
-    initStars();
+  const reviewsSection = document.getElementById('reviews-section');
+  if (reviewsSection) reviewsSection.style.display = 'block';
+  renderReviews();
+  initStars();
 }
 
 function addToCart() {
-    const inventory = JSON.parse(localStorage.getItem('pshub_inventory') || '[]');
-    const game = inventory.find(g => g.gameID === gameID);
-    if (!game || cart.some(c => c.gameID === gameID)) return;
-    cart.push(game);
-    localStorage.setItem('pshub_cart', JSON.stringify(cart));
-    const btn = document.getElementById('cart-btn');
+  if (!currentGame) return;
+
+  const gameKey = getCurrentGameKey();
+  if (cart.some((c) => getGameKey(c) === gameKey)) {
+    alert('This game is already in your cart!');
+    return;
+  }
+
+  cart.push(currentGame);
+  localStorage.setItem('pshub_cart', JSON.stringify(cart));
+
+  const btn = document.getElementById('cart-btn');
+  if (btn) {
     btn.textContent = '✓ In Cart';
     btn.classList.add('in-cart');
-    renderCart();
+  }
+
+  renderCart();
+  alert('Game added to cart!');
 }
 
 function initStars() {
-    const stars = document.querySelectorAll('#star-row span');
-    stars.forEach(s => {
-        s.onmouseover = () => highlightStars(+s.dataset.v);
-        s.onmouseout = () => highlightStars(selectedStars);
-        s.onclick = () => { selectedStars = +s.dataset.v; highlightStars(selectedStars); };
+  document.querySelectorAll('#star-row span').forEach((star) => {
+    star.addEventListener('mouseover', () => highlightStars(+star.dataset.v));
+    star.addEventListener('mouseout', () => highlightStars(selectedStars));
+    star.addEventListener('click', () => {
+      selectedStars = +star.dataset.v;
+      highlightStars(selectedStars);
     });
+  });
 }
 
-function highlightStars(n) {
-    document.querySelectorAll('#star-row span').forEach(s => {
-        s.classList.toggle('lit', +s.dataset.v <= n);
-    });
+function highlightStars(value) {
+  document.querySelectorAll('#star-row span').forEach((star) => {
+    star.classList.toggle('lit', +star.dataset.v <= value);
+  });
 }
 
 function submitReview() {
-    const name = document.getElementById('reviewer-name').value.trim();
-    const comment = document.getElementById('review-comment').value.trim();
-    if (!name || !comment || !selectedStars) {
-        alert('Please fill in your name, a comment, and select a star rating.');
-        return;
-    }
-    const reviews = JSON.parse(localStorage.getItem('reviews_' + gameID) || '[]');
-    reviews.unshift({ reviewer: name, comment, rating: selectedStars, date: new Date().toLocaleDateString() });
-    localStorage.setItem('reviews_' + gameID, JSON.stringify(reviews));
+  const nameInput = document.getElementById('reviewer-name');
+  const commentInput = document.getElementById('review-comment');
+  if (!nameInput || !commentInput) return;
 
-    document.getElementById('reviewer-name').value = '';
-    document.getElementById('review-comment').value = '';
-    selectedStars = 0;
-    highlightStars(0);
-    renderReviews();
+  const name = nameInput.value.trim();
+  const comment = commentInput.value.trim();
+  if (!name || !comment || !selectedStars) {
+    alert('Please fill in your name, a comment, and select a star rating.');
+    return;
+  }
+
+  const reviewKey = `reviews_${currentGame._id || gameId}`;
+  const reviews = JSON.parse(localStorage.getItem(reviewKey) || '[]');
+  reviews.unshift({
+    reviewer: name,
+    comment,
+    rating: selectedStars,
+    date: new Date().toLocaleDateString(),
+  });
+  localStorage.setItem(reviewKey, JSON.stringify(reviews));
+
+  nameInput.value = '';
+  commentInput.value = '';
+  selectedStars = 0;
+  highlightStars(0);
+  renderReviews();
+  alert('Review posted successfully!');
 }
 
 function renderReviews() {
-    const reviews = JSON.parse(localStorage.getItem('reviews_' + gameID) || '[]');
-    const list = document.getElementById('reviews-list');
-    if (!reviews.length) {
-        list.innerHTML = '<p class="no-reviews">No reviews yet — be the first!</p>';
-        return;
-    }
-    list.innerHTML = reviews.map((r, i) => `
-        <div class="review-card">
-            <div class="review-top">
-                <span class="reviewer-name">${r.reviewer}</span>
-                <span class="review-stars">${'★'.repeat(r.rating)}${'☆'.repeat(5 - r.rating)}</span>
-                <button class="btn-report-review ${r.flagged ? 'flagged' : ''}" onclick="reportReview(${i})" title="Report this review">
-                    ${r.flagged ? 'Flagged' : '🚩'}
-                </button>
-            </div>
-            <p class="review-comment">${r.comment}</p>
-            ${r.date ? `<p style="font-size:0.75rem;color:#444;margin-top:6px">${r.date}</p>` : ''}
-        </div>`).join('');
-}
+  const reviewKey = `reviews_${currentGame._id || gameId}`;
+  const reviews = JSON.parse(localStorage.getItem(reviewKey) || '[]');
+  const list = document.getElementById('reviews-list');
+  if (!list) return;
 
-function renderSimilar(inventory, current) {
-    const similar = inventory
-        .filter(g => g.category === current.category && g.gameID !== current.gameID)
-        .slice(0, 6);
-    const grid = document.getElementById('similar-grid');
-    if (!similar.length) {
-        document.getElementById('similar-section').style.display = 'none';
-        return;
-    }
-    grid.innerHTML = similar.map(g => `
-        <div class="similar-card" onclick="window.location.href='/game_description?id=${g.gameID}'">
-            <img src="${g.img}" alt="${g.title}">
-            <div class="similar-label">
-                <div>${g.title}</div>
-                <div class="similar-price">${g.price.toFixed(2)} EGP</div>
-            </div>
-        </div>`).join('');
+  if (!reviews.length) {
+    list.innerHTML = '<p class="no-reviews">No reviews yet — be the first!</p>';
+    return;
+  }
+
+  list.innerHTML = reviews.map((review, index) => `
+    <div class="review-card">
+      <div class="review-top">
+        <span class="reviewer-name">${review.reviewer}</span>
+        <span class="review-stars">${'★'.repeat(review.rating)}${'☆'.repeat(5 - review.rating)}</span>
+        <button class="btn-report-review ${review.flagged ? 'flagged' : ''}" onclick="reportReview(${index})" title="Report this review">
+          ${review.flagged ? 'Flagged' : '🚩'}
+        </button>
+      </div>
+      <p class="review-comment">${review.comment}</p>
+      ${review.date ? `<p class="review-date">${review.date}</p>` : ''}
+    </div>
+  `).join('');
 }
 
 function reportGame() {
-    if (!confirm('Report this game as inappropriate?')) return;
-    const inventory = JSON.parse(localStorage.getItem('pshub_inventory') || '[]');
-    const idx = inventory.findIndex(g => g.gameID === gameID);
-    if (idx > -1) {
-        inventory[idx].flagged = true;
-        localStorage.setItem('pshub_inventory', JSON.stringify(inventory));
-        alert('Game reported to admin.');
-    }
+  if (!confirm('Report this game as inappropriate?')) return;
+  localStorage.setItem(`reported_games_${currentGame._id || gameId}`, 'true');
+  alert('Game reported to admin.');
 }
 
-function reportReview(idx) {
-    if (!confirm('Report this review?')) return;
-    const reviews = JSON.parse(localStorage.getItem('reviews_' + gameID) || '[]');
-    if (reviews[idx]) {
-        reviews[idx].flagged = true;
-        localStorage.setItem('reviews_' + gameID, JSON.stringify(reviews));
-        renderReviews();
-        alert('Review reported.');
-    }
+function reportReview(index) {
+  if (!confirm('Report this review?')) return;
+
+  const reviewKey = `reviews_${currentGame._id || gameId}`;
+  const reviews = JSON.parse(localStorage.getItem(reviewKey) || '[]');
+  if (!reviews[index]) return;
+  reviews[index].flagged = true;
+  localStorage.setItem(reviewKey, JSON.stringify(reviews));
+  renderReviews();
+  alert('Review reported.');
+}
+
+function renderCart() {
+  const cartList = document.getElementById('cart-items');
+  const cartCount = document.getElementById('cart-count');
+  const cartTotal = document.getElementById('cart-total');
+
+  if (cartCount) cartCount.innerText = cart.length;
+
+  let total = 0;
+  if (cartList) {
+    cartList.innerHTML = cart.map((item) => {
+      const price = Number(item.pricePerDay || item.price || 0);
+      total += price;
+      const itemImg = item.img || (item.images && item.images[0]) || '/photos/placeholder.png';
+      return `
+        <div class="cart-item">
+          <img src="${itemImg}" alt="${item.title}" />
+          <div class="cart-item-details">${item.title}<br>${price.toFixed(2)} EGP</div>
+          <button onclick="removeFromCart('${item._id || item.gameID || item.id}')" class="cart-remove">🗑️</button>
+        </div>
+      `;
+    }).join('');
+  }
+
+  if (cartTotal) cartTotal.innerText = total.toFixed(2);
+}
+
+function removeFromCart(id) {
+  cart = cart.filter((item) => getGameKey(item) !== String(id));
+  localStorage.setItem('pshub_cart', JSON.stringify(cart));
+  renderCart();
+
+  const btn = document.getElementById('cart-btn');
+  if (btn && currentGame && String(id) === getCurrentGameKey()) {
+    btn.textContent = '+ Add to Cart';
+    btn.classList.remove('in-cart');
+  }
+}
+
+function checkout() {
+  if (cart.length === 0) {
+    alert('Your cart is empty!');
+    return;
+  }
+  localStorage.setItem('pshub_cart', JSON.stringify(cart));
+  window.location.href = '/Checkout';
+}
+
+function toggleCart(open) {
+  const sidebar = document.getElementById('cart-sidebar');
+  if (!sidebar) return;
+
+  if (open === true) sidebar.classList.add('open');
+  else if (open === false) sidebar.classList.remove('open');
+  else sidebar.classList.toggle('open');
+}
+
+function index() {
+  window.location.href = '/index';
 }
 
 loadCurrentUser();
 loadGame();
-
-function index() {
-    window.location.href = '/index';
-}
-
-function renderCart() {
-    const cartList = document.getElementById('cart-items');
-    const cartCount = document.getElementById('cart-count');
-    const cartTotal = document.getElementById('cart-total');
-
-    if (cartCount) cartCount.innerText = cart.length;
-
-    let total = 0;
-    if (cartList) {
-        cartList.innerHTML = cart.map(item => {
-            total += item.price;
-            return `
-                <div class="cart-item">
-                    <img src="${item.img}" style="width:40px; height:60px; object-fit:cover; border-radius:4px;">
-                    <div style="flex:1; font-size:0.85rem; color:white; margin-left:10px;">${item.title}<br>${item.price} EGP</div>
-                    <button onclick="removeFromCart('${item.gameID}')" style="background:none; border:none; cursor:pointer; color:white;">🗑️</button>
-                </div>
-            `;
-        }).join('');
-    }
-    if (cartTotal) cartTotal.innerText = total.toFixed(2);
-}
-
-function removeFromCart(id) {
-    cart = cart.filter(c => c.gameID !== id);
-    localStorage.setItem('pshub_cart', JSON.stringify(cart));
-    renderCart();
-
-    if (id === gameID) {
-        const btn = document.getElementById('cart-btn');
-        if (btn) {
-            btn.textContent = '+ Add to Cart';
-            btn.classList.remove('in-cart');
-        }
-    }
-}
-
-function checkout() {
-    if (cart.length === 0) { alert("Your cart is empty!"); return; }
-    localStorage.setItem('pshub_cart', JSON.stringify(cart));
-    window.location.href = '/Checkout';
-}
-
-function toggleCart(open) {
-    const sidebar = document.getElementById('cart-sidebar');
-    if (!sidebar) return;
-
-    if (open === true) sidebar.classList.add('open');
-    else if (open === false) sidebar.classList.remove('open');
-    else sidebar.classList.toggle('open');
-}

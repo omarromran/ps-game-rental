@@ -66,8 +66,8 @@
                     <select id="user-type-filter" onchange="renderUsers()">
                         <option value="all">All User Types</option>
                         <option value="admin">Admin</option>
-                        <option value="business">Business</option>
-                        <option value="customer">Customer</option>
+                        <option value="business">Store</option>
+                        <option value="customer">Gamer</option>
                     </select>
                 </div>
                 <table id="users-table"></table>
@@ -75,12 +75,12 @@
 
             <section id="addAdmin">
                 <h2>Add New Admin</h2>
-                <form id="add-admin-form">
-                    <div><input type="text" placeholder="Full Name" name="name" required></div>
-                    <div><input type="text" placeholder="Username" name="username" required></div>
-                    <div><input type="email" placeholder="Email" name="email" required></div>
-                    <div><input type="password" placeholder="Password" name="password" required></div>
-                    <div><input type="password" placeholder="Confirm Password" name="confirmPassword" required></div>
+                <form id="add-admin-form" autocomplete="off">
+                    <div><input type="text" autocomplete="off" placeholder="Full Name" name="name" required></div>
+                    <div><input type="text" autocomplete="off" placeholder="Username" name="username" required></div>
+                    <div><input type="email" autocomplete="off" placeholder="Email" name="email" required></div>
+                    <div><input type="password" autocomplete="new-password" placeholder="Password" name="password" required></div>
+                    <div><input type="password" autocomplete="new-password" placeholder="Confirm Password" name="confirmPassword" required></div>
                     <button type="submit" class="submit-btn">
                         <i class="fas fa-user-plus"></i> Create Admin
                     </button>

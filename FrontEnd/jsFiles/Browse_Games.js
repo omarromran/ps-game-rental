@@ -200,6 +200,21 @@ function loadCurrentUser() {
     }
 }
 
+window.addEventListener('storage', (event) => {
+    if (event.key === 'currentUser' || event.key === 'token') {
+        loadCurrentUser();
+    }
+    if (event.key === 'pshub_cart') {
+        const storedCart = localStorage.getItem('pshub_cart');
+        try {
+            cart = JSON.parse(storedCart) || [];
+        } catch {
+            cart = [];
+        }
+        applyFilters();
+    }
+});
+
 function applyFilters() {
 
     const searchEl =

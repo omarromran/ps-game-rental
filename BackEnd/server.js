@@ -119,6 +119,63 @@ pageViews.forEach((view) => {
     return;
   }
 
+  if (view === 'game_description') {
+    const Game = require('./models/Game');
+    app.get(`/${view}`, async (req, res) => {
+      try {
+        const gameId = req.query.id;
+        let game = null;
+        
+        if (gameId) {
+          // Try to find by MongoDB ObjectId first
+          try {
+            if (mongoose.Types.ObjectId.isValid(gameId)) {
+              game = await Game.findById(gameId).lean();
+            }
+          } catch (e) {
+            // If not a valid ObjectId, try to find by gameID field
+          }
+          
+          // Fall back to custom gameID field
+          if (!game) {
+            game = await Game.findOne({ gameID: gameId }).lean();
+          }
+        }
+        
+        return res.render(view, { game: game || null, user: req.session.user || null });
+      } catch (err) {
+        console.error('Error rendering game_description:', err);
+        return res.render(view, { game: null, user: req.session.user || null });
+      }
+    });
+    app.get(`/${view}.html`, async (req, res) => {
+      try {
+        const gameId = req.query.id;
+        let game = null;
+        
+        if (gameId) {
+          try {
+            if (mongoose.Types.ObjectId.isValid(gameId)) {
+              game = await Game.findById(gameId).lean();
+            }
+          } catch (e) {
+            // If not a valid ObjectId, try to find by gameID field
+          }
+          
+          if (!game) {
+            game = await Game.findOne({ gameID: gameId }).lean();
+          }
+        }
+        
+        return res.render(view, { game: game || null, user: req.session.user || null });
+      } catch (err) {
+        console.error('Error rendering game_description:', err);
+        return res.render(view, { game: null, user: req.session.user || null });
+      }
+    });
+    return;
+  }
+
   app.get(`/${view}`, (req, res) => res.render(view));
   app.get(`/${view}.html`, (req, res) => res.render(view));
 });

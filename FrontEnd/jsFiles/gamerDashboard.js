@@ -4,10 +4,13 @@ let games = [];
 // ==========================================
 // 👤 CURRENT USER
 // ==========================================
-const currentUsername =
-    sessionStorage.getItem("loggedInUsername") ||
-    JSON.parse(localStorage.getItem("currentUser") || "null")?.username ||
-    null;
+function getCurrentUsername() {
+    return (
+        sessionStorage.getItem("loggedInUsername") ||
+        JSON.parse(localStorage.getItem("currentUser") || "null")?.username ||
+        null
+    );
+}
 
 // ==========================================
 // 👤 GET CURRENT USER
@@ -26,7 +29,16 @@ function getCurrentUser() {
         fresh = [];
     }
 
-    return fresh.find(u => u.username === currentUsername) || null;
+    const username = getCurrentUsername();
+    const found = fresh.find(u => u.username === username);
+    if (found) return found;
+
+    const currentUser = JSON.parse(localStorage.getItem("currentUser") || "null");
+    if (currentUser && currentUser.username === username) {
+        return currentUser;
+    }
+
+    return null;
 }
 
 // ==========================================
@@ -48,7 +60,7 @@ function saveWishlist(list) {
     const fresh = JSON.parse(stored);
 
     const idx = fresh.findIndex(
-        u => u.username === currentUsername
+        u => u.username === getCurrentUsername()
     );
 
     if (idx === -1) return;
@@ -620,7 +632,7 @@ function saveProfile() {
     const fresh = JSON.parse(stored);
 
     const idx = fresh.findIndex(
-        u => u.username === currentUsername
+        u => u.username === getCurrentUsername()
     );
 
     if (idx === -1) return;
@@ -738,3 +750,9 @@ document.addEventListener(
         );
     }
 );
+
+window.addEventListener("storage", (event) => {
+    if (["currentUser", "token", "users", "pshub_cart"].includes(event.key)) {
+        refreshUI();
+    }
+});

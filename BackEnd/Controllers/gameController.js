@@ -17,10 +17,22 @@ const getAllGames = async (req, res) => {
     res.status(500).json({ error: 'Failed to fetch games' });
   }
 };
+const mongoose = require('mongoose');
+
 // ─── GET ONE GAME ────────────────────────────────────────────────
 const getOneGame = async (req, res) => {
   try {
-    const game = await Game.findById(req.params.id);
+    const id = req.params.id;
+    let game = null;
+
+    if (mongoose.Types.ObjectId.isValid(id)) {
+      game = await Game.findById(id);
+    }
+
+    if (!game) {
+      game = await Game.findOne({ gameID: id });
+    }
+
     if (!game) return res.status(404).json({ error: 'Game not found' });
     res.json(game);
   } catch (err) {
@@ -181,10 +193,11 @@ const editGame = async (req, res) => {
     // if the owner uploads new images during an edit, replace the array
     // if no new files are sent, keep the existing images untouched
     if (req.files && req.files.length > 0) {
-      req.body.images = req.files.map((file) => file.path);
-
-      // also update the single img field to the new first image
-      req.body.img = req.body.images[0];
+      const newImageUrls = req.files.map(file => file.path || file.secure_url || file.url).filter(Boolean);
+      if (newImageUrls.length > 0) {
+        req.body.images = newImageUrls;
+        req.body.img = newImageUrls[0];
+      }
     }
 
     const updatedGame = await Game.findByIdAndUpdate(
@@ -212,20 +225,27 @@ const deleteGame = async (req, res) => {
   }
 };
 // ─── GET MY GAMES ────────────────────────────────────────────────
-const getMyGames = async (req, res, next) => {
-  try {
-    // ── CHANGE 4: Fixed field name to match your schema ───────
-    // your schema has storeID: String, not owner: ObjectId
-    // req.user._id comes from verifyToken middleware as a string
-    const games = await Game.find({ storeID: req.user._id });
 
-    res.status(200).json({
+const getMyGames = async (req, res) => {
+  try {
+    // Match games where storeID may be stored as a string or ObjectId
+    const ownerId = req.user && req.user._id ? req.user._id : null;
+    const ownerIdStr = ownerId ? ownerId.toString() : null;
+
+    const query = ownerId
+      ? { storeID: { $in: [ownerId, ownerIdStr] } }
+      : { storeID: null };
+
+    const games = await Game.find(query).lean();
+
+    return res.status(200).json({
       status: 'success',
       results: games.length,
       data: { games },
     });
   } catch (err) {
-    next(err);
+    console.error('GET MY GAMES ERROR:', err);
+    return res.status(500).json({ error: 'Failed to fetch owner games' });
   }
 };
 module.exports = { getAllGames, getOneGame, addGame, editGame, deleteGame, getMyGames };
