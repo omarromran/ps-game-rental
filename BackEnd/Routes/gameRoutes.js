@@ -43,12 +43,11 @@ router.get('/browseGames', async (req, res) => {
 
 router.get('/', getAllGames);
 
-router.get('/:id', getOneGame);
-
 // ─── BUSINESS ROUTES ─────────────────────────────────────────────
 // Must be logged in as a business owner
 
 // Get my own games — owner ID comes from the token, NOT the URL
+// IMPORTANT: This MUST be before /:id or Express will match "my" as an id
 router.get(
   '/my/games',
   protect,
@@ -56,11 +55,13 @@ router.get(
   getMyGames
 );
 
+router.get('/:id', getOneGame);
+
 // Add a game with image upload
 router.post(
   '/',
   protect,
-  restrictTo('Store'),
+  restrictTo('Store', 'Admin'),
   upload.array('images', 5),
   (req, res, next) => {
     console.log('UPLOAD FILES:', req.files);
@@ -73,7 +74,7 @@ router.post(
 router.put(
   '/:id',
   protect,
-  restrictTo('Store'),
+  restrictTo('Store', 'Admin'),
   upload.array('images', 5),
   editGame
 );
@@ -82,7 +83,7 @@ router.put(
 router.delete(
   '/:id',
   protect,
-  restrictTo('Store'),
+  restrictTo('Store', 'Admin'),
   deleteGame
 );
 

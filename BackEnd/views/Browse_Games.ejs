@@ -10,7 +10,7 @@
     <link rel="icon" href="/photos/images.png">
 
     <script>
-        window.serverGames = <%- JSON.stringify(games || []) %>;
+        window.serverGames = " JSON.stringify(games || [])";
     </script>
     <script src="/jsFiles/Browse_Games.js" defer></script>
 </head>
@@ -69,8 +69,6 @@
                     </a>
 
                 <% } %>
-
-                <div class="avatar"></div>
 
             </div>
         </div>

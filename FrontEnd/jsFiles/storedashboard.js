@@ -62,6 +62,25 @@ function startGameEdit(gameId) {
     showSection('addGame');
 }
 
+function cancelGameEdit() {
+    currentEditGameId = null;
+    const formTitle = document.getElementById('gameFormTitle');
+    const submitButton = document.getElementById('submitGameButton');
+    const cancelButton = document.getElementById('cancelEditButton');
+    const imageInput = document.getElementById('images');
+    const editGameId = document.getElementById('editGameId');
+
+    if (formTitle) formTitle.textContent = 'List a New Game';
+    if (submitButton) submitButton.textContent = 'Add Game';
+    if (cancelButton) cancelButton.style.display = 'none';
+    if (imageInput) imageInput.required = true;
+    if (editGameId) editGameId.value = '';
+
+    const form = document.getElementById('addGameForm');
+    if (form) form.reset();
+    hideFormError();
+}
+
 async function initializeData() {
     const token = localStorage.getItem('token');
     if (!token) {

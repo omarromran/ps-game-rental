@@ -35,7 +35,7 @@ const getUser = async (req, res) => {
 // Edit profile
 const updateUser = async (req, res) => {
     try {
-        const { username, email, password } = req.body;
+        const { username, email, password, role } = req.body;
         const updateData = {};
 
         // Validation
@@ -83,6 +83,14 @@ const updateUser = async (req, res) => {
                 return res.status(400).json({ error: 'Password must be at least 6 characters' });
             }
             updateData.password = await bcrypt.hash(password, 10);
+        }
+
+        // Allow role changes (admin feature)
+        if (role !== undefined) {
+            if (!['Gamer', 'Store', 'Admin'].includes(role)) {
+                return res.status(400).json({ error: 'Role must be Gamer, Store, or Admin' });
+            }
+            updateData.role = role;
         }
 
         if (Object.keys(updateData).length === 0) {

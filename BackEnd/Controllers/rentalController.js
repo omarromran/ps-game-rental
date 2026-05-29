@@ -4,70 +4,94 @@ const Game = require('../models/Game');
 // Checkout — create rental
 const checkout = async (req, res) => {
     try {
-        const { gameId, days } = req.body;
+        const { items, phone, address } = req.body;
 
-        // Validation
         if (!req.session.user) {
             return res.status(401).json({ error: 'You must be logged in to rent' });
         }
-        if (!gameId || gameId.trim() === '') {
-            return res.status(400).json({ error: 'Game ID is required' });
-        }
-        if (!days) {
-            return res.status(400).json({ error: 'Number of days is required' });
-        }
-        if (isNaN(days) || days < 1) {
-            return res.status(400).json({ error: 'Number of days must be at least 1' });
-        }
-        if (days > 30) {
-            return res.status(400).json({ error: 'Maximum rental period is 30 days' });
+
+        if (!Array.isArray(items) || items.length === 0) {
+            return res.status(400).json({ error: 'Cart items are required' });
         }
 
-        const game = await Game.findById(gameId);
-        if (!game) {
-            return res.status(404).json({ error: 'Game not found' });
-        }
-        if (game.status !== 'Available') {
-            return res.status(400).json({ error: 'Game is not available for rent' });
+        if (!phone || !address) {
+            return res.status(400).json({ error: 'Phone and address are required' });
         }
 
-        // Check if user already has an active rental for this game
-        const existingRental = await Rental.findOne({
-            customer: req.session.user._id,
-            game: gameId,
-            status: 'active'
-        });
-        if (existingRental) {
-            return res.status(400).json({ error: 'You already have an active rental for this game' });
+        const normalizedItems = items.map(item => ({
+            gameId: String(item.gameId || item._id || item.gameID || item.id || ''),
+            days: Number(item.days || item.duration || 1)
+        }));
+
+        const badItem = normalizedItems.find(item => !item.gameId || isNaN(item.days) || item.days < 1 || item.days > 30);
+        if (badItem) {
+            return res.status(400).json({ error: 'Each rental item must include a valid gameId and days between 1 and 30' });
         }
 
-        const startDate = new Date();
-        const dueDate = new Date();
-        dueDate.setDate(dueDate.getDate() + parseInt(days));
-
-        const totalPrice = game.pricePerDay * days;
-
-        const rental = new Rental({
-            customer: req.session.user._id,
-            game: gameId,
-            startDate,
-            dueDate,
-            pricePerDay: game.pricePerDay,
-            totalPrice,
-            status: 'active'
+        const gameIds = normalizedItems.map(item => item.gameId);
+        const games = await Game.find({
+            $or: [
+                { _id: { $in: gameIds.filter(id => mongoose.Types.ObjectId.isValid(id)) } },
+                { gameID: { $in: gameIds } }
+            ]
         });
 
-        await rental.save();
+        if (games.length !== normalizedItems.length) {
+            return res.status(404).json({ error: 'One or more games were not found or are unavailable' });
+        }
 
-        // Mark game as rented
-        await Game.findByIdAndUpdate(gameId, {
-            status: 'Rented',
-            customerID: req.session.user._id
-        });
+        const rentalDocs = [];
+        const updates = [];
+
+        for (const item of normalizedItems) {
+            const game = games.find(g => String(g._id) === item.gameId || String(g.gameID) === item.gameId);
+            if (!game) {
+                return res.status(404).json({ error: `Game ${item.gameId} not found` });
+            }
+
+            if ((game.status || '').toLowerCase() !== 'available') {
+                return res.status(400).json({ error: `${game.title || 'Game'} is not available to rent` });
+            }
+
+            const existingRental = await Rental.findOne({
+                customer: req.session.user._id,
+                game: game._id,
+                status: 'active'
+            });
+            if (existingRental) {
+                return res.status(400).json({ error: `You already have an active rental for ${game.title}` });
+            }
+
+            const startDate = new Date();
+            const dueDate = new Date();
+            dueDate.setDate(dueDate.getDate() + item.days);
+
+            rentalDocs.push({
+                customer: req.session.user._id,
+                game: game._id,
+                startDate,
+                dueDate,
+                pricePerDay: game.pricePerDay,
+                totalPrice: game.pricePerDay * item.days,
+                phone,
+                address,
+                status: 'active'
+            });
+
+            updates.push({
+                updateOne: {
+                    filter: { _id: game._id },
+                    update: { status: 'Rented', customerID: req.session.user._id }
+                }
+            });
+        }
+
+        const rentals = await Rental.insertMany(rentalDocs);
+        await Game.bulkWrite(updates);
 
         res.status(201).json({
             message: 'Rental confirmed!',
-            rental
+            rentals
         });
 
     } catch (err) {
