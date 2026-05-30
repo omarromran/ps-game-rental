@@ -201,13 +201,13 @@ const editGameBtn = async (id) => {
   let g = games.find(item => item._id === id);
   if (!g) return;
   let title = prompt('Title:', g.title);
-  let platform = prompt('Platform (PS4/PS5):', g.platform);
+  let platform = prompt('Platform (PS4/PS5/PS4 & PS5):', g.platform);
   let category = prompt('Category:', g.category);
   let status = prompt('Status (Available/Rented/Maintenance):', g.status);
   let pricePerDay = prompt('Price Per Day:', g.pricePerDay);
   if (!title || !platform || !category || !status || !pricePerDay) return alert('Invalid inputs.');
   
-  if (['PS4', 'PS5'].indexOf(platform) === -1) return alert('Platform must be PS4 or PS5.');
+  if (['PS4', 'PS5', 'PS4 & PS5'].indexOf(platform) === -1) return alert('Platform must be PS4, PS5, or PS4 & PS5.');
   if (['Available', 'Rented', 'Maintenance'].indexOf(status) === -1) return alert('Invalid status.');
   if (isNaN(pricePerDay) || Number(pricePerDay) <= 0) return alert('Price must be a positive number.');
 

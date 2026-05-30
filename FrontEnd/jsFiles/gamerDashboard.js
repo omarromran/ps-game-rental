@@ -238,10 +238,20 @@ async function loadRentals() {
     }
 
     try {
-        const res = await fetch("/api/rentals/my", {
-            credentials: "include"
-        });
+        const token = localStorage.getItem('token');
+        const fetchOptions = {
+            credentials: 'include',
+            headers: {}
+        };
+
+        if (token) {
+            fetchOptions.headers.Authorization = `Bearer ${token}`;
+        }
+
+        const res = await fetch('/api/rentals/my', fetchOptions);
         if (!res.ok) {
+            const err = await res.json().catch(() => null);
+            console.warn('Failed to load rentals:', res.status, err);
             rentals = [];
             return;
         }
@@ -380,16 +390,18 @@ function renderDashboard() {
     const user = getCurrentUser();
     if (!user) return;
 
-    const activeRentals = rentals.filter(r => r.status === "active");
     const wishlistIds = getWishlist();
-    const availableWishlist = games.filter(g => wishlistIds.includes(g.gameID));
+    const recentRentals = rentals
+        .slice()
+        .sort((a, b) => new Date(b.startDate) - new Date(a.startDate))
+        .slice(0, 5);
 
     const cards = document.getElementById("dashboard-cards");
     if (cards) {
         cards.innerHTML = `
             <div class="card">
                 <h3>Active Rentals</h3>
-                <p>${activeRentals.length}</p>
+                <p>${rentals.filter(r => r.status === "active").length}</p>
             </div>
             <div class="card">
                 <h3>Wishlist</h3>
@@ -403,23 +415,15 @@ function renderDashboard() {
 
     const activityRows = [];
 
-    activeRentals.forEach(rental => {
+    recentRentals.forEach(rental => {
         const date = rental.startDate ? new Date(rental.startDate).toLocaleDateString() : "-";
+        const statusLabel = rental.status === "active" ? "Active Rental" : "Returned";
+
         activityRows.push(`
             <tr>
                 <td>${rental.game?.title || "Unknown Game"}</td>
-                <td>Active Rental</td>
+                <td>${statusLabel}</td>
                 <td>${date}</td>
-            </tr>
-        `);
-    });
-
-    availableWishlist.forEach(game => {
-        activityRows.push(`
-            <tr>
-                <td>${game.title || "Unknown Game"}</td>
-                <td>Wishlist</td>
-                <td>${game.status === "available" ? "Available" : "Unavailable"}</td>
             </tr>
         `);
     });
@@ -535,48 +539,38 @@ function goToGameDescription(gameID) {
 // ==========================================
 function renderRentals() {
 
-    const active =
-        document.getElementById("active-rentals");
-
-    const completed =
-        document.getElementById("completed-rentals");
-
-    if (!active || !completed) return;
+    const active = document.getElementById("active-rentals");
+    if (!active) return;
 
     const user = getCurrentUser();
     if (!user) return;
 
     active.innerHTML = "";
-    completed.innerHTML = "";
 
-    rentals.forEach(rental => {
+    const activeRentals = rentals.filter(rental => rental.status === "active");
+
+    activeRentals.forEach(rental => {
         const game = rental.game || {};
         const dateStart = rental.startDate ? new Date(rental.startDate).toLocaleDateString() : "-";
         const dateEnd = rental.dueDate ? new Date(rental.dueDate).toLocaleDateString() : "-";
+        const imageUrl = game.img || game.image || game.cover || '/photos/images.png';
 
         const html = `
-            <div class="game-card">
+            <div class="wishlist-card">
+                <img src="${imageUrl}" alt="${game.title || 'Game cover'}" style="width:60px" />
                 <h3>${game.title || "Unknown Game"}</h3>
                 <p>${game.platform || ""}</p>
                 <p>${dateStart} → ${dateEnd}</p>
-                <span>${rental.status}</span>
-                ${rental.status === "active" ? `<button onclick="returnGame('${rental._id}')">Return</button>` : ""}
+                <p>Status: ${rental.status}</p>
+                <button onclick="returnGame('${rental._id}')">Return</button>
             </div>
         `;
 
-        if (rental.status === "active") {
-            active.innerHTML += html;
-        } else {
-            completed.innerHTML += html;
-        }
+        active.innerHTML += html;
     });
 
     if (!active.innerHTML) {
         active.innerHTML = "<p>No active rentals.</p>";
-    }
-
-    if (!completed.innerHTML) {
-        completed.innerHTML = "<p>No completed rentals.</p>";
     }
 }
 
@@ -734,9 +728,16 @@ async function returnGame(rentalId) {
     if (!rental) return;
 
     try {
+        const token = localStorage.getItem('token');
+        const headers = {};
+        if (token) {
+            headers.Authorization = `Bearer ${token}`;
+        }
+
         const res = await fetch(`/api/rentals/${rentalId}/return`, {
             method: 'PATCH',
-            credentials: 'include'
+            credentials: 'include',
+            headers
         });
         const data = await res.json();
         if (!res.ok) {

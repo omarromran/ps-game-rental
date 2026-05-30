@@ -14,6 +14,13 @@ function getCurrentGameKey() {
   return getGameKey(currentGame) || String(gameId || '');
 }
 
+function getDashboardRoute(user) {
+  if (!user || !user.role) return '/gamerDashboard';
+  if (user.role === 'Admin') return '/adminDashboard';
+  if (user.role === 'Store') return '/storedashboard';
+  return '/gamerDashboard';
+}
+
 function loadCurrentUser() {
   const userLink = document.getElementById('user-name-link');
   const loginBtn = document.querySelector('.login-btn');
@@ -23,6 +30,7 @@ function loadCurrentUser() {
   if (stored) {
     const user = JSON.parse(stored);
     userLink.textContent = user.name || user.username || 'My Account';
+    userLink.href = getDashboardRoute(user);
     if (loginBtn) loginBtn.style.display = 'none';
   } else {
     userLink.textContent = 'Guest';

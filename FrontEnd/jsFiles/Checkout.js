@@ -182,12 +182,18 @@ async function processOrder() {
     }));
 
     try {
+        const token = localStorage.getItem('token');
+        const headers = {
+            'Content-Type': 'application/json'
+        };
+        if (token) {
+            headers.Authorization = `Bearer ${token}`;
+        }
+
         const response = await fetch('/api/rentals/checkout', {
             method: 'POST',
             credentials: 'include',
-            headers: {
-                'Content-Type': 'application/json'
-            },
+            headers,
             body: JSON.stringify({ items, phone, address })
         });
 

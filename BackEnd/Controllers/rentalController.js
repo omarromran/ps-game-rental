@@ -3,11 +3,18 @@ const Rental = require('../models/Rental');
 const Game = require('../models/Game');
 
 // Checkout — create rental
+const getRequestUser = (req) => {
+    if (req.user) return req.user;
+    if (req.session && req.session.user) return req.session.user;
+    return null;
+};
+
 const checkout = async (req, res) => {
     try {
+        const currentUser = getRequestUser(req);
         const { items, phone, address } = req.body;
 
-        if (!req.session.user) {
+        if (!currentUser) {
             return res.status(401).json({ error: 'You must be logged in to rent' });
         }
 
@@ -55,7 +62,7 @@ const checkout = async (req, res) => {
             }
 
             const existingRental = await Rental.findOne({
-                customer: req.session.user._id,
+                customer: currentUser._id,
                 game: game._id,
                 status: 'active'
             });
@@ -68,7 +75,7 @@ const checkout = async (req, res) => {
             dueDate.setDate(dueDate.getDate() + item.days);
 
             rentalDocs.push({
-                customer: req.session.user._id,
+                customer: currentUser._id,
                 game: game._id,
                 startDate,
                 dueDate,
@@ -82,7 +89,7 @@ const checkout = async (req, res) => {
             updates.push({
                 updateOne: {
                     filter: { _id: game._id },
-                    update: { status: 'Rented', customerID: req.session.user._id }
+                    update: { status: 'Rented', customerID: currentUser._id }
                 }
             });
         }
@@ -104,11 +111,12 @@ const checkout = async (req, res) => {
 // Get my rentals
 const getMyRentals = async (req, res) => {
     try {
-        if (!req.session.user) {
+        const currentUser = getRequestUser(req);
+        if (!currentUser) {
             return res.status(401).json({ error: 'Not logged in' });
         }
 
-        const rentals = await Rental.find({ customer: req.session.user._id })
+        const rentals = await Rental.find({ customer: currentUser._id })
             .populate('game', 'title img platform pricePerDay')
             .sort({ createdAt: -1 });
 
@@ -120,10 +128,33 @@ const getMyRentals = async (req, res) => {
     }
 };
 
+const getStoreRentals = async (req, res) => {
+    try {
+        if (!req.user || !req.user.storeID) {
+            return res.status(403).json({ error: 'Store access required' });
+        }
+
+        const storeGames = await Game.find({ storeID: req.user.storeID }, '_id title');
+        const storeGameIds = storeGames.map(game => game._id);
+
+        const rentals = await Rental.find({ game: { $in: storeGameIds } })
+            .populate('customer', 'username email')
+            .populate('game', 'title platform')
+            .sort({ createdAt: -1 });
+
+        res.json(rentals);
+
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({ error: 'Failed to fetch store rentals' });
+    }
+};
+
 // Return a game
 const returnGame = async (req, res) => {
     try {
-        if (!req.session.user) {
+        const currentUser = getRequestUser(req);
+        if (!currentUser) {
             return res.status(401).json({ error: 'Not logged in' });
         }
 
@@ -136,7 +167,7 @@ const returnGame = async (req, res) => {
             return res.status(404).json({ error: 'Rental not found' });
         }
 
-        if (rental.customer.toString() !== req.session.user._id.toString()) {
+        if (rental.customer.toString() !== currentUser._id.toString()) {
             return res.status(403).json({ error: 'This is not your rental' });
         }
 
@@ -177,4 +208,4 @@ const getAllRentals = async (req, res) => {
     }
 };
 
-module.exports = { checkout, getMyRentals, returnGame, getAllRentals };
+module.exports = { checkout, getMyRentals, returnGame, getAllRentals, getStoreRentals };

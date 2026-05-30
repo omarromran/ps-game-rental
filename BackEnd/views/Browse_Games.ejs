@@ -39,7 +39,7 @@
                     <a 
                         id="user-name-link"
                         class="user-name"
-                        href="/gamerDashboard"
+                        href="<%= user.role === 'Admin' ? '/adminDashboard' : user.role === 'Store' ? '/storedashboard' : '/gamerDashboard' %>"
                         style="text-decoration:none; color:inherit;"
                     >
                         <%= user.username %>

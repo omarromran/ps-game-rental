@@ -176,6 +176,13 @@ window.onload = function () {
     loadDB();
 };
 
+function getDashboardRoute(user) {
+    if (!user || !user.role) return '/gamerDashboard';
+    if (user.role === 'Admin') return '/adminDashboard';
+    if (user.role === 'Store') return '/storedashboard';
+    return '/gamerDashboard';
+}
+
 function loadCurrentUser() {
     const userLink = document.getElementById('user-name-link');
     const loginBtn = document.querySelector('.login-btn');
@@ -192,13 +199,14 @@ function loadCurrentUser() {
     if (stored) {
         const user = JSON.parse(stored);
         userLink.textContent = user.name || user.username || 'My Account';
+        userLink.href = getDashboardRoute(user);
         if (loginBtn) loginBtn.style.display = 'none';
     } else {
         userLink.textContent = 'Guest';
         userLink.removeAttribute('href');
         if (loginBtn) loginBtn.style.display = 'inline';
     }
-}
+} 
 
 window.addEventListener('storage', (event) => {
     if (event.key === 'currentUser' || event.key === 'token') {
@@ -272,10 +280,15 @@ function applyFilters() {
                 g.gameID.toLowerCase().includes(search)
             );
 
+        const gamePlatforms = String(g.platform || '')
+            .split('&')
+            .map(p => p.trim())
+            .filter(Boolean);
+
         const matchesPlatform =
             platforms.length === 0
             ||
-            platforms.includes(g.platform);
+            platforms.some(platform => gamePlatforms.includes(platform));
 
         const matchesCategory =
             categories.length === 0

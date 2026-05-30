@@ -48,14 +48,23 @@ body {
     z-index: 100;
 }
 
+.sidebar-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 2rem;
+    gap: 10px;
+}
+
 .sidebar h2,
 .sidebar .logo {
     text-align: center;
-    margin-bottom: 2rem;
+    flex-grow: 1;
     font-size: 1.5rem;
     font-weight: bold;
     letter-spacing: 2px;
     color: var(--white-color);
+    margin: 0;
 }
 
 .sidebar h2 span {
@@ -121,6 +130,31 @@ main,
     margin-left: 240px;
     padding: 2rem;
     width: calc(100% - 240px);
+    position: relative;
+}
+
+.back-to-browse-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    background-color: rgba(0, 67, 156, 0.15);
+    border: 1px solid rgba(0, 67, 156, 0.4);
+    border-radius: 8px;
+    color: var(--secondary-color);
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    flex-shrink: 0;
+}
+
+.back-to-browse-btn:hover {
+    background-color: rgba(0, 67, 156, 0.3);
+    border-color: var(--secondary-color);
+    color: var(--white-color);
+    transform: translateX(-2px);
 }
 
 section {
@@ -197,6 +231,77 @@ th {
 td {
     font-size: 0.9rem;
     color: var(--white-color);
+}
+
+.selected-images-preview {
+    margin-top: 0.75rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.selected-image-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.45rem 0.7rem;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    color: var(--white-color);
+    font-size: 0.85rem;
+}
+
+.selected-image-chip span {
+    max-width: 180px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.remove-image-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    border: none;
+    background: rgba(255, 68, 68, 0.15);
+    color: var(--accent-red);
+    border-radius: 50%;
+    cursor: pointer;
+    transition: transform 0.2s ease, background 0.2s ease;
+}
+
+.remove-image-btn:hover {
+    background: rgba(255, 68, 68, 0.3);
+    transform: scale(1.05);
+}
+
+.status-badge {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    background: rgba(255, 255, 255, 0.08);
+    color: #fff;
+}
+
+.status-badge.active {
+    background: rgba(40, 167, 69, 0.2);
+    color: #28a745;
+}
+
+.status-badge.returned {
+    background: rgba(0, 123, 255, 0.2);
+    color: #007bff;
+}
+
+.status-badge.overdue {
+    background: rgba(255, 68, 68, 0.2);
+    color: #ff4444;
 }
 
 button,
@@ -559,6 +664,8 @@ main {
     border-radius: 16px;
     overflow: hidden;
     transition: 0.3s;
+    display: grid;
+    grid-template-rows: auto 1fr;
 }
 
 .rental-card:hover {
@@ -567,8 +674,15 @@ main {
 
 .rental-image {
     width: 100%;
-    height: 220px;
+    aspect-ratio: 1 / 1;
+    overflow: hidden;
+}
+
+.rental-image img {
+    width: 100%;
+    height: 100%;
     object-fit: cover;
+    display: block;
 }
 
 .rental-content {

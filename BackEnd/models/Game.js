@@ -7,7 +7,7 @@ const gameSchema = new mongoose.Schema({
   status: { type: String, required: true, default: 'Available', enum: ['Available', 'Rented', 'Maintenance'] },
   title: { type: String, required: true, trim: true },
   type: { type: String, required: true, default: 'Game' },
-  platform: { type: String, required: true, enum: ['PS4', 'PS5'] },
+  platform: { type: String, required: true, enum: ['PS4', 'PS5', 'PS4 & PS5'] },
   pricePerDay: { type: Number, required: true, min: 0 },
   category: { type: String, required: true },
   img: { type: String, required: true },

@@ -21,7 +21,9 @@
         <div class="dashboard-wrapper">
 
             <aside class="sidebar">
-                <h2>PS HUB</h2>
+                <div class="sidebar-header">
+                    <h2>PS HUB</h2>
+                </div>
                 <nav>
                     <button onclick="showSection('dashboard', this)" class="active">
                         <i class="fas fa-tachometer-alt"></i>
@@ -122,6 +124,7 @@
                                 <option value="">Select Platform</option>
                                 <option value="PS5">PlayStation 5</option>
                                 <option value="PS4">PlayStation 4</option>
+                                <option value="PS4 & PS5">PlayStation 4 & 5</option>
                             </select>
                         </div>
 
@@ -150,6 +153,7 @@
                             <label>Game Images</label>
                             <input type="file" id="images" name="images" multiple accept="image/*" required>
                             <small id="imageHint">Upload at least one image to create a new game.</small>
+                            <div id="selectedImagesPreview" class="selected-images-preview"></div>
                         </div>
 
                         <p id="form-error-msg" style="color:red; font-size:0.85rem; display:none; margin-bottom:10px;">

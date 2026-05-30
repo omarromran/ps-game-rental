@@ -1,5 +1,6 @@
 let gameInventory = [];
 let currentEditGameId = null;
+let selectedImages = [];
 
 document.addEventListener("DOMContentLoaded", () => {
     initializeData();
@@ -7,6 +8,11 @@ document.addEventListener("DOMContentLoaded", () => {
     const form = document.getElementById("addGameForm");
     if (form) {
         form.addEventListener("submit", handleGameFormSubmit);
+    }
+
+    const imageInput = document.getElementById("images");
+    if (imageInput) {
+        imageInput.addEventListener("change", handleImageSelection);
     }
 
     const logoutBtn = document.getElementById("logoutBtn");
@@ -78,6 +84,8 @@ function cancelGameEdit() {
 
     const form = document.getElementById('addGameForm');
     if (form) form.reset();
+    selectedImages = [];
+    updateImagePreview();
     hideFormError();
 }
 
@@ -112,27 +120,99 @@ async function initializeData() {
 }
 
 async function fetchActivityLog() {
+    const token = localStorage.getItem('token');
+    if (!token) return;
+
     try {
-        const response = await fetch("bussiness.json");
+        const response = await fetch('/api/rentals/store', {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
+
+        if (!response.ok) {
+            const error = await response.json().catch(() => ({}));
+            console.error('Failed to load store rental history:', error.message || response.statusText);
+            renderActivityTable([]);
+            return;
+        }
+
         const data = await response.json();
-        if (data.activity) renderActivityTable(data.activity);
+        renderActivityTable(data);
     } catch (e) {
-        console.log("Activity data not available.");
+        console.error('Activity data not available.', e);
+        renderActivityTable([]);
     }
+}
+
+function setSelectedImages(files) {
+    selectedImages = Array.from(files);
+    updateImageInputFiles();
+    updateImagePreview();
+}
+
+function updateImageInputFiles() {
+    const imageInput = document.getElementById('images');
+    if (!imageInput) return;
+    const dataTransfer = new DataTransfer();
+    selectedImages.forEach(file => dataTransfer.items.add(file));
+    imageInput.files = dataTransfer.files;
+}
+
+function updateImagePreview() {
+    const previewContainer = document.getElementById('selectedImagesPreview');
+    if (!previewContainer) return;
+    previewContainer.innerHTML = selectedImages.map((file, index) => `
+        <div class="selected-image-chip">
+            <span>${file.name}</span>
+            <button type="button" class="remove-image-btn" onclick="removeSelectedImage(${index})">×</button>
+        </div>
+    `).join('');
+}
+
+function handleImageSelection(event) {
+    const files = Array.from(event.target.files || []);
+    if (files.length === 0) return;
+    selectedImages = selectedImages.concat(files);
+    updateImageInputFiles();
+    updateImagePreview();
+}
+
+function removeSelectedImage(index) {
+    if (index < 0 || index >= selectedImages.length) return;
+    selectedImages.splice(index, 1);
+    updateImageInputFiles();
+    updateImagePreview();
 }
 
 function renderActivityTable(activities) {
     const activityBody = document.getElementById("activityLog");
     if (!activityBody) return;
 
-    activityBody.innerHTML = activities.map(act => `
-        <tr>
-            <td>${act.game}</td>
-            <td>${act.customer}</td>
-            <td><span class="status-badge ${act.status.toLowerCase()}">${act.status}</span></td>
-            <td>${act.date}</td>
-        </tr>
-    `).join('');
+    if (!Array.isArray(activities) || activities.length === 0) {
+        activityBody.innerHTML = `
+            <tr>
+                <td colspan="4" style="text-align:center;">No recent rental history</td>
+            </tr>
+        `;
+        return;
+    }
+
+    activityBody.innerHTML = activities.slice(0, 10).map(act => {
+        const gameTitle = act.game?.title || 'Unknown Game';
+        const customerName = act.customer?.username || act.customer?.email || 'Unknown Customer';
+        const status = act.status || 'unknown';
+        const date = act.createdAt ? new Date(act.createdAt).toLocaleDateString() : (act.startDate ? new Date(act.startDate).toLocaleDateString() : 'N/A');
+
+        return `
+            <tr>
+                <td>${gameTitle}</td>
+                <td>${customerName}</td>
+                <td><span class="status-badge ${status.toLowerCase()}">${status}</span></td>
+                <td>${date}</td>
+            </tr>
+        `;
+    }).join('');
 }
 
 function loadGamesTable() {
@@ -271,6 +351,11 @@ async function handleGameFormSubmit(e) {
         formData.append('images', files[i]);
     }
 
+    if (!currentEditGameId && files.length === 0) {
+        showFormError('Please upload at least one image for the game.');
+        return;
+    }
+
     try {
         const token = localStorage.getItem('token');
         const url = currentEditGameId ? `/api/games/${currentEditGameId}` : "/api/games";
@@ -309,6 +394,8 @@ async function handleGameFormSubmit(e) {
             } else {
                 gameInventory.push(data.data || data);
                 e.target.reset();
+                selectedImages = [];
+                updateImagePreview();
             }
             hideFormError();
             loadGamesTable();
@@ -340,7 +427,9 @@ async function deleteGame(id) {
                 updateDashboardStats();
                 alert("Game deleted successfully!");
             } else {
-                alert("Failed to delete game.");
+                const errorData = await response.json().catch(() => null);
+                const message = errorData?.error || errorData?.message || 'Failed to delete game.';
+                alert(message);
             }
         } catch (error) {
             console.error("Error deleting game:", error);

@@ -75,8 +75,9 @@ const addGame = async (req, res) => {
       return res.status(400).json({ error: 'Game title is required' });
     }
 
-    if (!platform || !['PS4', 'PS5'].includes(platform)) {
-      return res.status(400).json({ error: 'Platform must be PS4 or PS5' });
+    const validPlatforms = ['PS4', 'PS5', 'PS4 & PS5'];
+    if (!platform || !validPlatforms.includes(platform)) {
+      return res.status(400).json({ error: 'Platform must be PS4, PS5, or PS4 & PS5' });
     }
 
     if (!category || category.trim() === '') {
@@ -186,8 +187,9 @@ const editGame = async (req, res) => {
     if (req.body.title !== undefined && req.body.title.trim() === '') {
       return res.status(400).json({ error: 'Game title cannot be empty' });
     }
-    if (req.body.platform !== undefined && !['PS4', 'PS5'].includes(req.body.platform)) {
-      return res.status(400).json({ error: 'Platform must be PS4 or PS5' });
+    const validPlatforms = ['PS4', 'PS5', 'PS4 & PS5'];
+    if (req.body.platform !== undefined && !validPlatforms.includes(req.body.platform)) {
+      return res.status(400).json({ error: 'Platform must be PS4, PS5, or PS4 & PS5' });
     }
     if (req.body.pricePerDay !== undefined && (isNaN(req.body.pricePerDay) || req.body.pricePerDay <= 0)) {
       return res.status(400).json({ error: 'Price must be a positive number' });
@@ -221,11 +223,20 @@ const deleteGame = async (req, res) => {
   try {
     const game = await Game.findById(req.params.id);
     if (!game) return res.status(404).json({ error: 'Game not found' });
+
+    if (req.user.role === 'Store') {
+      const storeId = req.user.storeID || req.user._id?.toString();
+      const gameStoreId = game.storeID?.toString();
+      if (!storeId || storeId !== gameStoreId) {
+        return res.status(403).json({ error: 'You are not allowed to delete this game' });
+      }
+    }
+
     await Game.findByIdAndDelete(req.params.id);
     res.json({ message: 'Game deleted successfully' });
   } catch (err) {
-    console.log(err);
-    res.status(500).json({ error: 'Failed to delete game' });
+    console.log('DELETE GAME ERROR:', err);
+    res.status(500).json({ error: err.message || 'Failed to delete game' });
   }
 };
 // ─── GET MY GAMES ────────────────────────────────────────────────
