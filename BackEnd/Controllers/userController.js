@@ -85,6 +85,15 @@ const updateUser = async (req, res) => {
             updateData.password = await bcrypt.hash(password, 10);
         }
 
+        // Allow updating phone number
+        if (req.body.phone !== undefined) {
+            const phone = String(req.body.phone || '').trim();
+            if (phone.length > 0 && phone.length < 6) {
+                return res.status(400).json({ error: 'Phone number is too short' });
+            }
+            updateData.phone = phone;
+        }
+
         // Allow role changes (admin feature)
         if (role !== undefined) {
             if (!['Gamer', 'Store', 'Admin'].includes(role)) {
@@ -114,17 +123,55 @@ const updateUser = async (req, res) => {
 };
 
 // Delete user (admin)
+const Game = require('../models/Game');
+const Rental = require('../models/Rental');
+
+// Delete user (admin) with transaction-safe cascade
 const deleteUser = async (req, res) => {
+    let session = null;
     try {
         if (!req.params.id) {
             return res.status(400).json({ error: 'User ID is required' });
         }
-        const user = await User.findByIdAndDelete(req.params.id);
-        if (!user) return res.status(404).json({ error: 'User not found' });
+
+        // start a mongoose session for transaction
+        session = await User.startSession();
+        await session.withTransaction(async () => {
+            // load user within the transaction
+            const user = await User.findById(req.params.id).session(session);
+            if (!user) {
+                // throwing will abort the transaction
+                throw { status: 404, message: 'User not found' };
+            }
+
+            // If deleted user is a Store, delete their games
+            if (user.role === 'Store' || user.role === 'StoreOwner') {
+                const storeIdentifier = user.storeID || String(user._id);
+                const deleteResult = await Game.deleteMany({ storeID: storeIdentifier }).session(session);
+                console.log(`Deleted ${deleteResult.deletedCount} games for store ${storeIdentifier}`);
+            }
+
+            // If deleted user is a Gamer, mark their active rentals as returned and free the games
+            if (user.role === 'Gamer') {
+                const activeRentals = await Rental.find({ customer: user._id, status: 'active' }).session(session);
+                for (const r of activeRentals) {
+                    await Rental.findByIdAndUpdate(r._id, { status: 'returned' }, { session });
+                    await Game.findByIdAndUpdate(r.game, { status: 'Available', customerID: null }, { session });
+                }
+                console.log(`Processed ${activeRentals.length} active rentals for deleted gamer ${user._id}`);
+            }
+
+            // finally delete the user record itself
+            await User.deleteOne({ _id: user._id }).session(session);
+        });
+
         res.json({ message: 'User deleted successfully' });
     } catch (err) {
         console.log(err);
+        if (err && err.status === 404) return res.status(404).json({ error: err.message });
         res.status(500).json({ error: 'Failed to delete user' });
+    } finally {
+        if (session) session.endSession();
     }
 };
 

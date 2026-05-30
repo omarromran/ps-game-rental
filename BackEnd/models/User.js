@@ -11,6 +11,7 @@ const userSchema = new mongoose.Schema({
     enum: ['Gamer', 'Store', 'Admin']
   },
   storeID: { type: String, unique: true, sparse: true, trim: true },
+  phone: { type: String, trim: true, default: '' },
   approved: { type: Boolean, default: false },
   suspended: { type: Boolean, default: false },
   balance: { type: Number, default: 0, min: 0 }

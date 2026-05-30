@@ -87,23 +87,29 @@ function renderCheckoutList() {
     const totalEl = document.getElementById('final-total');
     const days = Number(document.getElementById('days')?.value || 3);
 
+    if (!listDiv || !subtotalEl || !totalEl) return;
+
     let total = 0;
 
-    listDiv.innerHTML = cart.map(item => {
-        const itemTotal = item.pricePerDay * days;
-        total += itemTotal;
-        return `
-            <div class="horizontal-item">
-                <img src="${item.img}" alt="${item.title}">
-                <div class="item-info">
-                    <div class="item-title">${item.title}</div>
-                    <div class="item-store">${(item.storeID || 'Store').toUpperCase()}</div>
-                    <div class="item-duration">${days} day${days === 1 ? '' : 's'} rental</div>
+    if (cart.length === 0) {
+        listDiv.innerHTML = '<p class="empty-cart">Your cart is empty. Add games in the store first.</p>';
+    } else {
+        listDiv.innerHTML = cart.map(item => {
+            const itemTotal = item.pricePerDay * days;
+            total += itemTotal;
+            return `
+                <div class="horizontal-item">
+                    <img src="${item.img}" alt="${item.title}">
+                    <div class="item-info">
+                        <div class="item-title">${item.title}</div>
+                        <div class="item-store">${(item.storeID || 'Store').toUpperCase()}</div>
+                        <div class="item-duration">${days} day${days === 1 ? '' : 's'} rental</div>
+                    </div>
+                    <div class="item-price">${itemTotal.toFixed(2)} EGP</div>
                 </div>
-                <div class="item-price">${itemTotal.toFixed(2)} EGP</div>
-            </div>
-        `;
-    }).join('');
+            `;
+        }).join('');
+    }
 
     subtotalEl.innerText = total.toFixed(2);
     totalEl.innerText = total.toFixed(2);
@@ -160,19 +166,25 @@ async function processOrder() {
         return;
     }
 
+    if (!cart.length) {
+        alert('Your cart is empty. Add games before checking out.');
+        window.location.href = '/Browse_Games';
+        return;
+    }
+
     phoneInput.style.borderColor = '#333';
     addressInput.style.borderColor = '#333';
     daysInput.style.borderColor = '#333';
 
     const items = cart.map(item => ({
-        gameId: item._id,
+        gameId: item._id || item.gameID || item.id,
         days
     }));
 
     try {
         const response = await fetch('/api/rentals/checkout', {
             method: 'POST',
-            credentials: 'same-origin',
+            credentials: 'include',
             headers: {
                 'Content-Type': 'application/json'
             },
@@ -200,8 +212,6 @@ async function processOrder() {
         if (overlay) {
             overlay.style.display = 'flex';
         }
-
-        window.dispatchEvent(new StorageEvent('storage', { key: 'pshub_cart', newValue: null }));
 
         setTimeout(() => {
             window.location.href = '/Browse_Games';

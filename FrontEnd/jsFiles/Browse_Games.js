@@ -411,19 +411,37 @@ function toggleCart(open) {
 function saveDB() {
     localStorage.setItem('pshub_cart', JSON.stringify(cart));
 
+    // Always persist a pshub_wishlist for pages that rely on it
+    try {
+        localStorage.setItem('pshub_wishlist', JSON.stringify(wishlist));
+    } catch (e) {
+        console.error('Failed to write pshub_wishlist', e);
+    }
+
     const currentUserStr = localStorage.getItem('currentUser');
     if (currentUserStr) {
-        const currentUser = JSON.parse(currentUserStr);
-        const users = JSON.parse(localStorage.getItem('users') || '[]');
-        const idx = users.findIndex(u => u.username === currentUser.username);
-        if (idx !== -1) {
-            users[idx].wishlist = wishlist;
+        try {
+            const currentUser = JSON.parse(currentUserStr);
+
+            // update currentUser object in storage
+            currentUser.wishlist = wishlist;
+            localStorage.setItem('currentUser', JSON.stringify(currentUser));
+
+            // update users array if present, otherwise add a minimal entry
+            const users = JSON.parse(localStorage.getItem('users') || '[]');
+            const idx = users.findIndex(u => u.username === currentUser.username || u.email === currentUser.email);
+            if (idx !== -1) {
+                users[idx].wishlist = wishlist;
+            } else {
+                users.push({ username: currentUser.username, email: currentUser.email, wishlist });
+            }
             localStorage.setItem('users', JSON.stringify(users));
+        } catch (err) {
+            console.error('Failed to persist wishlist to currentUser/users', err);
         }
-    } else {
-        localStorage.setItem('pshub_wishlist', JSON.stringify(wishlist));
     }
 }
+
 
 function toggleWishlist(id) {
     const normalizedId = String(id || '');

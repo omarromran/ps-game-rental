@@ -229,6 +229,10 @@
                                 <%= game.title %>
                             </h3>
 
+                            <% if (game.store) { %>
+                                <p class="store-text">Store: <%= game.store.username || game.store.storeName || 'Store' %></p>
+                            <% } %>
+
                             <p class="platform-text">
                                 <%= game.platform %>
                             </p>

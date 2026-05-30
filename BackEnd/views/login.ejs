@@ -14,7 +14,7 @@
 
     <div class="wrapper">
         <h1>Log In</h1>
-        <form id="login-form" autocomplete="off">
+        <form id="login-form" >
 
             <div class="input-group">
                 <i class="fa-solid fa-envelope"></i>
@@ -34,7 +34,7 @@
         </form>
     </div>
 
-            <script>
+    <script>
         document.getElementById("login-form").addEventListener("submit", async e => {
             e.preventDefault();
 
@@ -73,7 +73,7 @@
             try {
                 const res = await fetch("/api/auth/login", {
                     method: "POST",
-                    credentials: 'same-origin',
+                    credentials: 'include',
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({ email, password })
                 });

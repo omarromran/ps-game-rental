@@ -38,7 +38,7 @@ const getOneGame = async (req, res) => {
     }
 
     if (!game) return res.status(404).json({ error: 'Game not found' });
-    res.json(game);
+    return res.json(game);
   } catch (err) {
     console.log(err);
     res.status(500).json({ error: 'Failed to fetch game' });
