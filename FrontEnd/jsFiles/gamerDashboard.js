@@ -486,8 +486,9 @@ function renderWishlist() {
     let wishlistIds = getWishlist();
 
     const wishlistGames = games.filter(g =>
-        wishlistIds.includes(g.gameID)
-    );
+    wishlistIds.includes(g.gameID) &&
+    (g.status === 'Available' || g.status === 'available')
+);
 
     container.innerHTML = "";
 
@@ -582,14 +583,7 @@ function renderProfile() {
     if (!user) return;
 
     const displayName = user.name || user.username || "Gamer";
-    const initials = displayName
-        .split(" ")
-        .map(n => n[0])
-        .join("")
-        .toUpperCase()
-        .slice(0, 2);
-
-    document.getElementById("avatar").innerText = initials;
+   
     document.getElementById("nameText").innerText = displayName;
     document.getElementById("emailText").innerText = user.email || "No Email";
     document.getElementById("usernameText").innerText = user.username || "Unknown";
