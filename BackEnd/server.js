@@ -237,3 +237,6 @@ app.use((err, req, res, next) => {
 app.listen(PORT, () => {
   console.log(`🚀 Server is flying high on http://localhost:${PORT}`);
 });
+
+const errorMiddleware = require('./Middleware/errorMiddleware');
+app.use(errorMiddleware);
