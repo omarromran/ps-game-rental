@@ -16,6 +16,7 @@ const gameSchema = new mongoose.Schema({
   releaseYear: { type: Number },
   pegi: { type: Number },
  description: { type: String },
+  wishlist: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User', default: [] }]
 }, { timestamps: true, collection: 'Games' });
 
 module.exports = mongoose.model('Game', gameSchema);
