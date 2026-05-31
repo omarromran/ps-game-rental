@@ -33,9 +33,11 @@ exports.register = async (req, res) => {
     if (!role || role.trim() === '') {
       return res.status(400).json({ message: 'Role is required' });
     }
-    if (!['Gamer', 'Store', 'Admin'].includes(role)) {
-      return res.status(400).json({ message: 'Role must be Gamer, Store, or Admin' });
-    }
+    if (!['Gamer', 'Store'].includes(role)) {
+    return res.status(400).json({
+        message: 'Role must be Gamer or Store'
+    });
+}
     // Store ID will be set after saving user (no custom generation needed)    };
 
     // Check duplicates
@@ -76,7 +78,13 @@ exports.register = async (req, res) => {
     if (role === 'Store') {
       return res.status(201).json({
         message: 'Store registered successfully! Waiting for Admin approval before login.',
-        user: newUser
+        user: {
+    _id: newUser._id,
+    username: newUser.username,
+    email: newUser.email,
+    role: newUser.role,
+    storeID: newUser.storeID
+}
       });
     }
 
@@ -130,8 +138,6 @@ exports.login = async (req, res) => {
       { expiresIn: '1d' }
     );
 
-    req.session.user = { _id: user._id, username: user.username, email: user.email, role: user.role };
-
     res.status(200).json({
       message: `Welcome back, ${user.username}!`,
       token,
@@ -159,9 +165,48 @@ exports.logout = (req, res) => {
   });
 };
 
-exports.getMe = (req, res) => {
-  if (!req.session.user) {
-    return res.status(401).json({ error: 'Not logged in' });
-  }
-  res.json(req.session.user);
+exports.getMe = async (req,res)=>{
+
+    try{
+
+        const authHeader =
+            req.headers.authorization;
+
+        if(
+            !authHeader ||
+            !authHeader.startsWith('Bearer ')
+        ){
+            return res.status(401).json({
+                error:'No token provided'
+            });
+        }
+
+        const token =
+            authHeader.split(' ')[1];
+
+        const decoded =
+            jwt.verify(
+                token,
+                process.env.JWT_SECRET 
+              );
+
+        const user =
+            await User.findById(
+                decoded.id
+            ).select('-password');
+
+        if(!user){
+            return res.status(404).json({
+                error:'User not found'
+            });
+        }
+
+        res.json(user);
+
+    }catch(err){
+
+        res.status(401).json({
+            error:'Invalid token'
+        });
+    }
 };

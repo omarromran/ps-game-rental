@@ -47,18 +47,20 @@ const getOneGame = async (req, res) => {
 // ─── ADD GAME ────────────────────────────────────────────────────
 const addGame = async (req, res) => {
   try {
-    console.log("FILES:");
-    console.log(req.files);
 
-    console.log("BODY:");
-    console.log(req.body);
-    console.log("REQ BODY:", req.body);
-    console.log("REQ FILES:", req.files);
-    console.log("REQ USER:", req.user);
+    if (!req.user) {
+      return res.status(401).json({
+        error: 'Authentication required'
+      });
+    }
+
+    if (req.user.role !== 'Store' && req.user.role !== 'Admin') {
+      return res.status(403).json({
+        error: 'Only stores can add games'
+      });
+    }
 
     const {
-      gameID: incomingGameID,
-      storeID: incomingStoreID,
       title,
       description,
       category,
@@ -70,152 +72,250 @@ const addGame = async (req, res) => {
       type
     } = req.body;
 
-    // ── Validation (unchanged) ────────────────────────────────
-    if (!title || title.trim() === '') {
-      return res.status(400).json({ error: 'Game title is required' });
+    if (!title?.trim()) {
+      return res.status(400).json({
+        error: 'Game title is required'
+      });
     }
 
-    const validPlatforms = ['PS4', 'PS5', 'PS4 & PS5'];
-    if (!platform || !validPlatforms.includes(platform)) {
-      return res.status(400).json({ error: 'Platform must be PS4, PS5, or PS4 & PS5' });
+    if (title.length > 100) {
+      return res.status(400).json({
+        error: 'Title is too long'
+      });
     }
 
-    if (!category || category.trim() === '') {
-      return res.status(400).json({ error: 'Category is required' });
+    if (description && description.length > 2000) {
+      return res.status(400).json({
+        error: 'Description is too long'
+      });
     }
 
-    if (!pricePerDay || isNaN(pricePerDay) || pricePerDay <= 0) {
-      return res.status(400).json({ error: 'Price must be a positive number' });
+    const validPlatforms = [
+      'PS4',
+      'PS5',
+      'PS4 & PS5'
+    ];
+
+    if (!validPlatforms.includes(platform)) {
+      return res.status(400).json({
+        error: 'Invalid platform'
+      });
     }
 
-    // ── NEW FIX: require at least one uploaded image ──────────
+    if (!category?.trim()) {
+      return res.status(400).json({
+        error: 'Category is required'
+      });
+    }
+
+    if (
+      !pricePerDay ||
+      isNaN(pricePerDay) ||
+      Number(pricePerDay) <= 0
+    ) {
+      return res.status(400).json({
+        error: 'Price must be greater than zero'
+      });
+    }
+
+    if (
+      releaseYear &&
+      (
+        isNaN(releaseYear) ||
+        releaseYear < 1970 ||
+        releaseYear > new Date().getFullYear() + 1
+      )
+    ) {
+      return res.status(400).json({
+        error: 'Invalid release year'
+      });
+    }
+
+    if (
+      pegi &&
+      (
+        isNaN(pegi) ||
+        pegi < 3 ||
+        pegi > 18
+      )
+    ) {
+      return res.status(400).json({
+        error: 'Invalid PEGI rating'
+      });
+    }
+
     if (!req.files || req.files.length === 0) {
       return res.status(400).json({
         error: 'At least one image is required'
       });
     }
 
-    const storeID =
-      incomingStoreID ||
-      req.user.storeID ||
-      req.user._id.toString();
+    const imageUrls = req.files
+      .map(file => file.path || file.url || file.secure_url)
+      .filter(Boolean);
 
-    if (!storeID || storeID.trim() === '') {
-      return res.status(400).json({ error: 'Store ID is required' });
+    if (imageUrls.length === 0) {
+      return res.status(400).json({
+        error: 'Image upload failed'
+      });
     }
 
     const gameID =
-      incomingGameID && incomingGameID.trim() !== ''
-        ? incomingGameID.trim()
-        : `${Date.now().toString(36)}-${Math.random()
-          .toString(36)
-          .slice(2, 8)}`;
+      `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
 
-    const existingGame = await Game.findOne({ gameID });
-
-    if (existingGame) {
-      return res.status(400).json({
-        error: 'A game with this ID already exists'
-      });
-    }
-
-    // ── FIXED IMAGE EXTRACTION ────────────────────────────────
-    // ── Extract Cloudinary URLs from uploaded files ────────────
-    // ── Extract Cloudinary URLs from uploaded files ────────────
-    const imageUrls = req.files && req.files.length > 0
-      ? req.files.map((file) => {
-
-        console.log("UPLOADED FILE OBJECT:");
-        console.log(file);
-
-        return (
-          file.path ||
-          file.secure_url ||
-          file.url ||
-          null
-        );
-      }).filter(Boolean)
-      : [];
-
-    // ensure at least one image exists
-    if (imageUrls.length === 0) {
-      return res.status(400).json({
-        error: 'Image upload failed. No image URL was returned.'
-      });
-    }
-
-    const imgValue = imageUrls[0];
-
-    const newGame = new Game({
+    const game = await Game.create({
       gameID,
-      storeID,
+      storeID: req.user.storeID,
       title: title.trim(),
-      description,
-      category,
+      description: description?.trim(),
+      category: category.trim(),
       platform,
       pricePerDay: Number(pricePerDay),
-      img: imgValue,
+      img: imageUrls[0],
       images: imageUrls,
       developer,
       releaseYear,
       pegi,
-      type
+      type: type || 'Game'
     });
 
-    const savedGame = await newGame.save();
+    res.status(201).json(game);
 
-    console.log("SAVED GAME:");
-    console.log(savedGame);
-
-    res.status(201).json(savedGame);
   } catch (err) {
 
-    console.log('ADD GAME ERROR:', err);
+    console.error('ADD GAME ERROR:', err);
 
     res.status(500).json({
-      error: err.message || 'Failed to add game'
+      error: 'Failed to add game'
     });
+
   }
 };
 // ─── EDIT GAME ───────────────────────────────────────────────────
 const editGame = async (req, res) => {
   try {
+
     const game = await Game.findById(req.params.id);
-    if (!game) return res.status(404).json({ error: 'Game not found' });
 
-    // ── Validation (unchanged) ────────────────────────────────
-    if (req.body.title !== undefined && req.body.title.trim() === '') {
-      return res.status(400).json({ error: 'Game title cannot be empty' });
-    }
-    const validPlatforms = ['PS4', 'PS5', 'PS4 & PS5'];
-    if (req.body.platform !== undefined && !validPlatforms.includes(req.body.platform)) {
-      return res.status(400).json({ error: 'Platform must be PS4, PS5, or PS4 & PS5' });
-    }
-    if (req.body.pricePerDay !== undefined && (isNaN(req.body.pricePerDay) || req.body.pricePerDay <= 0)) {
-      return res.status(400).json({ error: 'Price must be a positive number' });
+    if (!game) {
+      return res.status(404).json({
+        error: 'Game not found'
+      });
     }
 
-    // ── CHANGE 3: Handle new image uploads on edit ────────────
-    // if the owner uploads new images during an edit, replace the array
-    // if no new files are sent, keep the existing images untouched
+    if (
+      req.user.role === 'Store' &&
+      game.storeID !== req.user.storeID
+    ) {
+      return res.status(403).json({
+        error: 'You are not allowed to edit this game'
+      });
+    }
+
+    const updateData = {};
+
+    if (req.body.title !== undefined) {
+
+      if (!req.body.title.trim()) {
+        return res.status(400).json({
+          error: 'Title cannot be empty'
+        });
+      }
+
+      updateData.title = req.body.title.trim();
+    }
+
+    if (req.body.description !== undefined) {
+      updateData.description = req.body.description.trim();
+    }
+
+    if (req.body.category !== undefined) {
+      updateData.category = req.body.category.trim();
+    }
+
+    if (req.body.platform !== undefined) {
+
+      const validPlatforms = [
+        'PS4',
+        'PS5',
+        'PS4 & PS5'
+      ];
+
+      if (!validPlatforms.includes(req.body.platform)) {
+        return res.status(400).json({
+          error: 'Invalid platform'
+        });
+      }
+
+      updateData.platform = req.body.platform;
+    }
+
+    if (req.body.pricePerDay !== undefined) {
+
+      if (
+        isNaN(req.body.pricePerDay) ||
+        Number(req.body.pricePerDay) <= 0
+      ) {
+        return res.status(400).json({
+          error: 'Invalid price'
+        });
+      }
+
+      updateData.pricePerDay =
+        Number(req.body.pricePerDay);
+    }
+
+    if (req.body.status !== undefined) {
+
+      const validStatuses = [
+        'Available',
+        'Rented',
+        'Maintenance'
+      ];
+
+      if (!validStatuses.includes(req.body.status)) {
+        return res.status(400).json({
+          error: 'Invalid status'
+        });
+      }
+
+      updateData.status = req.body.status;
+    }
+
     if (req.files && req.files.length > 0) {
-      const newImageUrls = req.files.map(file => file.path || file.secure_url || file.url).filter(Boolean);
-      if (newImageUrls.length > 0) {
-        req.body.images = newImageUrls;
-        req.body.img = newImageUrls[0];
+
+      const imageUrls = req.files
+        .map(file => file.path || file.url || file.secure_url)
+        .filter(Boolean);
+
+      if (imageUrls.length > 0) {
+
+        updateData.images = imageUrls;
+        updateData.img = imageUrls[0];
+
       }
     }
 
-    const updatedGame = await Game.findByIdAndUpdate(
-      req.params.id,
-      req.body,
-      { new: true }
-    );
+    const updatedGame =
+      await Game.findByIdAndUpdate(
+        req.params.id,
+        updateData,
+        {
+          new: true,
+          runValidators: true
+        }
+      );
+
     res.json(updatedGame);
 
   } catch (err) {
-    console.log(err);
-    res.status(500).json({ error: 'Failed to update game' });
+
+    console.error('EDIT GAME ERROR:', err);
+
+    res.status(500).json({
+      error: 'Failed to update game'
+    });
+
   }
 };
 // ─── DELETE GAME ─────────────────────────────────────────────────
@@ -243,24 +343,30 @@ const deleteGame = async (req, res) => {
 
 const getMyGames = async (req, res) => {
   try {
-    // Match games where storeID may be stored as a string or ObjectId
-    const ownerId = req.user && req.user._id ? req.user._id : null;
-    const ownerIdStr = ownerId ? ownerId.toString() : null;
 
-    const query = ownerId
-      ? { storeID: { $in: [ownerId, ownerIdStr] } }
-      : { storeID: null };
+    if (!req.user || !req.user.storeID) {
+      return res.status(403).json({
+        error: 'Store account required'
+      });
+    }
 
-    const games = await Game.find(query).lean();
+    const games = await Game.find({
+      storeID: req.user.storeID
+    });
 
     return res.status(200).json({
       status: 'success',
       results: games.length,
-      data: { games },
+      data: { games }
     });
+
   } catch (err) {
+
     console.error('GET MY GAMES ERROR:', err);
-    return res.status(500).json({ error: 'Failed to fetch owner games' });
+
+    return res.status(500).json({
+      error: 'Failed to fetch games'
+    });
   }
 };
 module.exports = { getAllGames, getOneGame, addGame, editGame, deleteGame, getMyGames };

@@ -174,19 +174,30 @@
                     </div> 
 
                     <!-- PHONE -->
-                    <div class="profile-item">
+                   <div class="profile-item">
 
-                        <span class="profile-key">
-                            Phone
-                        </span>
+    <span class="profile-key">
+        Phone
+    </span>
 
-                        <span class="profile-val" id="phoneText">
-                            N/A
-                        </span>
+    <span class="profile-val" id="phoneText">
+        N/A
+    </span>
 
-                        <input id="phoneInput" type="text" style="display:none;" />
+    <div id="phoneEditContainer" style="display:none;">
+        <span>+20</span>
+        <input
+            id="phoneInput"
+            type="text"
+            maxlength="11"
+            placeholder="01XXXXXXXXX"
+        />
+        <small id="phoneError" style="color:red; display:none;">
+            Please enter a valid Egyptian phone number.
+        </small>
+    </div>
 
-                    </div>
+</div>
 
                     <!-- MEMBER SINCE -->
                     <div class="profile-item">

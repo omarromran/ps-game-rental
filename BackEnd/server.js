@@ -23,6 +23,8 @@ const authRoutes = require('./Routes/authRoutes');
 const gameRoutes = require('./Routes/gameRoutes');
 const rentalRoutes = require('./Routes/rentalRoutes');
 const userRoutes = require('./Routes/userRoutes');
+const wishlistRoutes =require('./Routes/wishlistRoutes');
+
 
 // Import your custom security gatekeepers
 const { protect, restrictTo } = require('./Middleware/authMiddleware');
@@ -33,6 +35,7 @@ const { protect, restrictTo } = require('./Middleware/authMiddleware');
 app.use(cors());
 app.use(express.json());
 app.use(express.static(path.join(__dirname, '../FrontEnd')));
+
 
 // EJS view engine setup for converted front-end pages
 app.set('view engine', 'ejs');
@@ -81,6 +84,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/games', gameRoutes);
 app.use('/api/rentals', rentalRoutes);
 app.use('/api/users', userRoutes);
+app.use('/api/wishlist',wishlistRoutes);  
 
 // Render converted EJS front-end pages from their original HTML endpoints
 const pageViews = [

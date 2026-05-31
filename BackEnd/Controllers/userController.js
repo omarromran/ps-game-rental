@@ -38,6 +38,15 @@ const updateUser = async (req, res) => {
         const { username, email, password, role } = req.body;
         const updateData = {};
 
+        if (
+  req.user.role !== 'Admin' &&
+  req.user._id.toString() !== req.params.id
+) {
+  return res.status(403).json({
+    error: 'Not authorized'
+  });
+}
+
         // Validation
         if (username !== undefined) {
             if (username.trim() === '') {
@@ -87,20 +96,39 @@ const updateUser = async (req, res) => {
 
         // Allow updating phone number
         if (req.body.phone !== undefined) {
-            const phone = String(req.body.phone || '').trim();
-            if (phone.length > 0 && phone.length < 6) {
-                return res.status(400).json({ error: 'Phone number is too short' });
-            }
-            updateData.phone = phone;
-        }
 
-        // Allow role changes (admin feature)
+    const phone = String(req.body.phone || '').trim();
+
+    const egyptPhoneRegex = /^01[0125][0-9]{8}$/;
+
+    if (
+        phone &&
+        !egyptPhoneRegex.test(phone)
+    ) {
+        return res.status(400).json({
+            error: 'Invalid Egyptian phone number'
+        });
+    }
+
+    updateData.phone = phone;
+}
+
         if (role !== undefined) {
-            if (!['Gamer', 'Store', 'Admin'].includes(role)) {
-                return res.status(400).json({ error: 'Role must be Gamer, Store, or Admin' });
-            }
-            updateData.role = role;
-        }
+
+    if (req.user.role !== 'Admin') {
+        return res.status(403).json({
+            error: 'Only admins can change roles'
+        });
+    }
+
+    if (!['Gamer', 'Store', 'Admin'].includes(role)) {
+        return res.status(400).json({
+            error: 'Role must be Gamer, Store, or Admin'
+        });
+    }
+
+    updateData.role = role;
+}
 
         if (Object.keys(updateData).length === 0) {
             return res.status(400).json({ error: 'No valid fields provided to update' });
@@ -145,7 +173,7 @@ const deleteUser = async (req, res) => {
             }
 
             // If deleted user is a Store, delete their games
-            if (user.role === 'Store' || user.role === 'StoreOwner') {
+            if (user.role === 'Store' ){
                 const storeIdentifier = user.storeID || String(user._id);
                 const deleteResult = await Game.deleteMany({ storeID: storeIdentifier }).session(session);
                 console.log(`Deleted ${deleteResult.deletedCount} games for store ${storeIdentifier}`);
@@ -185,7 +213,7 @@ const approveStore = async (req, res) => {
         const user = await User.findById(req.params.id);
         if (!user) return res.status(404).json({ error: 'User not found' });
 
-        if (user.role !== 'StoreOwner') {
+        if (user.role !== 'Store') {
             return res.status(400).json({ error: 'This user is not a store owner' });
         }
 
