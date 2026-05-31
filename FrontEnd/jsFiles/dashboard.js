@@ -1,559 +1,304 @@
+// dashboard.js (Admin) — token-only auth
+
 let users = [];
 let games = [];
 let chartObj = null;
 
-// =====================================================
-// HELPERS
-// =====================================================
-
-const getToken = () => localStorage.getItem("token");
+// ==========================================
+// 🔑 AUTH HELPERS
+// ==========================================
+const getToken = () => localStorage.getItem('token');
 
 const getHeaders = (json = false) => {
-    const headers = {};
-
-    const token = getToken();
-
-    if (token) {
-        headers.Authorization = `Bearer ${token}`;
-    }
-
-    if (json) {
-        headers["Content-Type"] = "application/json";
-    }
-
-    return headers;
+  const headers = {};
+  const token = getToken();
+  if (token) headers.Authorization = `Bearer ${token}`;
+  if (json) headers['Content-Type'] = 'application/json';
+  return headers;
 };
 
-const saveCache = (key, value) => {
-    localStorage.setItem(key, JSON.stringify(value));
-};
+const saveCache = (key, value) => localStorage.setItem(key, JSON.stringify(value));
 
 const getCache = (key) => {
-    try {
-        return JSON.parse(localStorage.getItem(key));
-    } catch {
-        return null;
-    }
+  try { return JSON.parse(localStorage.getItem(key)); } catch { return null; }
 };
 
-// =====================================================
-// FETCH
-// =====================================================
-
+// ==========================================
+// 📡 FETCH HELPER
+// ==========================================
 async function fetchData(endpoint) {
-    try {
-        const res = await fetch(endpoint, {
-            credentials: "include",
-            headers: getHeaders()
-        });
+  try {
+    const res = await fetch(endpoint, { headers: getHeaders() });
 
-        if (!res.ok) {
-            throw new Error(`Failed to fetch ${endpoint}`);
-        }
+    if (!res.ok) throw new Error(`Failed to fetch ${endpoint}`);
 
-        const data = await res.json();
-
-        saveCache(endpoint, data);
-
-        return data;
-    } catch (err) {
-        console.error(err);
-
-        return getCache(endpoint) || [];
-    }
+    const data = await res.json();
+    saveCache(endpoint, data);
+    return data;
+  } catch (err) {
+    console.error(err);
+    return getCache(endpoint) || [];
+  }
 }
 
-// =====================================================
-// LOAD DATA
-// =====================================================
-
+// ==========================================
+// 📦 LOAD DATA
+// ==========================================
 async function loadData() {
-    try {
-        users = await fetchData("/api/users");
-
-        // IMPORTANT:
-        // your backend only returns Available games by default
-        games = await fetchData("/api/games?status=all");
-
-        updateUI();
-    } catch (err) {
-        console.error(err);
-    }
+  try {
+    users = await fetchData('/api/users');
+    games = await fetchData('/api/games?status=all');
+    updateUI();
+  } catch (err) {
+    console.error(err);
+  }
 }
 
-// =====================================================
-// UI UPDATE
-// =====================================================
-
+// ==========================================
+// 🖥️ UI
+// ==========================================
 function updateUI() {
-    updateDashboard();
-    renderUsers();
-    renderGames();
-
-    if (typeof Chart !== "undefined") {
-        renderChart();
-    }
+  updateDashboard();
+  renderUsers();
+  renderGames();
+  if (typeof Chart !== 'undefined') renderChart();
 }
-
-// =====================================================
-// DASHBOARD
-// =====================================================
 
 function updateDashboard() {
-    const container = document.getElementById("dashboard-cards");
+  const container = document.getElementById('dashboard-cards');
+  if (!container) return;
 
-    if (!container) return;
+  const totalValue = games.reduce((sum, game) => sum + (Number(game.pricePerDay) || 0), 0);
 
-    const totalValue = games.reduce(
-        (sum, game) => sum + (Number(game.pricePerDay) || 0),
-        0
-    );
+  const cards = [
+    { title: 'Total Users', value: users.length },
+    { title: 'Pending Stores', value: users.filter(u => u.role === 'Store' && !u.approved).length, link: '/approveLenders' },
+    { title: 'Total Games', value: games.length },
+    { title: 'Inventory Value', value: `${totalValue.toFixed(2)} EGP` }
+  ];
 
-    const cards = [
-        {
-            title: "Total Users",
-            value: users.length
-        },
-        {
-            title: "Pending Stores",
-            value: users.filter(
-                u => u.role === "Store" && !u.approved
-            ).length,
-            link: "/approveLenders"
-        },
-        {
-            title: "Total Games",
-            value: games.length
-        },
-        {
-            title: "Inventory Value",
-            value: `${totalValue.toFixed(2)} EGP`
-        }
-    ];
-
-    container.innerHTML = cards
-        .map(card => `
-            <div
-                class="card"
-                ${card.link
-                    ? `onclick="window.location.href='${card.link}'" style="cursor:pointer"`
-                    : ""}
-            >
-                <h3>${card.title}</h3>
-                <p>${card.value}</p>
-            </div>
-        `)
-        .join("");
+  container.innerHTML = cards.map(card => `
+    <div class="card" ${card.link ? `onclick="window.location.href='${card.link}'" style="cursor:pointer"` : ''}>
+      <h3>${card.title}</h3>
+      <p>${card.value}</p>
+    </div>
+  `).join('');
 }
-
-// =====================================================
-// CHART
-// =====================================================
 
 function renderChart() {
-    const canvas = document.getElementById("gamesBarChart");
+  const canvas = document.getElementById('gamesBarChart');
+  if (!canvas) return;
 
-    if (!canvas) return;
+  const stores = users.filter(u => u.role === 'Store' && u.approved);
+  const labels = stores.map(s => s.username);
+  const counts = stores.map(store => games.filter(g => String(g.storeID) === String(store.storeID)).length);
 
-    const stores = users.filter(
-        user => user.role === "Store" && user.approved
-    );
+  if (chartObj) chartObj.destroy();
 
-    const labels = stores.map(
-        store => store.username
-    );
-
-    const counts = stores.map(store =>
-        games.filter(
-            game => String(game.storeID) === String(store.storeID)
-        ).length
-    );
-
-    if (chartObj) {
-        chartObj.destroy();
-    }
-
-    chartObj = new Chart(canvas, {
-        type: "bar",
-        data: {
-            labels,
-            datasets: [
-                {
-                    label: "Games",
-                    data: counts,
-                    borderWidth: 1
-                }
-            ]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false
-        }
-    });
+  chartObj = new Chart(canvas, {
+    type: 'bar',
+    data: { labels, datasets: [{ label: 'Games', data: counts, borderWidth: 1 }] },
+    options: { responsive: true, maintainAspectRatio: false }
+  });
 }
 
-// =====================================================
-// USERS
-// =====================================================
-
+// ==========================================
+// 👥 USERS
+// ==========================================
 function renderUsers() {
-    const table = document.getElementById("users-table");
+  const table = document.getElementById('users-table');
+  if (!table) return;
 
-    if (!table) return;
+  const filter = document.getElementById('user-type-filter')?.value || 'all';
 
-    const filter =
-        document.getElementById("user-type-filter")
-            ?.value || "all";
+  const filtered = users.filter(user => {
+    if (filter === 'all') return true;
+    if (filter === 'admin') return user.role === 'Admin';
+    if (filter === 'business') return user.role === 'Store';
+    if (filter === 'customer') return user.role === 'Gamer';
+    return true;
+  });
 
-    const filtered = users.filter(user => {
-        if (filter === "all") return true;
-
-        if (filter === "admin")
-            return user.role === "Admin";
-
-        if (filter === "business")
-            return user.role === "Store";
-
-        if (filter === "customer")
-            return user.role === "Gamer";
-
-        return true;
-    });
-
-    table.innerHTML = `
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Username</th>
-                <th>Email</th>
-                <th>Role</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            ${filtered
-                .map(
-                    user => `
-                <tr>
-                    <td>${user._id}</td>
-                    <td>${user.username}</td>
-                    <td>${user.email}</td>
-                    <td>${user.role}</td>
-                    <td>
-                        <button onclick="editUser('${user._id}')">
-                            Edit
-                        </button>
-
-                        <button onclick="deleteUser('${user._id}')">
-                            Delete
-                        </button>
-                    </td>
-                </tr>
-            `
-                )
-                .join("")}
-        </tbody>
-    `;
+  table.innerHTML = `
+    <thead>
+      <tr><th>ID</th><th>Username</th><th>Email</th><th>Role</th><th>Actions</th></tr>
+    </thead>
+    <tbody>
+      ${filtered.map(user => `
+        <tr>
+          <td>${user._id}</td>
+          <td>${user.username}</td>
+          <td>${user.email}</td>
+          <td>${user.role}</td>
+          <td>
+            <button onclick="editUser('${user._id}')">Edit</button>
+            <button onclick="deleteUser('${user._id}')">Delete</button>
+          </td>
+        </tr>
+      `).join('')}
+    </tbody>
+  `;
 }
-
-// =====================================================
-// GAMES
-// =====================================================
-
-function getVendor(game) {
-    const store = users.find(
-        user => String(user.storeID) === String(game.storeID)
-    );
-
-    return store ? store.username : "Unknown";
-}
-
-function renderGames() {
-    const table = document.getElementById("games-table");
-
-    if (!table) return;
-
-    table.innerHTML = `
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Title</th>
-                <th>Platform</th>
-                <th>Category</th>
-                <th>Status</th>
-                <th>Vendor</th>
-                <th>Price/Day</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            ${games
-                .map(
-                    game => `
-                <tr>
-                    <td>${game.gameID}</td>
-                    <td>${game.title}</td>
-                    <td>${game.platform}</td>
-                    <td>${game.category}</td>
-                    <td>${game.status}</td>
-                    <td>${getVendor(game)}</td>
-                    <td>${game.pricePerDay}</td>
-                    <td>
-                        <button onclick="editGameBtn('${game._id}')">
-                            Edit
-                        </button>
-
-                        <button onclick="deleteGame('${game._id}')">
-                            Delete
-                        </button>
-                    </td>
-                </tr>
-            `
-                )
-                .join("")}
-        </tbody>
-    `;
-}
-
-// =====================================================
-// USER ACTIONS
-// =====================================================
 
 async function editUser(id) {
-    const user = users.find(u => u._id === id);
+  const user = users.find(u => u._id === id);
+  if (!user) return;
 
-    if (!user) return;
+  const username = prompt('Username', user.username);
+  const email = prompt('Email', user.email);
+  const role = prompt('Role (Admin/Store/Gamer)', user.role);
+  if (!username || !email || !role) return;
 
-    const username = prompt(
-        "Username",
-        user.username
-    );
-
-    const email = prompt(
-        "Email",
-        user.email
-    );
-
-    const role = prompt(
-        "Role (Admin/Store/Gamer)",
-        user.role
-    );
-
-    if (!username || !email || !role) return;
-
-    try {
-        const res = await fetch(`/api/users/${id}`, {
-            method: "PUT",
-            headers: getHeaders(true),
-            body: JSON.stringify({
-                username,
-                email,
-                role
-            })
-        });
-
-        const data = await res.json();
-
-        if (!res.ok) {
-            throw new Error(
-                data.error ||
-                data.message ||
-                "Update failed"
-            );
-        }
-
-        alert("User updated");
-
-        await loadData();
-    } catch (err) {
-        alert(err.message);
-    }
+  try {
+    const res = await fetch(`/api/users/${id}`, {
+      method: 'PUT',
+      headers: getHeaders(true),
+      body: JSON.stringify({ username, email, role })
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || data.message || 'Update failed');
+    alert('User updated');
+    await loadData();
+  } catch (err) {
+    alert(err.message);
+  }
 }
 
 async function deleteUser(id) {
-    if (!confirm("Delete user?")) return;
-
-    try {
-        const res = await fetch(`/api/users/${id}`, {
-            method: "DELETE",
-            headers: getHeaders()
-        });
-
-        const data = await res.json();
-
-        if (!res.ok) {
-            throw new Error(
-                data.error ||
-                data.message
-            );
-        }
-
-        alert("User deleted");
-
-        await loadData();
-    } catch (err) {
-        alert(err.message);
-    }
+  if (!confirm('Delete user?')) return;
+  try {
+    const res = await fetch(`/api/users/${id}`, { method: 'DELETE', headers: getHeaders() });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || data.message);
+    alert('User deleted');
+    await loadData();
+  } catch (err) {
+    alert(err.message);
+  }
 }
 
-// =====================================================
-// GAME ACTIONS
-// =====================================================
+// ==========================================
+// 🎮 GAMES
+// ==========================================
+function getVendor(game) {
+  const store = users.find(u => String(u.storeID) === String(game.storeID));
+  return store ? store.username : 'Unknown';
+}
+
+function renderGames() {
+  const table = document.getElementById('games-table');
+  if (!table) return;
+
+  table.innerHTML = `
+    <thead>
+      <tr><th>ID</th><th>Title</th><th>Platform</th><th>Category</th><th>Status</th><th>Vendor</th><th>Price/Day</th><th>Actions</th></tr>
+    </thead>
+    <tbody>
+      ${games.map(game => `
+        <tr>
+          <td>${game.gameID}</td>
+          <td>${game.title}</td>
+          <td>${game.platform}</td>
+          <td>${game.category}</td>
+          <td>${game.status}</td>
+          <td>${getVendor(game)}</td>
+          <td>${game.pricePerDay}</td>
+          <td>
+            <button onclick="editGameBtn('${game._id}')">Edit</button>
+            <button onclick="deleteGame('${game._id}')">Delete</button>
+          </td>
+        </tr>
+      `).join('')}
+    </tbody>
+  `;
+}
 
 async function editGameBtn(id) {
-    const game = games.find(g => g._id === id);
+  const game = games.find(g => g._id === id);
+  if (!game) return;
 
-    if (!game) return;
+  const title = prompt('Title', game.title);
+  const pricePerDay = prompt('Price Per Day', game.pricePerDay);
+  if (!title || !pricePerDay) return;
 
-    const title = prompt(
-        "Title",
-        game.title
-    );
-
-    const pricePerDay = prompt(
-        "Price Per Day",
-        game.pricePerDay
-    );
-
-    if (!title || !pricePerDay) return;
-
-    try {
-        const res = await fetch(`/api/games/${id}`, {
-            method: "PUT",
-            headers: getHeaders(true),
-            body: JSON.stringify({
-                title,
-                pricePerDay
-            })
-        });
-
-        const data = await res.json();
-
-        if (!res.ok) {
-            throw new Error(
-                data.error ||
-                data.message
-            );
-        }
-
-        alert("Game updated");
-
-        await loadData();
-    } catch (err) {
-        alert(err.message);
-    }
+  try {
+    const res = await fetch(`/api/games/${id}`, {
+      method: 'PUT',
+      headers: getHeaders(true),
+      body: JSON.stringify({ title, pricePerDay })
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || data.message);
+    alert('Game updated');
+    await loadData();
+  } catch (err) {
+    alert(err.message);
+  }
 }
 
 async function deleteGame(id) {
-    if (!confirm("Delete game?")) return;
-
-    try {
-        const res = await fetch(`/api/games/${id}`, {
-            method: "DELETE",
-            headers: getHeaders()
-        });
-
-        const data = await res.json();
-
-        if (!res.ok) {
-            throw new Error(
-                data.error ||
-                data.message
-            );
-        }
-
-        alert("Game deleted");
-
-        await loadData();
-    } catch (err) {
-        alert(err.message);
-    }
+  if (!confirm('Delete game?')) return;
+  try {
+    const res = await fetch(`/api/games/${id}`, { method: 'DELETE', headers: getHeaders() });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || data.message);
+    alert('Game deleted');
+    await loadData();
+  } catch (err) {
+    alert(err.message);
+  }
 }
 
-// =====================================================
-// CREATE ADMIN
-// =====================================================
-
+// ==========================================
+// 👤 CREATE ADMIN
+// ==========================================
 async function handleAdmin(e) {
-    e.preventDefault();
+  e.preventDefault();
+  const formData = new FormData(e.target);
+  const data = Object.fromEntries(formData);
 
-    const formData = new FormData(e.target);
+  if (data.password !== data.confirmPassword) {
+    return alert('Passwords do not match');
+  }
 
-    const data = Object.fromEntries(formData);
-
-    if (data.password !== data.confirmPassword) {
-        return alert("Passwords do not match");
-    }
-
-    try {
-        const res = await fetch(
-            "/api/auth/register",
-            {
-                method: "POST",
-                headers: {
-                    "Content-Type":
-                        "application/json"
-                },
-                body: JSON.stringify({
-                    username: data.username,
-                    email: data.email,
-                    password: data.password,
-                    role: "Admin"
-                })
-            }
-        );
-
-        const result = await res.json();
-
-        if (!res.ok) {
-            throw new Error(
-                result.message ||
-                result.error
-            );
-        }
-
-        alert("Admin created");
-
-        e.target.reset();
-
-        await loadData();
-    } catch (err) {
-        alert(err.message);
-    }
+  try {
+    const res = await fetch('/api/auth/register', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username: data.username, email: data.email, password: data.password, role: 'Admin' })
+    });
+    const result = await res.json();
+    if (!res.ok) throw new Error(result.message || result.error);
+    alert('Admin created');
+    e.target.reset();
+    await loadData();
+  } catch (err) {
+    alert(err.message);
+  }
 }
 
-// =====================================================
-// LOGOUT
-// =====================================================
-
+// ==========================================
+// 🚪 LOGOUT
+// ==========================================
 function logout() {
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
-
-    window.location.href = "/login";
+  fetch('/api/auth/logout', { method: 'POST', headers: getHeaders() }).catch(() => {});
+  localStorage.removeItem('token');
+  localStorage.removeItem('currentUser');
+  window.location.href = '/login';
 }
 
-// =====================================================
-// INIT
-// =====================================================
+// ==========================================
+// 🚀 INIT
+// ==========================================
+document.addEventListener('DOMContentLoaded', () => {
+  const token = getToken();
+  if (!token) {
+    window.location.href = '/login';
+    return;
+  }
 
-document.addEventListener(
-    "DOMContentLoaded",
-    () => {
-        loadData();
+  loadData();
 
-        document
-            .getElementById("user-type-filter")
-            ?.addEventListener(
-                "change",
-                renderUsers
-            );
-
-        document
-            .getElementById("add-admin-form")
-            ?.addEventListener(
-                "submit",
-                handleAdmin
-            );
-    }
-);
+  document.getElementById('user-type-filter')?.addEventListener('change', renderUsers);
+  document.getElementById('add-admin-form')?.addEventListener('submit', handleAdmin);
+});

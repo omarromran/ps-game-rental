@@ -1,5 +1,6 @@
 const User = require('../models/User');
 const Game = require('../models/Game');
+const mongoose = require('mongoose');
 
 // GET /api/wishlist
 exports.getWishlist = async (req, res) => {
@@ -33,7 +34,14 @@ try {
 
     const { gameId } = req.params;
 
-    const game = await Game.findById(gameId);
+    // ✅ FIXED: find by MongoDB _id OR custom gameID
+    let game = null;
+    if (mongoose.Types.ObjectId.isValid(gameId)) {
+        game = await Game.findById(gameId);
+    }
+    if (!game) {
+        game = await Game.findOne({ gameID: gameId });
+    }
 
     if (!game) {
         return res.status(404).json({
@@ -49,8 +57,11 @@ try {
         });
     }
 
+    // Use game._id for consistency in wishlist
+    const mongoId = game._id.toString();
+
     const alreadyExists = user.wishlist.some(
-        id => id.toString() === gameId
+        id => id.toString() === mongoId
     );
 
     if (alreadyExists) {
@@ -59,7 +70,7 @@ try {
         });
     }
 
-    user.wishlist.push(gameId);
+    user.wishlist.push(game._id);
 
     await user.save();
 
@@ -75,7 +86,6 @@ try {
         message: 'Failed to add game to wishlist'
     });
 }
-
 
 };
 
@@ -93,8 +103,15 @@ try {
         });
     }
 
+    // ✅ FIXED: match by MongoDB _id OR custom gameID
+    let mongoId = gameId;
+    if (!mongoose.Types.ObjectId.isValid(gameId)) {
+        const game = await Game.findOne({ gameID: gameId });
+        if (game) mongoId = game._id.toString();
+    }
+
     user.wishlist = user.wishlist.filter(
-        id => id.toString() !== gameId
+        id => id.toString() !== mongoId
     );
 
     await user.save();

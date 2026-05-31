@@ -3,516 +3,304 @@ let cart = [];
 let wishlist = [];
 let activeStoreFilter = null;
 
-async function loadDB() {
+// ==========================================
+// 🔑 AUTH HELPERS
+// ==========================================
+const getToken = () => localStorage.getItem('token');
 
-    // =========================
-    // LOAD CART
-    // =========================
-    let storedCart =
-        localStorage.getItem("pshub_cart");
-
-    let storedWishlist;
-
-    const currentUserStr =
-        localStorage.getItem("currentUser");
-
-    if (currentUserStr) {
-
-        const currentUser =
-            JSON.parse(currentUserStr);
-
-        const users =
-            JSON.parse(
-                localStorage.getItem("users") || "[]"
-            );
-
-        const userObj = users.find(
-            u => u.username === currentUser.username
-        );
-
-        if (userObj && userObj.wishlist) {
-
-            storedWishlist =
-                JSON.stringify(userObj.wishlist);
-        }
-    }
-
-    if (!storedWishlist) {
-
-        storedWishlist =
-            localStorage.getItem("pshub_wishlist");
-    }
-
-    // =========================
-    // CART
-    // =========================
-    if (storedCart) {
-
-        try {
-
-            cart = JSON.parse(storedCart) || [];
-
-        } catch (e) {
-
-            cart = [];
-        }
-    }
-
-    // =========================
-    // WISHLIST
-    // =========================
-    if (storedWishlist) {
-
-        try {
-
-            let raw =
-                JSON.parse(storedWishlist) || [];
-
-            wishlist = raw.map(w =>
-                typeof w === "string"
-                    ? w
-                    : (
-                        w.gameID ||
-                        w.id ||
-                        w._id ||
-                        ""
-                    )
-            ).filter(Boolean);
-
-        } catch (e) {
-
-            wishlist = [];
-        }
-    }
-
-    // =========================
-    // LOAD GAMES FROM BACKEND
-    // =========================
-    try {
-
-        const response =
-            await fetch("/api/games?status=Available");
-
-        const data =
-            await response.json();
-
-        console.log("Games from backend:", data);
-
-        inventory =
-            Array.isArray(data)
-            ? data
-            : (data.games || []);
-
-    } catch (error) {
-
-        console.error(
-            "Error loading games:",
-            error
-        );
-
-        inventory = [];
-    }
-
-    // =========================
-    // NORMALIZE DATABASE FIELDS
-    // =========================
-    inventory = inventory.map(g => ({
-
-        ...g,
-
-        // universal ID
-        gameID:
-            String(
-                g.gameID ||
-                g._id ||
-                g.id ||
-                ""
-            ),
-
-        // title
-        title:
-            g.title || "Unknown Game",
-
-        // image
-        img:
-            g.img ||
-            g.image ||
-            (
-                g.images &&
-                g.images.length > 0
-            ? g.images[0]
-            : "/photos/placeholder.png"
-            ),
-
-        // price
-        pricePerDay:
-            parseFloat(
-                g.pricePerDay ||
-                g.price ||
-                0
-            ),
-
-        // normalize status
-        status:
-            (
-                g.status ||
-                "available"
-            ).toLowerCase(),
-
-        // platform/category fallback
-        platform:
-            g.platform || "PS5",
-
-        category:
-            g.category || "Unknown"
-    }));
-
-    console.log("Normalized inventory:", inventory);
-
-    applyFilters();
-}
-window.onload = function () {
-    loadCurrentUser();
-    loadDB();
+const authHeaders = () => {
+  const headers = {};
+  const token = getToken();
+  if (token) headers.Authorization = `Bearer ${token}`;
+  return headers;
 };
 
+// ==========================================
+// 👤 CURRENT USER
+// ==========================================
 function getDashboardRoute(user) {
-    if (!user || !user.role) return '/gamerDashboard';
-    if (user.role === 'Admin') return '/adminDashboard';
-    if (user.role === 'Store') return '/storedashboard';
-    return '/gamerDashboard';
+  if (!user || !user.role) return '/gamerDashboard';
+  if (user.role === 'Admin') return '/adminDashboard';
+  if (user.role === 'Store') return '/storedashboard';
+  return '/gamerDashboard';
 }
 
 function loadCurrentUser() {
-    const userLink = document.getElementById('user-name-link');
-    const loginBtn = document.querySelector('.login-btn');
-    if (!userLink) return;
-    
-    // If server already rendered a username (not 'Guest'), don't override it
-    const currentText = userLink.textContent.trim();
-    if (currentText && currentText !== 'Guest') {
-        if (loginBtn) loginBtn.style.display = 'none';
-        return;
+  const userLink = document.getElementById('user-name-link');
+  const loginBtn = document.querySelector('.login-btn');
+  if (!userLink) return;
+
+  // Don't override if server already rendered a real username
+  const currentText = userLink.textContent.trim();
+  if (currentText && currentText !== 'Guest') {
+    if (loginBtn) loginBtn.style.display = 'none';
+    return;
+  }
+
+  const stored = localStorage.getItem('currentUser');
+  if (stored) {
+    const user = JSON.parse(stored);
+    userLink.textContent = user.name || user.username || 'My Account';
+    userLink.href = getDashboardRoute(user);
+    if (loginBtn) loginBtn.style.display = 'none';
+  } else {
+    userLink.textContent = 'Guest';
+    userLink.removeAttribute('href');
+    if (loginBtn) loginBtn.style.display = 'inline';
+  }
+}
+
+// ==========================================
+// 📦 LOAD DATA
+// ==========================================
+async function loadDB() {
+  // Load cart
+  try {
+    cart = JSON.parse(localStorage.getItem('pshub_cart') || '[]');
+  } catch {
+    cart = [];
+  }
+
+  // Load wishlist — from backend if logged in
+  const token = getToken();
+  if (token) {
+    try {
+      const res = await fetch('/api/wishlist', { headers: authHeaders() });
+      if (res.ok) {
+        const wishlistGames = await res.json();
+        wishlist = wishlistGames.map(g => String(g._id || g.gameID || g.id || '')).filter(Boolean);
+        localStorage.setItem('pshub_wishlist', JSON.stringify(wishlist));
+      }
+    } catch (e) {
+      wishlist = JSON.parse(localStorage.getItem('pshub_wishlist') || '[]');
     }
-    
-    const stored = localStorage.getItem('currentUser');
-    if (stored) {
-        const user = JSON.parse(stored);
-        userLink.textContent = user.name || user.username || 'My Account';
-        userLink.href = getDashboardRoute(user);
-        if (loginBtn) loginBtn.style.display = 'none';
-    } else {
-        userLink.textContent = 'Guest';
-        userLink.removeAttribute('href');
-        if (loginBtn) loginBtn.style.display = 'inline';
+  } else {
+    try {
+      wishlist = JSON.parse(localStorage.getItem('pshub_wishlist') || '[]');
+    } catch {
+      wishlist = [];
     }
-} 
+  }
+
+  // Load games from backend
+  try {
+    const response = await fetch('/api/games?status=Available');
+    const data = await response.json();
+    inventory = Array.isArray(data) ? data : (data.games || []);
+  } catch (error) {
+    console.error('Error loading games:', error);
+    inventory = [];
+  }
+
+  // Normalize
+  inventory = inventory.map(g => ({
+    ...g,
+    gameID: String(g.gameID || g._id || g.id || ''),
+    title: g.title || 'Unknown Game',
+    img: g.img || g.image || (g.images && g.images.length > 0 ? g.images[0] : '/photos/placeholder.png'),
+    pricePerDay: parseFloat(g.pricePerDay || g.price || 0),
+    status: (g.status || 'available').toLowerCase(),
+    platform: g.platform || 'PS5',
+    category: g.category || 'Unknown'
+  }));
+
+  applyFilters();
+}
+
+window.onload = function () {
+  loadCurrentUser();
+  loadDB();
+};
 
 window.addEventListener('storage', (event) => {
-    if (event.key === 'currentUser' || event.key === 'token') {
-        loadCurrentUser();
-    }
-    if (event.key === 'pshub_cart') {
-        const storedCart = localStorage.getItem('pshub_cart');
-        try {
-            cart = JSON.parse(storedCart) || [];
-        } catch {
-            cart = [];
-        }
-        applyFilters();
-    }
+  if (event.key === 'currentUser' || event.key === 'token') loadCurrentUser();
+  if (event.key === 'pshub_cart') {
+    try { cart = JSON.parse(localStorage.getItem('pshub_cart') || '[]'); } catch { cart = []; }
+    applyFilters();
+  }
 });
 
+// ==========================================
+// 🔍 FILTERS
+// ==========================================
 function applyFilters() {
+  const searchEl = document.getElementById('mainSearch');
+  const minEl = document.getElementById('minPrice');
+  const maxEl = document.getElementById('maxPrice');
 
-    const searchEl =
-        document.getElementById("mainSearch");
+  const search = searchEl?.value ? String(searchEl.value).toLowerCase() : '';
+  const minP = minEl ? (parseFloat(minEl.value) || 0) : 0;
+  const maxP = maxEl ? (parseFloat(maxEl.value) || Infinity) : Infinity;
 
-    const minEl =
-        document.getElementById("minPrice");
+  const platforms = Array.from(document.querySelectorAll('#platform-filters input:checked')).map(i => i.value);
+  const categories = Array.from(document.querySelectorAll('#category-filters input:checked')).map(i => i.value);
 
-    const maxEl =
-        document.getElementById("maxPrice");
+  const filtered = inventory.filter(g => {
+    const matchesSearch = !search || g.title.toLowerCase().includes(search) || g.gameID.toLowerCase().includes(search);
+    const gamePlatforms = String(g.platform || '').split('&').map(p => p.trim()).filter(Boolean);
+    const matchesPlatform = platforms.length === 0 || platforms.some(p => gamePlatforms.includes(p));
+    const matchesCategory = categories.length === 0 || categories.includes(g.category);
+    const matchesPrice = g.pricePerDay >= minP && g.pricePerDay <= maxP;
+    const matchesStore = !activeStoreFilter || g.storeID === activeStoreFilter;
+    const isAvailable = g.status === 'available' || g.status === '';
+    return matchesSearch && matchesPlatform && matchesCategory && matchesPrice && matchesStore && isAvailable;
+  });
 
-    const search =
-        (
-            searchEl &&
-            searchEl.value
-        )
-        ? String(searchEl.value).toLowerCase()
-        : "";
+  const itemCount = document.getElementById('item-count');
+  if (itemCount) itemCount.innerText = `${filtered.length} games found`;
 
-    const minP =
-        minEl
-        ? (
-            parseFloat(minEl.value) || 0
-        )
-        : 0;
-
-    const maxP =
-        maxEl
-        ? (
-            parseFloat(maxEl.value) || Infinity
-        )
-        : Infinity;
-
-    const platforms =
-        Array.from(
-            document.querySelectorAll(
-                "#platform-filters input:checked"
-            )
-        ).map(i => i.value);
-
-    const categories =
-        Array.from(
-            document.querySelectorAll(
-                "#category-filters input:checked"
-            )
-        ).map(i => i.value);
-
-    const filtered = inventory.filter(g => {
-
-        const matchesSearch =
-            !search ||
-            (
-                g.title.toLowerCase().includes(search)
-                ||
-                g.gameID.toLowerCase().includes(search)
-            );
-
-        const gamePlatforms = String(g.platform || '')
-            .split('&')
-            .map(p => p.trim())
-            .filter(Boolean);
-
-        const matchesPlatform =
-            platforms.length === 0
-            ||
-            platforms.some(platform => gamePlatforms.includes(platform));
-
-        const matchesCategory =
-            categories.length === 0
-            ||
-            categories.includes(g.category);
-
-        const matchesPrice =
-            g.pricePerDay >= minP &&
-            g.pricePerDay <= maxP;
-
-        const matchesStore =
-            !activeStoreFilter ||
-            g.storeID === activeStoreFilter;
-
-        // FIXED STATUS CHECK
-        const isAvailable =
-            g.status === "available" ||
-            g.status === "";
-
-        return (
-            matchesSearch &&
-            matchesPlatform &&
-            matchesCategory &&
-            matchesPrice &&
-            matchesStore &&
-            isAvailable
-        );
-    });
-
-    const itemCount =
-        document.getElementById("item-count");
-
-    if (itemCount) {
-
-        itemCount.innerText =
-            `${filtered.length} games found`;
-    }
-
-    renderInventory(filtered);
-
-    renderCart();
+  renderInventory(filtered);
+  renderCart();
 }
 
+// ==========================================
+// 🎮 RENDER GAMES
+// ==========================================
 function renderInventory(data) {
-    const gallery = document.getElementById('game-grid');
-    if (!gallery) return;
+  const gallery = document.getElementById('game-grid');
+  if (!gallery) return;
 
-    gallery.innerHTML = '';
+  gallery.innerHTML = '';
 
-    if (data.length === 0) {
-        gallery.innerHTML = `<div style="color:white; grid-column: 1/-1; text-align:center; padding: 50px;">No games available.</div>`;
-        return;
-    }
+  if (!data.length) {
+    gallery.innerHTML = `<div style="color:white; grid-column: 1/-1; text-align:center; padding: 50px;">No games available.</div>`;
+    return;
+  }
 
-    data.forEach(game => {
-        const gid = String(game.gameID || game._id || game.id || '');
-        const card = document.createElement('div');
-        card.className = 'game-card';
-        card.style.cursor = 'pointer';
-        card.onclick = () => window.location.href = `/game_description?id=${gid}`;
+  data.forEach(game => {
+    const gid = String(game.gameID || game._id || game.id || '');
+    const card = document.createElement('div');
+    card.className = 'game-card';
+    card.style.cursor = 'pointer';
+    card.onclick = () => window.location.href = `/game_description?id=${gid}`;
 
-        const isInCart = cart.some(item => item.gameID === gid);
-        const buttonText = isInCart ? "In Cart" : "Add to Cart";
-        const buttonClass = isInCart ? "add-btn in-cart" : "add-btn";
+    const isInCart = cart.some(item => item.gameID === gid);
+    const isInWishlist = wishlist.includes(gid);
 
-        const isInWishlist = wishlist.includes(gid);
-        const heartIcon = isInWishlist ? "❤️" : "🤍";
-
-        card.innerHTML = `
-            <img src="${game.img}" alt="${game.title}" style="width: 100%; height: auto; object-fit: cover;">
-            <div class="wishlist-btn" onclick="event.stopPropagation(); toggleWishlist('${gid}')">${heartIcon}</div>
-            <div class="game-info"> 
-                <h3>${game.title}</h3>
-                <p style="font-size: 0.8rem; color: #888; margin: 0;">${game.platform}</p>
-                <p style="font-size: 0.75rem; color: #666; margin: 3px 0;">${game.category || ''}</p>
-                <div class="price" style="font-weight: bold; margin: 5px 0;">${(game.pricePerDay || 0)} EGP/day</div>
-                <button class="${buttonClass}" onclick="event.stopPropagation(); addToCart('${gid}')">
-                    ${buttonText}
-                </button>
-            </div>
-        `;
-        gallery.appendChild(card);
-    });
+    card.innerHTML = `
+      <img src="${game.img}" alt="${game.title}" style="width: 100%; height: auto; object-fit: cover;">
+      <div class="wishlist-btn" onclick="event.stopPropagation(); toggleWishlist('${gid}')">${isInWishlist ? '❤️' : '🤍'}</div>
+      <div class="game-info">
+        <h3>${game.title}</h3>
+        <p style="font-size: 0.8rem; color: #888; margin: 0;">${game.platform}</p>
+        <p style="font-size: 0.75rem; color: #666; margin: 3px 0;">${game.category || ''}</p>
+        <div class="price" style="font-weight: bold; margin: 5px 0;">${game.pricePerDay || 0} EGP/day</div>
+        <button class="add-btn ${isInCart ? 'in-cart' : ''}" onclick="event.stopPropagation(); addToCart('${gid}')">
+          ${isInCart ? 'In Cart' : 'Add to Cart'}
+        </button>
+      </div>
+    `;
+    gallery.appendChild(card);
+  });
 }
 
+// ==========================================
+// 🛒 CART
+// ==========================================
 function addToCart(id) {
-    const item = inventory.find(g => String(g.gameID || g._id || g.id || '') === String(id));
-    if (item && !cart.some(c => String(c.gameID || c._id || c.id || '') === String(id))) {
-        cart.push(item);
-        saveDB();
-        applyFilters();
-    }
+  const item = inventory.find(g => String(g.gameID || g._id || g.id || '') === String(id));
+  if (item && !cart.some(c => String(c.gameID || c._id || c.id || '') === String(id))) {
+    cart.push(item);
+    localStorage.setItem('pshub_cart', JSON.stringify(cart));
+    applyFilters();
+  }
 }
 
 function removeFromCart(id) {
-    cart = cart.filter(c => String(c.gameID || c._id || c.id || '') !== String(id));
-    saveDB();
-    applyFilters();
+  cart = cart.filter(c => String(c.gameID || c._id || c.id || '') !== String(id));
+  localStorage.setItem('pshub_cart', JSON.stringify(cart));
+  applyFilters();
 }
 
 function renderCart() {
-    const cartList = document.getElementById('cart-items');
-    const cartCount = document.getElementById('cart-count');
-    const cartTotal = document.getElementById('cart-total');
+  const cartList = document.getElementById('cart-items');
+  const cartCount = document.getElementById('cart-count');
+  const cartTotal = document.getElementById('cart-total');
 
-    if (cartCount) cartCount.innerText = cart.length;
+  if (cartCount) cartCount.innerText = cart.length;
 
-    let total = 0;
-    if (cartList) {
-        cartList.innerHTML = cart.map(item => {
-            total += parseFloat(item.pricePerDay) || 0;
-            return `
-                <div class="cart-item">
-                    <img src="${item.img}" style="width:40px; height:60px; object-fit:cover; border-radius:4px;">
-                    <div style="flex:1; font-size:0.85rem; color:white; margin-left:10px;">${item.title}<br>${item.pricePerDay} EGP</div>
-                    <button onclick="removeFromCart('${item.gameID}')" style="background:none; border:none; cursor:pointer; color:white;">🗑️</button>
-                </div>
-            `;
-        }).join('');
-    }
-    if (cartTotal) cartTotal.innerText = total.toFixed(2);
+  let total = 0;
+  if (cartList) {
+    cartList.innerHTML = cart.map(item => {
+      total += parseFloat(item.pricePerDay) || 0;
+      return `
+        <div class="cart-item">
+          <img src="${item.img}" style="width:40px; height:60px; object-fit:cover; border-radius:4px;">
+          <div style="flex:1; font-size:0.85rem; color:white; margin-left:10px;">${item.title}<br>${item.pricePerDay} EGP</div>
+          <button onclick="removeFromCart('${item.gameID}')" style="background:none; border:none; cursor:pointer; color:white;">🗑️</button>
+        </div>
+      `;
+    }).join('');
+  }
+  if (cartTotal) cartTotal.innerText = total.toFixed(2);
 }
 
 function toggleCart(open) {
-    const sidebar = document.getElementById('cart-sidebar');
-    if (!sidebar) return;
-
-    if (open === true) sidebar.classList.add('open');
-    else if (open === false) sidebar.classList.remove('open');
-    else sidebar.classList.toggle('open');
-}
-
-function saveDB() {
-    localStorage.setItem('pshub_cart', JSON.stringify(cart));
-
-    // Always persist a pshub_wishlist for pages that rely on it
-    try {
-        localStorage.setItem('pshub_wishlist', JSON.stringify(wishlist));
-    } catch (e) {
-        console.error('Failed to write pshub_wishlist', e);
-    }
-
-    const currentUserStr = localStorage.getItem('currentUser');
-    if (currentUserStr) {
-        try {
-            const currentUser = JSON.parse(currentUserStr);
-
-            // update currentUser object in storage
-            currentUser.wishlist = wishlist;
-            localStorage.setItem('currentUser', JSON.stringify(currentUser));
-
-            // update users array if present, otherwise add a minimal entry
-            const users = JSON.parse(localStorage.getItem('users') || '[]');
-            const idx = users.findIndex(u => u.username === currentUser.username || u.email === currentUser.email);
-            if (idx !== -1) {
-                users[idx].wishlist = wishlist;
-            } else {
-                users.push({ username: currentUser.username, email: currentUser.email, wishlist });
-            }
-            localStorage.setItem('users', JSON.stringify(users));
-        } catch (err) {
-            console.error('Failed to persist wishlist to currentUser/users', err);
-        }
-    }
-}
-
-
-function toggleWishlist(id) {
-    const normalizedId = String(id || '');
-    if (wishlist.includes(normalizedId)) {
-        wishlist = wishlist.filter(wId => wId !== normalizedId);
-    } else {
-        wishlist.push(normalizedId);
-    }
-    saveDB();
-    applyFilters();
-}
-
-function resetDatabase() {
-    localStorage.clear();
-    location.reload();
+  const sidebar = document.getElementById('cart-sidebar');
+  if (!sidebar) return;
+  if (open === true) sidebar.classList.add('open');
+  else if (open === false) sidebar.classList.remove('open');
+  else sidebar.classList.toggle('open');
 }
 
 function checkout() {
-    if (cart.length === 0) { alert("Your cart is empty!"); return; }
-    saveDB();
-    window.location.href = '/Checkout';
+  if (!cart.length) { alert('Your cart is empty!'); return; }
+  localStorage.setItem('pshub_cart', JSON.stringify(cart));
+  window.location.href = '/Checkout';
 }
 
+// ==========================================
+// ❤️ WISHLIST
+// ==========================================
+async function toggleWishlist(id) {
+  const token = getToken();
+  if (!token) {
+    alert('Please login to use the wishlist!');
+    window.location.href = '/login';
+    return;
+  }
+
+  const normalizedId = String(id || '');
+  try {
+    if (wishlist.includes(normalizedId)) {
+      await fetch(`/api/wishlist/${normalizedId}`, { method: 'DELETE', headers: authHeaders() });
+      wishlist = wishlist.filter(wId => wId !== normalizedId);
+    } else {
+      await fetch(`/api/wishlist/${normalizedId}`, { method: 'POST', headers: authHeaders() });
+      wishlist.push(normalizedId);
+    }
+    localStorage.setItem('pshub_wishlist', JSON.stringify(wishlist));
+    applyFilters();
+  } catch (err) {
+    console.error('Wishlist error:', err);
+  }
+}
+
+// ==========================================
+// 🚪 LOGOUT
+// ==========================================
+document.getElementById('logout-btn')?.addEventListener('click', async (e) => {
+  e.preventDefault();
+  try {
+    await fetch('/api/auth/logout', { method: 'POST', headers: authHeaders() });
+  } catch (err) { /* stateless — ignore */ }
+  localStorage.removeItem('token');
+  localStorage.removeItem('currentUser');
+  window.location.href = '/login';
+});
+
+// ==========================================
+// 🔍 SEARCH/FILTER EVENTS
+// ==========================================
 document.addEventListener('DOMContentLoaded', () => {
-    const ms = document.getElementById('mainSearch');
-    const min = document.getElementById('minPrice');
-    const max = document.getElementById('maxPrice');
-    if (ms) ms.addEventListener('input', applyFilters);
-    if (min) min.addEventListener('input', applyFilters);
-    if (max) max.addEventListener('input', applyFilters);
+  const ms = document.getElementById('mainSearch');
+  const min = document.getElementById('minPrice');
+  const max = document.getElementById('maxPrice');
+  if (ms) ms.addEventListener('input', applyFilters);
+  if (min) min.addEventListener('input', applyFilters);
+  if (max) max.addEventListener('input', applyFilters);
 });
 
 function index() {
-    window.location.href = '/index';
+  window.location.href = '/index';
 }
-
-// ==========================================
-// 🚪 UNIFIED JWT LOGOUT LOGIC
-// ==========================================
-// This looks for a button with id="logout-btn" on your dashboard HTML
-document.getElementById("logout-btn")?.addEventListener("click", async (e) => {
-    e.preventDefault();
-
-    try {
-        // 1. Tell the backend to process the logout
-        await fetch("http://localhost:8080/api/auth/logout", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" }
-        });
-    } catch (err) {
-        console.log("Network message: Server processed stateless token drop.");
-    }
-
-    // 2. Wipe the local storage clean so the middlewares block further access
-    localStorage.removeItem("token");
-    localStorage.removeItem("currentUser");
-
-    // 3. Kick them out to the login screen
-    alert("Logged out successfully!");
-    window.location.href = "/login";
-});
