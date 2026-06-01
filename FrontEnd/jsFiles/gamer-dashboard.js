@@ -91,13 +91,12 @@ function showSection(sectionId, btn) {
 // ==========================================
 // 🚪 LOGOUT
 // ==========================================
-function logout() {
-  if (!confirm('Are you sure you want to log out?')) return;
+async function logout() {
+  const confirmed = await showConfirm('Are you sure you want to log out?');
+  if (!confirmed) return;
 
-  // Tell the server (fire and forget — stateless)
   fetch('/api/auth/logout', { method: 'POST', headers: authHeaders() }).catch(() => {});
 
-  // Wipe client storage
   localStorage.removeItem('token');
   localStorage.removeItem('currentUser');
   localStorage.removeItem('pshub_wishlist');
@@ -268,25 +267,114 @@ function renderRentals() {
 }
 
 async function returnGame(rentalId) {
-  try {
-    const res = await fetch(`/api/rentals/${rentalId}/return`, {
-      method: 'PATCH',
-      headers: authHeaders()
-    });
+  showConfirmPopup('Are you sure you want to return this game?', async () => {
+    try {
+      const res = await fetch(`/api/rentals/${rentalId}/return`, {
+        method: 'PATCH',
+        headers: authHeaders()
+      });
 
-    const data = await res.json();
-    if (!res.ok) {
-      alert(data.error || data.message || 'Failed to return game.');
-      return;
+      const data = await res.json();
+      if (!res.ok) {
+        alert(data.error || data.message || 'Failed to return game.');
+        return;
+      }
+
+      await loadRentals();
+      await refreshUI();
+      showToast('Game returned successfully!');
+    } catch (err) {
+      console.error('Return failed:', err);
+      alert('Failed to return game.');
     }
+  });
+}
 
-    await loadRentals();
-    await refreshUI();
-    showToast('Game returned successfully!');
-  } catch (err) {
-    console.error('Return failed:', err);
-    alert('Failed to return game.');
-  }
+// ==========================================
+// 🗑️ CONFIRM POPUP
+// ==========================================
+function showConfirmPopup(message, onConfirm) {
+  const existing = document.getElementById('confirm-popup-overlay');
+  if (existing) existing.remove();
+
+  const overlay = document.createElement('div');
+  overlay.id = 'confirm-popup-overlay';
+  overlay.style.cssText = `
+    position: fixed; inset: 0;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex; align-items: center; justify-content: center;
+    z-index: 9999;
+    backdrop-filter: blur(4px);
+  `;
+
+  overlay.innerHTML = `
+    <div style="
+      background: #111111;
+      border: 1px solid rgba(0, 67, 156, 0.4);
+      border-radius: 20px;
+      padding: 36px 32px;
+      max-width: 380px;
+      width: 90%;
+      text-align: center;
+      box-shadow: 0 10px 30px rgba(0, 67, 156, 0.3);
+    ">
+      <p style="
+        font-size: 1.05rem;
+        margin-bottom: 28px;
+        color: #ffffff;
+        font-family: 'Segoe UI', sans-serif;
+        line-height: 1.5;
+      ">${message}</p>
+      <div style="display: flex; gap: 12px; justify-content: center;">
+        <button id="confirm-yes-btn" style="
+          padding: 10px 32px;
+          background: rgba(255, 68, 68, 0.15);
+          color: #ff4444;
+          border: 1px solid rgba(255, 68, 68, 0.4);
+          border-radius: 50px;
+          font-size: 0.95rem;
+          font-family: 'Segoe UI', sans-serif;
+          font-weight: 600;
+          cursor: pointer;
+          transition: 0.2s;
+        "
+        onmouseover="this.style.background='#ff4444';this.style.color='#fff'"
+        onmouseout="this.style.background='rgba(255,68,68,0.15)';this.style.color='#ff4444'"
+        >Yes</button>
+
+        <button id="confirm-no-btn" style="
+          padding: 10px 32px;
+          background: rgba(0, 67, 156, 0.2);
+          color: #ffffff;
+          border: 1px solid rgba(0, 67, 156, 0.4);
+          border-radius: 50px;
+          font-size: 0.95rem;
+          font-family: 'Segoe UI', sans-serif;
+          font-weight: 600;
+          cursor: pointer;
+          transition: 0.2s;
+        "
+        onmouseover="this.style.background='#00439c';this.style.color='#fff'"
+        onmouseout="this.style.background='rgba(0,67,156,0.2)';this.style.color='#fff'"
+        >No</button>
+      </div>
+    </div>
+  `;
+
+  document.body.appendChild(overlay);
+
+  document.getElementById('confirm-yes-btn').onclick = () => {
+    overlay.remove();
+    onConfirm();
+  };
+
+  document.getElementById('confirm-no-btn').onclick = () => {
+    overlay.remove();
+  };
+
+  overlay.addEventListener('click', (e) => {
+    if (e.target === overlay) overlay.remove();
+  });
 }
 
 // ==========================================
@@ -389,7 +477,61 @@ function goToGameDescription(gameID) {
 // 🍞 TOAST
 // ==========================================
 function showToast(message) {
-  alert(message);
+  const existing = document.getElementById('toast-popup-overlay');
+  if (existing) existing.remove();
+
+  const overlay = document.createElement('div');
+  overlay.id = 'toast-popup-overlay';
+  overlay.style.cssText = `
+    position: fixed; inset: 0;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex; align-items: center; justify-content: center;
+    z-index: 9999;
+    backdrop-filter: blur(4px);
+  `;
+
+  overlay.innerHTML = `
+    <div style="
+      background: #111111;
+      border: 1px solid rgba(0, 67, 156, 0.4);
+      border-radius: 20px;
+      padding: 36px 32px;
+      max-width: 380px;
+      width: 90%;
+      text-align: center;
+      box-shadow: 0 10px 30px rgba(0, 67, 156, 0.3);
+    ">
+      <p style="
+        font-size: 1.05rem;
+        margin-bottom: 28px;
+        color: #ffffff;
+        font-family: 'Segoe UI', sans-serif;
+        line-height: 1.5;
+      ">${message}</p>
+      <button id="toast-ok-btn" style="
+        padding: 10px 40px;
+        background: rgba(0, 67, 156, 0.2);
+        color: #ffffff;
+        border: 1px solid rgba(0, 67, 156, 0.4);
+        border-radius: 50px;
+        font-size: 0.95rem;
+        font-family: 'Segoe UI', sans-serif;
+        font-weight: 600;
+        cursor: pointer;
+      "
+      onmouseover="this.style.background='#00439c'"
+      onmouseout="this.style.background='rgba(0,67,156,0.2)'"
+      >OK</button>
+    </div>
+  `;
+
+  document.body.appendChild(overlay);
+
+  document.getElementById('toast-ok-btn').onclick = () => overlay.remove();
+
+  overlay.addEventListener('click', (e) => {
+    if (e.target === overlay) overlay.remove();
+  });
 }
 
 // ==========================================
