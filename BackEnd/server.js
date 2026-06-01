@@ -16,38 +16,34 @@ const app = express();
 const PORT = process.env.PORT || 8080;
 
 // ==========================================
-// 📁 IMPORT ROUTERS & MIDDLEWARE
-// ==========================================
-const authRoutes = require('./Routes/authRoutes');
-const gameRoutes = require('./Routes/gameRoutes');
-const rentalRoutes = require('./Routes/rentalRoutes');
-const userRoutes = require('./Routes/userRoutes');
-const wishlistRoutes = require('./Routes/wishlistRoutes');
-const errorMiddleware = require('./Middleware/errorMiddleware');
-const { protect, restrictTo } = require('./Middleware/authMiddleware');
-
-// ==========================================
-// 🔌 GLOBAL MIDDLEWARE
+// 🔌 GLOBAL BASIC MIDDLEWARE (Run First)
 // ==========================================
 app.use(cors());
 app.use(express.json());
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, '../FrontEnd')));
-app.use(express.static(path.join(__dirname, 'public')));
 
-// EJS view engine
+// ==========================================
+// 🖥️ VIEW ENGINE CONFIGURATION (CRITICAL: Must sit before any asset or page rendering)
+// ==========================================
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
 // ==========================================
+// 📁 STATIC ASSETS DEFINITIONS
+// Direct asset folder routing to keep static files completely safe from EJS clashes
+// ==========================================
+app.use('/cssFiles', express.static(path.join(__dirname, '../FrontEnd/cssFiles')));
+app.use('/jsFiles', express.static(path.join(__dirname, '../FrontEnd/jsFiles')));
+app.use('/photos', express.static(path.join(__dirname, '../FrontEnd/photos')));
+app.use(express.static(path.join(__dirname, '../FrontEnd')));
+app.use(express.static(path.join(__dirname, 'public')));
+
+// ==========================================
 // 🔑 TOKEN → EJS USER HELPER
-// Decodes JWT from cookie or Authorization header
-// and attaches user to res.locals for all EJS views
 // ==========================================
 app.use((req, res, next) => {
   res.locals.user = null;
 
-  // Support token in Authorization header OR a "token" cookie
   let token = null;
   const authHeader = req.headers.authorization;
   if (authHeader && authHeader.startsWith('Bearer ')) {
@@ -59,14 +55,24 @@ app.use((req, res, next) => {
   if (token) {
     try {
       const decoded = jwt.verify(token, process.env.JWT_SECRET || 'fallback_super_secret_key');
-      res.locals.user = decoded; // { id, role, storeID }
+      res.locals.user = decoded;
     } catch (err) {
-      // Invalid/expired token — just leave user as null
+      // Invalid/expired token
     }
   }
-
   next();
 });
+
+// ==========================================
+// 📁 IMPORT ROUTERS & MIDDLEWARE
+// ==========================================
+const authRoutes = require('./Routes/authRoutes');
+const gameRoutes = require('./Routes/gameRoutes');
+const rentalRoutes = require('./Routes/rentalRoutes');
+const userRoutes = require('./Routes/userRoutes');
+const wishlistRoutes = require('./Routes/wishlistRoutes');
+const errorMiddleware = require('./Middleware/errorMiddleware');
+const { protect, restrictTo } = require('./Middleware/authMiddleware');
 
 // ==========================================
 // ☁️ DATABASE CONNECTION
@@ -97,8 +103,6 @@ app.use('/api/wishlist', wishlistRoutes);
 
 // ==========================================
 // 🖥️ EJS PAGE ROUTES
-// NOTE: res.locals.user is set above from the JWT token middleware.
-// EJS views use <%= user %> — no session needed.
 // ==========================================
 const Game = require('./models/Game');
 
@@ -113,7 +117,7 @@ simpleViews.forEach((view) => {
   app.get(`/${view}.html`, (req, res) => res.render(view, { user: res.locals.user }));
 });
 
-// Browse Games — needs game list from DB
+// Browse Games
 app.get('/browse-games', async (req, res) => {
   try {
     const games = await Game.find({ status: 'Available' }).sort({ title: 1 }).lean();
@@ -124,7 +128,7 @@ app.get('/browse-games', async (req, res) => {
   }
 });
 
-// Game Description — needs single game from DB
+// Game Description
 app.get('/game-description', async (req, res) => {
   try {
     const gameId = req.query.id;
