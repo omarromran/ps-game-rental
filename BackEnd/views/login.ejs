@@ -89,6 +89,7 @@
                 // Save user to localStorage
                 localStorage.setItem("currentUser", JSON.stringify(data.user));
                 localStorage.setItem("token", data.token);
+                document.cookie = `token=${data.token}; path=/; max-age=86400`;
 
                 alert(`Welcome back, ${data.user.username}!`);
 

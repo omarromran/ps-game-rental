@@ -5,6 +5,7 @@ const dotenv = require('dotenv');
 const path = require('path');
 const multer = require('multer');
 const jwt = require('jsonwebtoken');
+const cookieParser = require('cookie-parser');
 
 // ==========================================
 // ⚙️ CONFIGURATIONS & INITIALIZATION
@@ -30,6 +31,7 @@ const { protect, restrictTo } = require('./Middleware/authMiddleware');
 // ==========================================
 app.use(cors());
 app.use(express.json());
+app.use(cookieParser());
 app.use(express.static(path.join(__dirname, '../FrontEnd')));
 app.use(express.static(path.join(__dirname, 'public')));
 

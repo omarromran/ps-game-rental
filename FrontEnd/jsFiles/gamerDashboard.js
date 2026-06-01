@@ -1,6 +1,7 @@
 let users = [];
 let games = [];
 let rentals = [];
+let availableWishlistCount = 0;
 
 // ==========================================
 // 🔑 AUTH HELPERS — Token only
@@ -108,8 +109,8 @@ function logout() {
 // 🔄 REFRESH UI
 // ==========================================
 async function refreshUI() {
-  renderDashboard();
-  await renderWishlist();
+  await renderWishlist(); // sets availableWishlistCount first
+  renderDashboard();      
   renderRentals();
   renderProfile();
 }
@@ -121,7 +122,6 @@ function renderDashboard() {
   const user = getCurrentUser();
   if (!user) return;
 
-  const wishlistIds = getWishlist();
   const recentRentals = rentals
     .slice()
     .sort((a, b) => new Date(b.startDate) - new Date(a.startDate))
@@ -136,7 +136,7 @@ function renderDashboard() {
       </div>
       <div class="card">
         <h3>Wishlist</h3>
-        <p>${wishlistIds.length}</p>
+        <p>${availableWishlistCount}</p>
       </div>
     `;
   }
@@ -161,7 +161,6 @@ function renderDashboard() {
     `;
   }).join('');
 }
-
 // ==========================================
 // ❤️ WISHLIST
 // ==========================================
@@ -191,12 +190,17 @@ async function renderWishlist() {
     const ids = wishlistGames.map(g => String(g._id || g.gameID || g.id));
     localStorage.setItem('pshub_wishlist', JSON.stringify(ids));
 
-    if (!wishlistGames.length) {
-      container.innerHTML = '<p>Your wishlist is empty.</p>';
-      return;
-    }
+    const availableGames = wishlistGames.filter(g => 
+    g.status === 'Available' || g.status === 'available'
+);
+availableWishlistCount = availableGames.length;
 
-    container.innerHTML = wishlistGames.map(game => {
+if (!availableGames.length) {
+    container.innerHTML = '<p>Your wishlist is empty.</p>';
+    return;
+}
+
+container.innerHTML = availableGames.map(game => {
       const gid = String(game._id || game.gameID || game.id || '');
       return `
         <div class="wishlist-card">
@@ -223,121 +227,12 @@ async function removeFromWishlist(gameID) {
       method: 'DELETE',
       headers: authHeaders()
     });
-<<<<<<< HEAD
   } catch (err) {
     console.error('Remove wishlist error:', err);
   }
   await renderWishlist();
   renderDashboard();
   showToast('Removed from wishlist.');
-=======
-
-    if (activityRows.length === 0) {
-        tbody.innerHTML = "<tr><td colspan=3>No recent activity found.</td></tr>";
-    } else {
-        tbody.innerHTML = activityRows.join("");
-    }
-}
-
-// ==========================================
-// ❤️ ADD TO WISHLIST
-// ==========================================
-function addToWishlist(gameID) {
-
-    let list = getWishlist();
-
-    if (!list.includes(gameID)) {
-
-        list.push(gameID);
-
-        saveWishlist(list);
-
-        showToast("Added to wishlist!");
-    }
-
-    renderWishlist();
-
-    renderDashboard();
-}
-
-// ==========================================
-// ❌ REMOVE WISHLIST
-// ==========================================
-function removeFromWishlist(gameID) {
-
-    let list =
-        getWishlist().filter(id => id !== gameID);
-
-    saveWishlist(list);
-
-    showToast("Removed from wishlist.");
-
-    renderWishlist();
-
-    renderDashboard();
-}
-
-// ==========================================
-// ❤️ RENDER WISHLIST
-// ==========================================
-function renderWishlist() {
-
-    const container =
-        document.getElementById("wishlist-container");
-
-    if (!container) return;
-
-    let wishlistIds = getWishlist();
-
-    const wishlistGames = games.filter(g =>
-    wishlistIds.includes(g.gameID) &&
-    (g.status === 'Available' || g.status === 'available')
-);
-
-    container.innerHTML = "";
-
-    if (wishlistGames.length === 0) {
-        container.innerHTML = "<p>Your wishlist is empty.</p>";
-        return;
-    }
-
-    wishlistGames.forEach(game => {
-
-        container.innerHTML += `
-            <div class="wishlist-card">
-
-                <img
-                    src="${game.img}"
-                    style="width:60px"
-                    alt="${game.title}"
-                >
-
-                <h3>${gameName(game)}</h3>
-
-                <p>${gameCategory(game)}</p>
-
-                <p>${game.pricePerDay || game.price || 0} EGP/day</p>
-                <p>Status: ${game.status || 'Unknown'}</p>
-                <button onclick="goToGameDescription('${game.gameID}')">
-                    Rent
-                </button>
-                <button onclick="removeFromWishlist('${game.gameID}')">
-                    Remove
-                </button>
-
-            </div>
-        `;
-    });
-}
-
-// ==========================================
-// 🎮 GAME DESCRIPTION
-// ==========================================
-function goToGameDescription(gameID) {
-
-    window.location.href =
-        `/game_description?id=${gameID}`;
->>>>>>> c1e1f81cfefb2150a50b9863083e792bb645fd0a
 }
 
 // ==========================================

@@ -67,9 +67,13 @@ async function loadDB() {
     try {
       const res = await fetch('/api/wishlist', { headers: authHeaders() });
       if (res.ok) {
-        const wishlistGames = await res.json();
-        wishlist = wishlistGames.map(g => String(g._id || g.gameID || g.id || '')).filter(Boolean);
-        localStorage.setItem('pshub_wishlist', JSON.stringify(wishlist));
+       const wishlistGames = await res.json();
+       wishlist = [];
+       wishlistGames.forEach(g => {
+    if (g._id) wishlist.push(String(g._id));
+    if (g.gameID) wishlist.push(String(g.gameID));
+});
+wishlist = [...new Set(wishlist)].filter(Boolean);
       }
     } catch (e) {
       wishlist = JSON.parse(localStorage.getItem('pshub_wishlist') || '[]');

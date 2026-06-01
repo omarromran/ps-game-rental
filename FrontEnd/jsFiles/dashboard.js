@@ -23,6 +23,20 @@ const getCache = (key) => {
   try { return JSON.parse(localStorage.getItem(key)); } catch { return null; }
 };
 
+function navigateToSection(sectionId, btn) {
+  document.querySelectorAll('main > section').forEach(s => s.style.display = 'none');
+  const sec = document.getElementById(sectionId);
+  if (sec) sec.style.display = 'block';
+  document.querySelectorAll('.sidebar nav button').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+}
+
+function showModTab(tabId) {
+  document.querySelectorAll('.tab-panel').forEach(p => p.style.display = 'none');
+  const tab = document.getElementById(tabId);
+  if (tab) tab.style.display = 'block';
+}
+
 // ==========================================
 // 📡 FETCH HELPER
 // ==========================================
