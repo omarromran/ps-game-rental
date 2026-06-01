@@ -288,11 +288,21 @@ async function toggleWishlist(id) {
 // ==========================================
 document.getElementById('logout-btn')?.addEventListener('click', async (e) => {
   e.preventDefault();
+
+  const confirmed = await showConfirm('Are you sure you want to log out?');
+  if (!confirmed) return;
+
   try {
-    await fetch('/api/auth/logout', { method: 'POST', headers: authHeaders() });
-  } catch (err) { /* stateless — ignore */ }
+    await fetch('/api/auth/logout', {
+      method: 'POST',
+      headers: authHeaders()
+    });
+  } catch (err) {}
+
   localStorage.removeItem('token');
   localStorage.removeItem('currentUser');
+  localStorage.removeItem('pshub_wishlist');
+
   window.location.href = '/login';
 });
 

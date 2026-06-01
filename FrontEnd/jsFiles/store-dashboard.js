@@ -45,18 +45,35 @@ document.addEventListener('DOMContentLoaded', () => {
   if (imageInput) imageInput.addEventListener('change', handleImageSelection);
 
   const logoutBtn = document.getElementById('logoutBtn');
-  if (logoutBtn) {
-    logoutBtn.addEventListener('click', async () => {
-      if (!confirm('Are you sure you want to logout?')) return;
+if (logoutBtn) {
+  logoutBtn.addEventListener('click', async () => {
+
+    const confirmed = await showConfirm('Are you sure you want to log out?');
+    if (!confirmed) return;
+
+    try {
+      await fetch('/api/auth/logout', {
+        method: 'POST',
+        headers: authHeaders()
+      });
+    } catch (err) {}
+
+    localStorage.removeItem('token');
+    localStorage.removeItem('currentUser');
+    localStorage.removeItem('pshub_wishlist');
+
+    window.location.href = '/login';
+  });
+}
       try {
         await fetch('/api/auth/logout', { method: 'POST', headers: authHeaders() });
       } catch (err) { /* stateless — ignore */ }
       localStorage.removeItem('token');
       localStorage.removeItem('currentUser');
       window.location.href = '/login';
-    });
+    
   }
-});
+);
 
 // ==========================================
 // 📦 LOAD DATA
