@@ -19,10 +19,10 @@ const authHeaders = () => {
 // 👤 CURRENT USER
 // ==========================================
 function getDashboardRoute(user) {
-  if (!user || !user.role) return '/gamerDashboard';
-  if (user.role === 'Admin') return '/adminDashboard';
-  if (user.role === 'Store') return '/storedashboard';
-  return '/gamerDashboard';
+  if (!user || !user.role) return '/gamer-dashboard';
+  if (user.role === 'Admin') return '/admin-dashboard';
+  if (user.role === 'Store') return '/store-dashboard';
+  return '/gamer-dashboard';
 }
 
 function loadCurrentUser() {
@@ -153,6 +153,9 @@ function applyFilters() {
   const itemCount = document.getElementById('item-count');
   if (itemCount) itemCount.innerText = `${filtered.length} games found`;
 
+  // Sort games alphabetically by title
+  filtered.sort((a, b) => (a.title || '').localeCompare(b.title || ''));
+
   renderInventory(filtered);
   renderCart();
 }
@@ -176,7 +179,7 @@ function renderInventory(data) {
     const card = document.createElement('div');
     card.className = 'game-card';
     card.style.cursor = 'pointer';
-    card.onclick = () => window.location.href = `/game_description?id=${gid}`;
+    card.onclick = () => window.location.href = `/game-description?id=${gid}`;
 
     const isInCart = cart.some(item => item.gameID === gid);
     const isInWishlist = wishlist.includes(gid);
@@ -250,7 +253,7 @@ function toggleCart(open) {
 function checkout() {
   if (!cart.length) { alert('Your cart is empty!'); return; }
   localStorage.setItem('pshub_cart', JSON.stringify(cart));
-  window.location.href = '/Checkout';
+  window.location.href = '/checkout';
 }
 
 // ==========================================
@@ -308,3 +311,4 @@ document.addEventListener('DOMContentLoaded', () => {
 function index() {
   window.location.href = '/index';
 }
+

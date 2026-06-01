@@ -7,13 +7,13 @@
     <title>PSHUB | Browse Games</title>
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-    <link rel="stylesheet" href="/cssFiles/BrowseGames.css">
+    <link rel="stylesheet" href="/cssFiles/browse-games.css">
     <link rel="icon" href="/photos/images.png">
 
     <script>
         window.serverGames = " JSON.stringify(games || [])";
     </script>
-    <script src="/jsFiles/Browse_Games.js" defer></script>
+    <script src="/jsFiles/browse-games.js" defer></script>
 </head>
 
 <body>
@@ -40,7 +40,7 @@
                     <a 
                         id="user-name-link"
                         class="user-name"
-                        href="<%= user.role === 'Admin' ? '/adminDashboard' : user.role === 'Store' ? '/storedashboard' : '/gamerDashboard' %>"
+                        href="<%= user.role === 'Admin' ? '/admin-dashboard' : user.role === 'Store' ? '/store-dashboard' : '/gamer-dashboard' %>"
                         style="text-decoration:none; color:inherit;"
                     >
                         <%= user.username %>
@@ -199,7 +199,7 @@
 
                     <div 
                         class="game-card"
-                        onclick="window.location.href='/game_description?id=<%= game._id %>'"
+                        onclick="window.location.href='/game-description?id=<%= game._id %>'"
                         style="cursor:pointer;"
                     >
 
@@ -329,3 +329,4 @@
 </body>
 
 </html>
+

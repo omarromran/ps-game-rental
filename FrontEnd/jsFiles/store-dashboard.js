@@ -1,4 +1,4 @@
-// storedashboard.js — token-only auth, no sessions
+// store-dashboard.js — token-only auth, no sessions
 
 let gameInventory = [];
 let currentEditGameId = null;
@@ -271,6 +271,14 @@ function cancelGameEdit() {
   selectedImages = [];
   updateImagePreview();
   hideFormError();
+
+  const manageGamesButton = document.querySelector('.sidebar nav button[onclick="showSection(\'manageGames\', this)"]')
+    || document.querySelector('.sidebar nav button:nth-child(3)');
+  if (manageGamesButton) {
+    showSection('manageGames', manageGamesButton);
+  } else {
+    showSection('manageGames');
+  }
 }
 
 // ==========================================
@@ -403,92 +411,7 @@ async function deleteGame(id) {
 }
 
 // ==========================================
-// 🔍 RAWG SEARCH
-// ==========================================
-async function performGameSearch() {
-  const searchInput = document.getElementById('gameSearchInput');
-  const searchResults = document.getElementById('searchResults');
-
-  if (!searchInput?.value.trim()) {
-    alert('Please enter a game title to search.');
-    return;
-  }
-
-  const title = searchInput.value.trim();
-
-  try {
-    searchResults.innerHTML = '<p style="text-align:center; padding:1rem;">Searching...</p>';
-    searchResults.style.display = 'block';
-
-    const response = await fetch(`/api/games/search-external?title=${encodeURIComponent(title)}`);
-    if (!response.ok) {
-      const error = await response.json().catch(() => ({}));
-      throw new Error(error.message || 'Search failed');
-    }
-
-    const gameData = await response.json();
-    displayGameSearchResult(gameData);
-  } catch (error) {
-    console.error('Search error:', error);
-    searchResults.innerHTML = `<p style="color:red; padding:1rem; text-align:center;">❌ ${error.message || 'Failed to search. Try again.'}</p>`;
-    searchResults.style.display = 'block';
-  }
-}
-
-function displayGameSearchResult(gameData) {
-  const searchResults = document.getElementById('searchResults');
-  if (!searchResults) return;
-
-  const descriptionLines = (gameData.description || '').split('\n').map(line => `<p>${line}</p>`).join('');
-
-  searchResults.innerHTML = `
-    <div class="game-result-card">
-      ${gameData.coverImage
-        ? `<img src="${gameData.coverImage}" alt="${gameData.title}" class="result-image" onerror="this.src='https://via.placeholder.com/120x180?text=No+Image'">`
-        : '<div class="result-image" style="background:#333; display:flex; align-items:center; justify-content:center;">No Image</div>'}
-      <div class="result-header">
-        <h4>${gameData.title || 'Unknown'}</h4>
-        <button type="button" class="use-btn" onclick="populateFormFromSearch('${gameData.title}', '${gameData.genre}', '${(gameData.description || '').replace(/'/g, "\\'")}')">
-          ✓ Use
-        </button>
-      </div>
-      <div class="result-info">${descriptionLines}</div>
-    </div>
-  `;
-  searchResults.style.display = 'block';
-}
-
-function populateFormFromSearch(title, genre, description) {
-  const titleInput = document.getElementById('gameTitle');
-  const genreInput = document.getElementById('genre');
-  const descriptionInput = document.getElementById('description');
-
-  if (titleInput) titleInput.value = title;
-  if (genreInput) {
-    const selectedGenre = matchGenreOption(genre);
-    if (genreInput.querySelector(`option[value="${selectedGenre}"]`)) genreInput.value = selectedGenre;
-  }
-  if (descriptionInput) descriptionInput.value = description;
-
-  const searchResults = document.getElementById('searchResults');
-  if (searchResults) {
-    searchResults.style.display = 'none';
-    document.getElementById('gameSearchInput').value = '';
-  }
-
-  alert(`✅ Form populated with "${title}" data! Please complete the remaining fields and upload images.`);
-}
-
-function matchGenreOption(rawgGenre) {
-  const genreMap = { 'Action': 'Action', 'RPG': 'RPG', 'Sports': 'Sports', 'Horror': 'Horror', 'Shooting': 'Action', 'Adventure': 'Action', 'Casual': 'Sports', 'Racing': 'Sports' };
-  for (const [rawg, option] of Object.entries(genreMap)) {
-    if (rawgGenre && rawgGenre.includes(rawg)) return option;
-  }
-  return 'Action';
-}
-
-// ==========================================
-// 📑 SECTIONS
+//  SECTIONS
 // ==========================================
 function showSection(sectionId, button) {
   document.querySelectorAll('main section').forEach(section => section.style.display = 'none');

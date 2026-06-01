@@ -5,9 +5,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Log In</title>
-    <link rel="stylesheet" href="cssFiles/login&signup.css">
+    <link rel="stylesheet" href="/cssFiles/login&signup.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="icon" href="photos/images.png">
+    <link rel="icon" href="/photos/images.png">
 </head>
 
 <body>
@@ -94,9 +94,9 @@
                 alert(`Welcome back, ${data.user.username}!`);
 
                 const role = data.user.role;
-                if (role === "Admin") window.location.href = "/adminDashboard";
-                else if (role === "Store") window.location.href = "/storedashboard";
-                else if (role === "Gamer") window.location.href = "/Browse_Games";
+                if (role === "Admin") window.location.href = "/admin-dashboard";
+                else if (role === "Store") window.location.href = "/store-dashboard";
+                else if (role === "Gamer") window.location.href = "/browse-games";
                 else {
                     errorMsg.textContent = "User role not recognized.";
                     errorMsg.style.display = "block";
