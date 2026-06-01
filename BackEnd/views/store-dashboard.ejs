@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="/cssFiles/dashboard.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-    <script defer src="/jsFiles/storedashboard.js"></script>
+    <script defer src="/jsFiles/store-dashboard.js"></script>
 </head>
 
 <body>
@@ -110,27 +110,6 @@
 
                 <section id="addGame" style="display:none;">
                     <h2 id="gameFormTitle">List a New Game</h2>
-                    
-                    <!-- 🔍 RAWG API Search Section -->
-                    <div class="search-external-game">
-                        <h3>Search for Game Metadata</h3>
-                        <p style="font-size: 0.9rem; color: #666; margin-bottom: 1rem;">Search the RAWG database to auto-fill game details</p>
-                        <div class="search-container">
-                            <input 
-                                type="text" 
-                                id="gameSearchInput" 
-                                placeholder="Search game by title (e.g., Uncharted, The Last of Us)..." 
-                                class="search-input"
-                                autocomplete="off"
-                            >
-                            <button type="button" id="searchGameBtn" class="search-btn">
-                                <i class="fas fa-search"></i> Search
-                            </button>
-                        </div>
-                        <div id="searchResults" class="search-results" style="display:none;"></div>
-                    </div>
-
-                    <hr style="margin: 2rem 0; border: none; border-top: 1px solid #ddd;">
 
                     <form id="addGameForm" action="/api/games" method="POST" enctype="multipart/form-data" autocomplete="off">
                         <input type="hidden" id="editGameId" name="editGameId" value="">

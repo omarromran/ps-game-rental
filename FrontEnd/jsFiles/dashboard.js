@@ -86,7 +86,7 @@ function updateDashboard() {
 
   const cards = [
     { title: 'Total Users', value: users.length },
-    { title: 'Pending Stores', value: users.filter(u => u.role === 'Store' && !u.approved).length, link: '/approveLenders' },
+    { title: 'Pending Stores', value: users.filter(u => u.role === 'Store' && !u.approved).length, link: '/approve-lenders' },
     { title: 'Total Games', value: games.length },
     { title: 'Inventory Value', value: `${totalValue.toFixed(2)} EGP` }
   ];

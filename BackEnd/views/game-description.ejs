@@ -5,10 +5,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PSHUB | Game Details</title>
-    <link rel="stylesheet" href="cssFiles/BrowseGames.css">
-    <link rel="stylesheet" href="cssFiles/game_description.css">
-    <link rel="icon" href="photos/images.png">
-    <script src="jsFiles/game_description.js" defer></script>
+    <link rel="stylesheet" href="/cssFiles/browse-games.css">
+    <link rel="stylesheet" href="/cssFiles/game-description.css">
+    <link rel="icon" href="/photos/images.png">
+    <script src="/jsFiles/game-description.js" defer></script>
 </head>
 
 <body>
@@ -21,7 +21,7 @@
                 🛒 <span id="cart-count">0</span>
             </div>
             <div class="user-profile">
-                <a id="user-name-link" class="user-name" href="<%= user && user.role === 'Admin' ? '/adminDashboard' : user && user.role === 'Store' ? '/storedashboard' : '/gamerDashboard' %>"
+                <a id="user-name-link" class="user-name" href="<%= user && user.role === 'Admin' ? '/admin-dashboard' : user && user.role === 'Store' ? '/store-dashboard' : '/gamer-dashboard' %>"
                     style="text-decoration:none; color:inherit;"></a>
                 <a href="/login" class="login-btn">Login</a>
                 <div class="avatar"></div>
@@ -67,3 +67,4 @@
 </body>
 
 </html>
+

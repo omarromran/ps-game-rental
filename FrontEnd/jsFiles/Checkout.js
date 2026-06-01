@@ -73,7 +73,7 @@ async function initCheckout() {
 
   if (!savedCart) {
     alert('Your cart is empty!');
-    window.location.href = '/Browse_Games';
+    window.location.href = '/browse-games';
     return;
   }
 
@@ -85,7 +85,7 @@ async function initCheckout() {
 
   if (!cart.length) {
     alert('Your cart is empty!');
-    window.location.href = '/Browse_Games';
+    window.location.href = '/browse-games';
     return;
   }
 
@@ -177,7 +177,7 @@ async function processOrder() {
   }
   if (!cart.length) {
     alert('Your cart is empty. Add games before checking out.');
-    window.location.href = '/Browse_Games';
+    window.location.href = '/browse-games';
     return;
   }
 
@@ -218,7 +218,7 @@ async function processOrder() {
     if (overlay) overlay.style.display = 'flex';
 
     setTimeout(() => {
-      window.location.href = '/Browse_Games';
+      window.location.href = '/browse-games';
     }, 2000);
 
   } catch (err) {

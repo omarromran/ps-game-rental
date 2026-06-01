@@ -104,8 +104,8 @@ const Game = require('./models/Game');
 
 const simpleViews = [
   'index', 'login', 'signup',
-  'gamerDashboard', 'storedashboard',
-  'adminDashboard', 'approveLenders', 'Checkout'
+  'gamer-dashboard', 'store-dashboard',
+  'admin-dashboard', 'approve-lenders', 'checkout'
 ];
 
 simpleViews.forEach((view) => {
@@ -114,26 +114,18 @@ simpleViews.forEach((view) => {
 });
 
 // Browse Games — needs game list from DB
-app.get('/Browse_Games', async (req, res) => {
+app.get('/browse-games', async (req, res) => {
   try {
-    const games = await Game.find({ status: 'Available' }).lean();
-    res.render('Browse_Games', { games, user: res.locals.user });
+    const games = await Game.find({ status: 'Available' }).sort({ title: 1 }).lean();
+    res.render('browse-games', { games, user: res.locals.user });
   } catch (err) {
-    console.error('Error rendering Browse_Games:', err);
-    res.render('Browse_Games', { games: [], user: res.locals.user });
-  }
-});
-app.get('/Browse_Games.html', async (req, res) => {
-  try {
-    const games = await Game.find({ status: 'Available' }).lean();
-    res.render('Browse_Games', { games, user: res.locals.user });
-  } catch (err) {
-    res.render('Browse_Games', { games: [], user: res.locals.user });
+    console.error('Error rendering browse-games:', err);
+    res.render('browse-games', { games: [], user: res.locals.user });
   }
 });
 
 // Game Description — needs single game from DB
-app.get('/game_description', async (req, res) => {
+app.get('/game-description', async (req, res) => {
   try {
     const gameId = req.query.id;
     let game = null;
@@ -147,48 +139,16 @@ app.get('/game_description', async (req, res) => {
       }
     }
 
-    res.render('game_description', { game: game || null, user: res.locals.user });
+    res.render('game-description', { game: game || null, user: res.locals.user });
   } catch (err) {
-    console.error('Error rendering game_description:', err);
-    res.render('game_description', { game: null, user: res.locals.user });
-  }
-});
-app.get('/game_description.html', async (req, res) => {
-  try {
-    const gameId = req.query.id;
-    let game = null;
-
-    if (gameId) {
-      if (mongoose.Types.ObjectId.isValid(gameId)) {
-        game = await Game.findById(gameId).lean();
-      }
-      if (!game) {
-        game = await Game.findOne({ gameID: gameId }).lean();
-      }
-    }
-
-    res.render('game_description', { game: game || null, user: res.locals.user });
-  } catch (err) {
-    res.render('game_description', { game: null, user: res.locals.user });
+    console.error('Error rendering game-description:', err);
+    res.render('game-description', { game: null, user: res.locals.user });
   }
 });
 
 // ==========================================
-// 🚨 GLOBAL ERROR HANDLER (single, clean one)
+// 🚨 GLOBAL ERROR HANDLER
 // ==========================================
-app.use((err, req, res, next) => {
-  console.error('GLOBAL ERROR:', err);
-
-  if (err instanceof multer.MulterError) {
-    return res.status(400).json({ error: err.message });
-  }
-
-  res.status(err.status || 500).json({
-    success: false,
-    message: err.message || 'Internal Server Error'
-  });
-});
-
 app.use(errorMiddleware);
 
 // ==========================================

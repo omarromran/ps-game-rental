@@ -382,7 +382,7 @@ function toggleEdit(editing) {
 // 🎮 NAV HELPERS
 // ==========================================
 function goToGameDescription(gameID) {
-  window.location.href = `/game_description?id=${gameID}`;
+  window.location.href = `/game-description?id=${gameID}`;
 }
 
 // ==========================================

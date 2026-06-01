@@ -1,4 +1,4 @@
-// game_description.js — token-only auth
+// game-description.js — token-only auth
 
 let cart = JSON.parse(localStorage.getItem('pshub_cart') || '[]');
 let currentGame = null;
@@ -28,10 +28,10 @@ function getCurrentGameKey() {
 // 👤 CURRENT USER
 // ==========================================
 function getDashboardRoute(user) {
-  if (!user || !user.role) return '/gamerDashboard';
-  if (user.role === 'Admin') return '/adminDashboard';
-  if (user.role === 'Store') return '/storedashboard';
-  return '/gamerDashboard';
+  if (!user || !user.role) return '/gamer-dashboard';
+  if (user.role === 'Admin') return '/admin-dashboard';
+  if (user.role === 'Store') return '/store-dashboard';
+  return '/gamer-dashboard';
 }
 
 function loadCurrentUser() {
@@ -81,7 +81,7 @@ window.addEventListener('storage', (event) => {
 async function loadGame() {
   const page = document.getElementById('desc-page');
   if (!gameId) {
-    if (page) page.innerHTML = `<p style="color:#888">No game selected. <a href="/Browse_Games" style="color:#00439c">Go back</a></p>`;
+    if (page) page.innerHTML = `<p style="color:#888">No game selected. <a href="/browse-games" style="color:#00439c">Go back</a></p>`;
     return;
   }
 
@@ -96,7 +96,7 @@ async function loadGame() {
     renderCart();
   } catch (error) {
     console.error('Error loading game:', error);
-    if (page) page.innerHTML = `<p style="color:#888">Game not found. <a href="/Browse_Games" style="color:#00439c">Go back</a></p>`;
+    if (page) page.innerHTML = `<p style="color:#888">Game not found. <a href="/browse-games" style="color:#00439c">Go back</a></p>`;
   }
 }
 
@@ -128,25 +128,18 @@ function renderGamePage() {
       <div class="desc-tags">
         <span class="tag tag-category">${currentGame.category || 'Unknown'}</span>
         <span class="tag tag-platform">${currentGame.platform || 'N/A'}</span>
-        <span class="tag tag-pegi">PEGI ${currentGame.pegi || '?'}</span>
       </div>
       <h1 class="desc-title">${title}</h1>
       <div class="desc-meta">
-        <span>🏢 ${currentGame.developer || 'Unknown Developer'}</span>
-        <span>📅 ${currentGame.releaseYear || 'N/A'}</span>
-        <span>🆔 ${currentGame._id || currentGame.gameID}</span>
         <span class="report-game" onclick="reportGame()" title="Report inappropriate content">🚩 Report</span>
       </div>
       <p class="desc-text">${currentGame.description || 'No description available.'}</p>
       <div class="info-grid">
-        <div class="info-item"><span class="info-label">Developer</span><span class="info-val">${currentGame.developer || '—'}</span></div>
-        <div class="info-item"><span class="info-label">Release Year</span><span class="info-val">${currentGame.releaseYear || '—'}</span></div>
         <div class="info-item"><span class="info-label">Platform</span><span class="info-val">${currentGame.platform || '—'}</span></div>
-        <div class="info-item"><span class="info-label">Age Rating</span><span class="info-val">PEGI ${currentGame.pegi || '?'}</span></div>
       </div>
       <div class="desc-price">${pricePerDay.toFixed(2)} EGP / day</div>
       <div class="btn-row">
-        <button class="btn-back" onclick="window.location.href='/Browse_Games'">← Back to Browse</button>
+        <button class="btn-back" onclick="window.location.href='/browse-games'">← Back to Browse</button>
         <button class="btn-cart ${inCart ? 'in-cart' : ''}" id="cart-btn" onclick="addToCart()">
           ${inCart ? '✓ In Cart' : '+ Add to Cart'}
         </button>
@@ -228,7 +221,7 @@ function toggleCart(open) {
 function checkout() {
   if (!cart.length) { alert('Your cart is empty!'); return; }
   localStorage.setItem('pshub_cart', JSON.stringify(cart));
-  window.location.href = '/Checkout';
+  window.location.href = '/checkout';
 }
 
 // ==========================================
@@ -325,3 +318,5 @@ function index() {
 // ==========================================
 loadCurrentUser();
 loadGame();
+
+
