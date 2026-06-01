@@ -45,35 +45,26 @@ document.addEventListener('DOMContentLoaded', () => {
   if (imageInput) imageInput.addEventListener('change', handleImageSelection);
 
   const logoutBtn = document.getElementById('logoutBtn');
-if (logoutBtn) {
-  logoutBtn.addEventListener('click', async () => {
+  if (logoutBtn) {
+    logoutBtn.addEventListener('click', async () => {
+      const confirmed = confirm('Are you sure you want to log out?');
+      if (!confirmed) return;
 
-    const confirmed = await showConfirm('Are you sure you want to log out?');
-    if (!confirmed) return;
-
-    try {
-      await fetch('/api/auth/logout', {
-        method: 'POST',
-        headers: authHeaders()
-      });
-    } catch (err) {}
-
-    localStorage.removeItem('token');
-    localStorage.removeItem('currentUser');
-    localStorage.removeItem('pshub_wishlist');
-
-    window.location.href = '/login';
-  });
-}
       try {
-        await fetch('/api/auth/logout', { method: 'POST', headers: authHeaders() });
-      } catch (err) { /* stateless — ignore */ }
+        await fetch('/api/auth/logout', {
+          method: 'POST',
+          headers: authHeaders()
+        });
+      } catch (err) {}
+
       localStorage.removeItem('token');
       localStorage.removeItem('currentUser');
+      localStorage.removeItem('pshub_wishlist');
+
       window.location.href = '/login';
-    
+    });
   }
-);
+});
 
 // ==========================================
 // 📦 LOAD DATA
@@ -129,6 +120,7 @@ function setSelectedImages(files) {
   updateImagePreview();
 }
 
+// Helper to resolve form image arrays safely
 function updateImageInputFiles() {
   const imageInput = document.getElementById('images');
   if (!imageInput) return;
@@ -249,7 +241,10 @@ function startGameEdit(gameId) {
   if (!game) return;
 
   currentEditGameId = gameId;
-  document.getElementById('gameFormTitle')?.setAttribute('textContent', 'Edit Game');
+  
+  const formTitle = document.getElementById('gameFormTitle');
+  if (formTitle) formTitle.textContent = 'Edit Game';
+
   const submitButton = document.getElementById('submitGameButton');
   const cancelButton = document.getElementById('cancelEditButton');
   const imageInput = document.getElementById('images');
@@ -366,7 +361,7 @@ async function handleGameFormSubmit(e) {
 
     const response = await fetch(url, {
       method,
-      headers: authHeaders(), // no Content-Type — FormData sets its own
+      headers: authHeaders(), 
       body: formData
     });
 
