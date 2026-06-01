@@ -276,16 +276,16 @@ async function returnGame(rentalId) {
 
       const data = await res.json();
       if (!res.ok) {
-        alert(data.error || data.message || 'Failed to return game.');
+        showToast(data.error || data.message || 'Failed to return game.', 'error');
         return;
       }
 
       await loadRentals();
       await refreshUI();
-      showToast('Game returned successfully!');
+      showToast('Game returned successfully!', 'success');
     } catch (err) {
       console.error('Return failed:', err);
-      alert('Failed to return game.');
+      showToast('Failed to return game.', 'error');
     }
   });
 }
@@ -425,7 +425,7 @@ function saveProfile() {
   }).then(async res => {
     const data = await res.json().catch(() => ({}));
     if (!res.ok) {
-      alert(data.error || data.message || 'Failed to save profile');
+      showToast(data.error || data.message || 'Failed to save profile', 'error');
       return;
     }
 
@@ -441,10 +441,10 @@ function saveProfile() {
 
     renderProfile();
     toggleEdit(false);
-    showToast('Profile saved!');
+    showToast('Profile saved!', 'success');
   }).catch(err => {
     console.error('Save failed', err);
-    alert('Failed to save profile.');
+    showToast('Failed to save profile.', 'error');
   });
 }
 

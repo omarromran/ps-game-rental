@@ -219,15 +219,15 @@ function cancelUserEdit() {
 }
 
 async function deleteUser(id) {
-  if (!confirm('Delete user?')) return;
+  if (!showConfirm('Delete user?')) return;
   try {
     const res = await fetch(`/api/users/${id}`, { method: 'DELETE', headers: getHeaders() });
     const data = await res.json();
     if (!res.ok) throw new Error(data.error || data.message);
-    alert('User deleted');
+    showToast('User deleted', 'success');
     await loadData();
   } catch (err) {
-    alert(err.message);
+    showToast(err.message, 'error');
   }
 }
 
@@ -329,15 +329,15 @@ function cancelGameEdit() {
 }
 
 async function deleteGame(id) {
-  if (!confirm('Delete game?')) return;
+  if (!showConfirm('Delete game?')) return;
   try {
     const res = await fetch(`/api/games/${id}`, { method: 'DELETE', headers: getHeaders() });
     const data = await res.json();
     if (!res.ok) throw new Error(data.error || data.message);
-    alert('Game deleted');
+    showToast('Game deleted', 'success');
     await loadData();
   } catch (err) {
-    alert(err.message);
+    showToast(err.message, 'error');
   }
 }
 
@@ -350,7 +350,7 @@ async function handleAdmin(e) {
   const data = Object.fromEntries(formData);
 
   if (data.password !== data.confirmPassword) {
-    return alert('Passwords do not match');
+    return showToast('Passwords do not match', 'error');
   }
 
   try {
@@ -361,11 +361,11 @@ async function handleAdmin(e) {
     });
     const result = await res.json();
     if (!res.ok) throw new Error(result.message || result.error);
-    alert('Admin created');
+    showToast('Admin created', 'success');
     e.target.reset();
     await loadData();
   } catch (err) {
-    alert(err.message);
+    showToast(err.message, 'error');
   }
 }
 

@@ -72,7 +72,7 @@ async function initCheckout() {
   const savedCart = localStorage.getItem('pshub_cart');
 
   if (!savedCart) {
-    alert('Your cart is empty!');
+    showToast('Your cart is empty!');
     window.location.href = '/browse-games';
     return;
   }
@@ -84,7 +84,7 @@ async function initCheckout() {
   }
 
   if (!cart.length) {
-    alert('Your cart is empty!');
+    showToast('Your cart is empty!');
     window.location.href = '/browse-games';
     return;
   }
@@ -161,22 +161,22 @@ async function processOrder() {
   const egPhoneRegex = /^01[0125][0-9]{8}$/;
 
   if (!egPhoneRegex.test(phone)) {
-    alert('Please enter a valid Egyptian phone number (11 digits starting with 01).');
+    showToast('Please enter a valid Egyptian phone number (11 digits starting with 01).');
     phoneInput.style.borderColor = '#ff4444';
     return;
   }
   if (!address) {
-    alert('Please provide a delivery address.');
+    showToast('Please provide a delivery address.');
     addressInput.style.borderColor = '#ff4444';
     return;
   }
   if (!days || isNaN(days) || days < 1 || days > 30) {
-    alert('Please choose a rental duration between 1 and 30 days.');
+    showToast('Please choose a rental duration between 1 and 30 days.');
     daysInput.style.borderColor = '#ff4444';
     return;
   }
   if (!cart.length) {
-    alert('Your cart is empty. Add games before checking out.');
+    showToast('Your cart is empty. Add games before checking out.');
     window.location.href = '/browse-games';
     return;
   }
@@ -199,7 +199,7 @@ async function processOrder() {
 
     const data = await response.json();
     if (!response.ok) {
-      alert(data.error || data.message || 'Checkout failed.');
+      showToast(data.error || data.message || 'Checkout failed.');
       return;
     }
 
@@ -223,7 +223,7 @@ async function processOrder() {
 
   } catch (err) {
     console.error('Checkout fetch failed', err);
-    alert('Checkout failed. Please try again.');
+    showToast('Checkout failed. Please try again.');
   }
 }
 

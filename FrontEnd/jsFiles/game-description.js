@@ -160,7 +160,7 @@ function addToCart() {
   if (!currentGame) return;
   const gameKey = getCurrentGameKey();
   if (cart.some(c => getGameKey(c) === gameKey)) {
-    alert('This game is already in your cart!');
+    showToast('This game is already in your cart!', 'error');
     return;
   }
   cart.push(currentGame);
@@ -170,7 +170,7 @@ function addToCart() {
   if (btn) { btn.textContent = '✓ In Cart'; btn.classList.add('in-cart'); }
 
   renderCart();
-  showToast('Game added to cart!');
+  showToast('Game added to cart!', 'success');
 }
 
 function removeFromCart(id) {
@@ -219,7 +219,7 @@ function toggleCart(open) {
 }
 
 function checkout() {
-  if (!cart.length) { alert('Your cart is empty!'); return; }
+  if (!cart.length) { showToast('Your cart is empty!', 'error'); return; }
   localStorage.setItem('pshub_cart', JSON.stringify(cart));
   window.location.href = '/checkout';
 }
@@ -249,7 +249,7 @@ function submitReview() {
   const name = nameInput.value.trim();
   const comment = commentInput.value.trim();
   if (!name || !comment || !selectedStars) {
-    alert('Please fill in your name, a comment, and select a star rating.');
+    showToast('Please fill in your name, a comment, and select a star rating.', 'error');
     return;
   }
 
@@ -263,7 +263,7 @@ function submitReview() {
   selectedStars = 0;
   highlightStars(0);
   renderReviews();
-  alert('Review posted successfully!');
+  showToast('Review posted successfully!', 'success');
 }
 
 function renderReviews() {
@@ -298,18 +298,18 @@ async function reportGame() {
 
   localStorage.setItem(`reported_games_${currentGame._id || gameId}`, 'true');
 
-  showToast('Game reported to admin.');
+  showToast('Game reported to admin.', 'success');
 }
 
 function reportReview(index) {
-  if (!confirm('Report this review?')) return;
+  if (!showConfirm('Report this review?')) return;
   const reviewKey = `reviews_${currentGame._id || gameId}`;
   const reviews = JSON.parse(localStorage.getItem(reviewKey) || '[]');
   if (!reviews[index]) return;
   reviews[index].flagged = true;
   localStorage.setItem(reviewKey, JSON.stringify(reviews));
   renderReviews();
-  alert('Review reported.');
+  showToast('Review reported.', 'success');
 }
 
 function index() {

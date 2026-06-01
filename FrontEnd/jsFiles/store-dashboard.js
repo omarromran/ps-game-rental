@@ -388,7 +388,7 @@ async function handleGameFormSubmit(e) {
       hideFormError();
       loadGamesTable();
       updateDashboardStats();
-      alert(currentEditGameId ? 'Game updated successfully!' : 'Game added successfully!');
+      showToast(currentEditGameId ? 'Game updated successfully!' : 'Game added successfully!', 'success');
     } else {
       showFormError(data.error || data.message || `Failed to save game (status ${response.status}).`);
     }
@@ -399,7 +399,8 @@ async function handleGameFormSubmit(e) {
 }
 
 async function deleteGame(id) {
-  if (!confirm('Delete this game?')) return;
+  const confirmed = await showConfirm('Delete this game?');
+  if (!confirmed) return;
 
   try {
     const response = await fetch(`/api/games/${id}`, {
@@ -411,14 +412,14 @@ async function deleteGame(id) {
       gameInventory = gameInventory.filter(game => game._id !== id);
       loadGamesTable();
       updateDashboardStats();
-      alert('Game deleted successfully!');
+      showToast('Game deleted successfully!', 'success');
     } else {
       const errorData = await response.json().catch(() => null);
-      alert(errorData?.error || errorData?.message || 'Failed to delete game.');
+      showToast(errorData?.error || errorData?.message || 'Failed to delete game.', 'error');
     }
   } catch (error) {
     console.error('Error deleting game:', error);
-    alert('Error connecting to server.');
+    showToast('Error connecting to server.', 'error');
   }
 }
 
