@@ -61,7 +61,7 @@ async function fetchData(endpoint) {
 async function loadData() {
   try {
     users = await fetchData('/api/users');
-    games = await fetchData('/api/games?status=all');
+   games = await fetchData('/api/games');
     updateUI();
   } catch (err) {
     console.error(err);
@@ -76,6 +76,7 @@ function updateUI() {
   renderUsers();
   renderGames();
   if (typeof Chart !== 'undefined') renderChart();
+  renderModeration();
 }
 
 function updateDashboard() {
@@ -154,28 +155,67 @@ function renderUsers() {
   `;
 }
 
-async function editUser(id) {
+let editingUserId = null;
+
+function editUser(id) {
   const user = users.find(u => u._id === id);
   if (!user) return;
 
-  const username = prompt('Username', user.username);
-  const email = prompt('Email', user.email);
-  const role = prompt('Role (Admin/Store/Gamer)', user.role);
-  if (!username || !email || !role) return;
+  editingUserId = id;
+
+  const table = document.getElementById('users-table');
+
+  document.getElementById('edit-user-row')?.remove();
+
+  const row = document.createElement('tr');
+  row.id = 'edit-user-row';
+  row.innerHTML = `
+    <td colspan="5">
+      <div style="padding:10px; background:#111; color:white; border-radius:10px;">
+        <h4>Edit User</h4>
+
+        <input id="edit-username" value="${user.username}" />
+        <input id="edit-email" value="${user.email}" />
+        <input id="edit-role" value="${user.role}" />
+
+        <div style="margin-top:10px;">
+          <button onclick="saveUserEdit()">Save</button>
+          <button onclick="cancelUserEdit()">Cancel</button>
+        </div>
+      </div>
+    </td>
+  `;
+
+  table.querySelector('tbody').prepend(row);
+}
+
+async function saveUserEdit() {
+  const username = document.getElementById('edit-username').value;
+  const email = document.getElementById('edit-email').value;
+  const role = document.getElementById('edit-role').value;
 
   try {
-    const res = await fetch(`/api/users/${id}`, {
+    const res = await fetch(`/api/users/${editingUserId}`, {
       method: 'PUT',
       headers: getHeaders(true),
       body: JSON.stringify({ username, email, role })
     });
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.error || data.message || 'Update failed');
-    alert('User updated');
+
+    if (!res.ok) throw new Error('Failed');
+
+    showToast('User updated', 'success');
+
+    editingUserId = null;
+    document.getElementById('edit-user-row')?.remove();
     await loadData();
   } catch (err) {
-    alert(err.message);
+    showToast(err.message, 'error');
   }
+}
+
+function cancelUserEdit() {
+  editingUserId = null;
+  document.getElementById('edit-user-row')?.remove();
 }
 
 async function deleteUser(id) {
@@ -227,27 +267,65 @@ function renderGames() {
   `;
 }
 
-async function editGameBtn(id) {
+let editingGameId = null;
+
+function editGameBtn(id) {
   const game = games.find(g => g._id === id);
   if (!game) return;
 
-  const title = prompt('Title', game.title);
-  const pricePerDay = prompt('Price Per Day', game.pricePerDay);
-  if (!title || !pricePerDay) return;
+  editingGameId = id;
+
+  const table = document.getElementById('games-table');
+
+  document.getElementById('edit-game-row')?.remove();
+
+  const row = document.createElement('tr');
+  row.id = 'edit-game-row';
+  row.innerHTML = `
+    <td colspan="8">
+      <div style="padding:10px; background:#111; color:white; border-radius:10px;">
+        <h4>Edit Game</h4>
+
+        <input id="edit-title" value="${game.title}" />
+        <input id="edit-price" value="${game.pricePerDay}" />
+
+        <div style="margin-top:10px;">
+          <button onclick="saveGameEdit()">Save</button>
+          <button onclick="cancelGameEdit()">Cancel</button>
+        </div>
+      </div>
+    </td>
+  `;
+
+  table.querySelector('tbody').prepend(row);
+}
+
+async function saveGameEdit() {
+  const title = document.getElementById('edit-title').value;
+  const pricePerDay = document.getElementById('edit-price').value;
 
   try {
-    const res = await fetch(`/api/games/${id}`, {
+    const res = await fetch(`/api/games/${editingGameId}`, {
       method: 'PUT',
       headers: getHeaders(true),
       body: JSON.stringify({ title, pricePerDay })
     });
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.error || data.message);
-    alert('Game updated');
+
+    if (!res.ok) throw new Error('Failed');
+
+    showToast('Game updated', 'success');
+
+    editingGameId = null;
+    document.getElementById('edit-game-row')?.remove();
     await loadData();
   } catch (err) {
-    alert(err.message);
+    showToast(err.message, 'error');
   }
+}
+
+function cancelGameEdit() {
+  editingGameId = null;
+  document.getElementById('edit-game-row')?.remove();
 }
 
 async function deleteGame(id) {
@@ -301,6 +379,38 @@ function logout() {
   window.location.href = '/login';
 }
 
+
+function renderModeration() {
+  const table = document.getElementById('mod-games-table');
+  if (!table) return;
+
+  const reported = games.filter(g => g.status === 'Reported');
+
+  table.innerHTML = `
+    <thead>
+      <tr>
+        <th>Title</th>
+        <th>Store</th>
+        <th>Status</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      ${reported.length ? reported.map(g => `
+        <tr>
+          <td>${g.title}</td>
+          <td>${getVendor(g)}</td>
+          <td>${g.status}</td>
+          <td>
+            <button onclick="unreportGame('${g._id}')">Approve</button>
+          </td>
+        </tr>
+      `).join('') : `
+        <tr><td colspan="4">No reported games</td></tr>
+      `}
+    </tbody>
+  `;
+}
 // ==========================================
 // 🚀 INIT
 // ==========================================
@@ -310,6 +420,8 @@ document.addEventListener('DOMContentLoaded', () => {
     window.location.href = '/login';
     return;
   }
+
+  window.addEventListener('pageshow', loadData);
 
   loadData();
 

@@ -292,10 +292,34 @@ function renderReviews() {
   `).join('');
 }
 
-function reportGame() {
-  if (!confirm('Report this game as inappropriate?')) return;
-  localStorage.setItem(`reported_games_${currentGame._id || gameId}`, 'true');
-  alert('Game reported to admin.');
+async function reportGame() {
+  const id = currentGame?._id || gameId;
+
+  if (!confirm('Report this game?')) return;
+
+  try {
+    const res = await fetch(`/api/games/${id}/report`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('token')}`
+      }
+    });
+
+    if (!res.ok) throw new Error('Failed');
+
+    const data = await res.json();
+
+    alert('Game reported successfully');
+
+    // 🔥 IMPORTANT: notify other pages
+    window.dispatchEvent(new Event('storage'));
+
+    // optional refresh
+    await loadGame();
+
+  } catch (err) {
+    alert('Error reporting game');
+  }
 }
 
 function reportReview(index) {
