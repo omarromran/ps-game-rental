@@ -457,10 +457,15 @@ function toggleEdit(editing) {
     document.getElementById('phoneInput').value = user.phone || '';
   }
 
-  ['name', 'email', 'username', 'phone'].forEach(id => {
+  // handle name, email, username normally
+  ['name', 'email', 'username'].forEach(id => {
     document.getElementById(id + 'Text').style.display = editing ? 'none' : 'block';
     document.getElementById(id + 'Input').style.display = editing ? 'block' : 'none';
   });
+
+  // handle phone separately because it has a container div
+  document.getElementById('phoneText').style.display = editing ? 'none' : 'block';
+  document.getElementById('phoneEditContainer').style.display = editing ? 'block' : 'none';
 
   document.getElementById('editBtn').style.display = editing ? 'none' : 'block';
   document.getElementById('saveBtn').style.display = editing ? 'block' : 'none';

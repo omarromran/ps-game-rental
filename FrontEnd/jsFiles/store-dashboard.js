@@ -47,7 +47,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const logoutBtn = document.getElementById('logoutBtn');
   if (logoutBtn) {
     logoutBtn.addEventListener('click', async () => {
-      const confirmed = confirm('Are you sure you want to log out?');
+      const confirmed = await showConfirm('Are you sure you want to log out?');
       if (!confirmed) return;
 
       try {

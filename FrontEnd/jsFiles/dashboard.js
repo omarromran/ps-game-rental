@@ -372,10 +372,21 @@ async function handleAdmin(e) {
 // ==========================================
 // 🚪 LOGOUT
 // ==========================================
-function logout() {
-  fetch('/api/auth/logout', { method: 'POST', headers: getHeaders() }).catch(() => {});
+async function logout() {
+  const confirmed = await showConfirm('Are you sure you want to log out?');
+  if (!confirmed) return;
+
+  try {
+    await fetch('/api/auth/logout', {
+      method: 'POST',
+      headers: getHeaders()
+    });
+  } catch (err) {}
+
   localStorage.removeItem('token');
   localStorage.removeItem('currentUser');
+  localStorage.removeItem('pshub_wishlist');
+
   window.location.href = '/login';
 }
 
