@@ -170,7 +170,7 @@ function addToCart() {
   if (btn) { btn.textContent = '✓ In Cart'; btn.classList.add('in-cart'); }
 
   renderCart();
-  alert('Game added to cart!');
+  showToast('Game added to cart!');
 }
 
 function removeFromCart(id) {
@@ -293,33 +293,12 @@ function renderReviews() {
 }
 
 async function reportGame() {
-  const id = currentGame?._id || gameId;
+  const ok = await showConfirm('Report this game as inappropriate?');
+  if (!ok) return;
 
-  if (!confirm('Report this game?')) return;
+  localStorage.setItem(`reported_games_${currentGame._id || gameId}`, 'true');
 
-  try {
-    const res = await fetch(`/api/games/${id}/report`, {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem('token')}`
-      }
-    });
-
-    if (!res.ok) throw new Error('Failed');
-
-    const data = await res.json();
-
-    alert('Game reported successfully');
-
-    // 🔥 IMPORTANT: notify other pages
-    window.dispatchEvent(new Event('storage'));
-
-    // optional refresh
-    await loadGame();
-
-  } catch (err) {
-    alert('Error reporting game');
-  }
+  showToast('Game reported to admin.');
 }
 
 function reportReview(index) {

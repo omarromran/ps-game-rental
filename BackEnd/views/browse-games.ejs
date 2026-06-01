@@ -304,29 +304,8 @@
         </div>
     </div>
 
-    <!-- ========================= -->
-    <!-- LOGOUT SCRIPT -->
-    <!-- ========================= -->
-    <script>
-
-        async function logout() {
-
-            try {
-
-                await fetch("/api/auth/logout", {
-                    method: "POST"
-                });
-
-                window.location.href = "/login";
-
-            } catch (error) {
-
-                console.log(error);
-            }
-        }
-
-    </script>
-
+   
+    
 </body>
 
 </html>

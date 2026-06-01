@@ -251,7 +251,7 @@ function toggleCart(open) {
 }
 
 function checkout() {
-  if (!cart.length) { alert('Your cart is empty!'); return; }
+  if (!cart.length) { showToast('Your cart is empty!'); return; }
   localStorage.setItem('pshub_cart', JSON.stringify(cart));
   window.location.href = '/checkout';
 }
@@ -262,7 +262,7 @@ function checkout() {
 async function toggleWishlist(id) {
   const token = getToken();
   if (!token) {
-    alert('Please login to use the wishlist!');
+    showToast('Please login to use the wishlist!');
     window.location.href = '/login';
     return;
   }
@@ -280,6 +280,7 @@ async function toggleWishlist(id) {
     applyFilters();
   } catch (err) {
     console.error('Wishlist error:', err);
+    showToast('Failed to update wishlist.');
   }
 }
 
@@ -303,6 +304,7 @@ document.getElementById('logout-btn')?.addEventListener('click', async (e) => {
   localStorage.removeItem('currentUser');
   localStorage.removeItem('pshub_wishlist');
 
+  showToast('Logged out successfully');
   window.location.href = '/login';
 });
 
