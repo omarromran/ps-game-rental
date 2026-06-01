@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Approve Stores</title>
-    <link rel="stylesheet" href="/cssFiles/approve-lenders.css">
+    <link rel="stylesheet" href="/cssFiles/approveLenders.css">
     <link rel="icon" href="/photos/images.png">
     <script src="/jsFiles/toast.js"></script>
 </head>
@@ -127,48 +127,53 @@
         // Sends requests to the backend server. 'approve' fires a PATCH request to 
         // flip the user's status to true, while 'decline' sends a DELETE request.
         // =========================================================================
-        async function handleApproval(id, action) {
-            if (!confirm(`Are you sure you want to ${action} this store registration?`)) return;
+       async function handleApproval(id, action) {
 
-            try {
-                if (action === 'approve') {
-                    const res = await fetch(`/api/users/${id}/approve`, {
-                        method: 'PATCH',
-                        headers: getAuthHeaders()
-                    });
+    const confirmed = await showConfirm(
+        `Are you sure you want to ${action} this store registration?`
+    );
 
-                    if (!res.ok) throw new Error('Approve operation failed on server');
+    if (!confirmed) return;
 
-                    users = users.map(u =>
-                        u._id === id ? { ...u, approved: true } : u
-                    );
+    try {
+        if (action === 'approve') {
 
-                    triggerNotification('Store approved successfully!', 'success');
-                } else {
-                    const res = await fetch(`/api/users/${id}`, {
-                        method: 'DELETE',
-                        headers: getAuthHeaders()
-                    });
+            const res = await fetch(`/api/users/${id}/approve`, {
+                method: 'PATCH',
+                headers: getAuthHeaders()
+            });
 
-                    if (!res.ok) throw new Error('Decline/Delete operation failed on server');
+            if (!res.ok) throw new Error('Approve operation failed on server');
 
-                    users = users.filter(u => u._id !== id);
+            users = users.map(u =>
+                u._id === id ? { ...u, approved: true } : u
+            );
 
-                    triggerNotification('Store registration application declined.', 'info');
-                }
+           triggerNotification('Store approved successfully!', 'success');
+           await loadPendingStores();
 
-                const row = document.getElementById(`row-${id}`);
-                if (row) row.remove();
+        } else {
 
-                if (users.filter(u => u.role === "Store" && !u.approved).length === 0) {
-                    renderTable();
-                }
+            const res = await fetch(`/api/users/${id}`, {
+                method: 'DELETE',
+                headers: getAuthHeaders()
+            });
 
-            } catch (err) {
-                console.error(err);
-                triggerNotification(err.message || 'Operation failed. Please try again.', 'error');
-            }
+            if (!res.ok) throw new Error('Decline/Delete operation failed on server');
+
+            users = users.filter(u => u._id !== id);
+
+            triggerNotification('Store registration application declined.', 'info');
         }
+
+        const row = document.getElementById(`row-${id}`);
+        if (row) row.remove();
+
+    } catch (err) {
+        console.error(err);
+        triggerNotification(err.message || 'Operation failed. Please try again.', 'error');
+    }
+}
 
         // =========================================================================
         // 🚀 INITIALIZATION: PAGE LOAD GATEKEEPER
