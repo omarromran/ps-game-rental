@@ -5,8 +5,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Approve Stores</title>
-    <link rel="stylesheet" href="cssFiles/approveLenders.css">
-    <link rel="icon" href="photos/images.png">
+    <link rel="stylesheet" href="/cssFiles/approve-lenders.css">
+    <link rel="icon" href="/photos/images.png">
+    <script src="/jsFiles/toast.js"></script>
 </head>
 
 <body>
@@ -96,7 +97,7 @@
                         u._id === id ? { ...u, approved: true } : u
                     );
 
-                    alert('Store approved');
+                    showToast('Store approved successfully!', 'success');
                 } else {
                     const res = await fetch(`/api/users/${id}`, {
                         method: 'DELETE'
@@ -106,7 +107,7 @@
 
                     users = users.filter(u => u._id !== id);
 
-                    alert('Store declined');
+                    showToast('Store declined.', 'info');
                 }
 
                 const row = document.getElementById(`row-${id}`);
@@ -118,7 +119,7 @@
 
             } catch (err) {
                 console.error(err);
-                alert('Operation failed');
+                showToast('Operation failed. Please try again.', 'error');
             }
         }
 

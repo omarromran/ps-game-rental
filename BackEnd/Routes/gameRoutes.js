@@ -16,29 +16,6 @@ const upload = require('../Middleware/upload');
 
 const Game = require('../models/Game');
 
-// ─────────────────────────────────────────────────────────────
-// EJS VIEW ROUTE
-// Render Browse Games Page
-// ─────────────────────────────────────────────────────────────
-
-router.get('/browseGames', async (req, res) => {
-  try {
-
-    const games = await Game.find({ status: 'Available' });
-
-    res.render('browseGames', {
-      games,
-      user: req.user || null
-    });
-
-  } catch (error) {
-
-    console.log(error);
-
-    res.status(500).send('Server Error');
-  }
-});
-
 // ─── PUBLIC ROUTES ───────────────────────────────────────────────
 // No login required — anyone can browse games
 
@@ -135,15 +112,3 @@ router.delete(
 );
 
 module.exports = router;
-
-// DEBUG LOG
-console.log({
-  getAllGames,
-  getOneGame,
-  addGame,
-  editGame,
-  deleteGame,
-  getMyGames,
-  protect,
-  restrictTo
-});

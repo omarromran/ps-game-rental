@@ -12,7 +12,7 @@ const getAllGames = async (req, res) => {
       filter.status = 'Available';
     }
 
-    const games = await Game.find(filter);
+    const games = await Game.find(filter).sort({ title: 1 });
 
     res.json(games);
 

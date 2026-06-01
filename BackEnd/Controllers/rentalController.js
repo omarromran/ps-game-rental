@@ -2,16 +2,9 @@ const mongoose = require('mongoose');
 const Rental = require('../models/Rental');
 const Game = require('../models/Game');
 
-// Checkout — create rental
-const getRequestUser = (req) => {
-    if (req.user) return req.user;
-    if (req.session && req.session.user) return req.session.user;
-    return null;
-};
-
 const checkout = async (req, res) => {
     try {
-        const currentUser = getRequestUser(req);
+        const currentUser = req.user;
         const { items, phone, address } = req.body;
 
         if (!currentUser) {
@@ -111,10 +104,7 @@ const checkout = async (req, res) => {
 // Get my rentals
 const getMyRentals = async (req, res) => {
     try {
-        const currentUser = getRequestUser(req);
-        if (!currentUser) {
-            return res.status(401).json({ error: 'Not logged in' });
-        }
+        const currentUser = req.user;
 
         const rentals = await Rental.find({ customer: currentUser._id })
             .populate('game', 'title img platform pricePerDay')
@@ -153,10 +143,7 @@ const getStoreRentals = async (req, res) => {
 // Return a game
 const returnGame = async (req, res) => {
     try {
-        const currentUser = getRequestUser(req);
-        if (!currentUser) {
-            return res.status(401).json({ error: 'Not logged in' });
-        }
+        const currentUser = req.user;
 
         if (!req.params.id) {
             return res.status(400).json({ error: 'Rental ID is required' });
