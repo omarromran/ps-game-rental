@@ -163,9 +163,16 @@ function editUser(id) {
 
   editingUserId = id;
 
-  const table = document.getElementById('users-table');
-
   document.getElementById('edit-user-row')?.remove();
+
+  const allRows = document.querySelectorAll('#users-table tbody tr');
+  let targetRow = null;
+  allRows.forEach(row => {
+    const btn = row.querySelector('button');
+    if (btn && btn.getAttribute('onclick') === `editUser('${id}')`){
+      targetRow = row;
+    }
+  });
 
   const row = document.createElement('tr');
   row.id = 'edit-user-row';
@@ -173,11 +180,9 @@ function editUser(id) {
     <td colspan="5">
       <div style="padding:10px; background:#111; color:white; border-radius:10px;">
         <h4>Edit User</h4>
-
         <input id="edit-username" value="${user.username}" />
         <input id="edit-email" value="${user.email}" />
         <input id="edit-role" value="${user.role}" />
-
         <div style="margin-top:10px;">
           <button onclick="saveUserEdit()">Save</button>
           <button onclick="cancelUserEdit()">Cancel</button>
@@ -186,7 +191,11 @@ function editUser(id) {
     </td>
   `;
 
-  table.querySelector('tbody').prepend(row);
+  if (targetRow) {
+    targetRow.insertAdjacentElement('afterend', row);
+  } else {
+    document.querySelector('#users-table tbody').prepend(row);
+  }
 }
 
 async function saveUserEdit() {
@@ -275,9 +284,18 @@ function editGameBtn(id) {
 
   editingGameId = id;
 
-  const table = document.getElementById('games-table');
-
+  // Remove any existing edit row
   document.getElementById('edit-game-row')?.remove();
+
+  // Find the row of the clicked game by its Edit button
+  const allRows = document.querySelectorAll('#games-table tbody tr');
+  let targetRow = null;
+  allRows.forEach(row => {
+    const btn = row.querySelector('button');
+    if (btn && btn.getAttribute('onclick') === `editGameBtn('${id}')`){
+      targetRow = row;
+    }
+  });
 
   const row = document.createElement('tr');
   row.id = 'edit-game-row';
@@ -285,10 +303,8 @@ function editGameBtn(id) {
     <td colspan="8">
       <div style="padding:10px; background:#111; color:white; border-radius:10px;">
         <h4>Edit Game</h4>
-
         <input id="edit-title" value="${game.title}" />
         <input id="edit-price" value="${game.pricePerDay}" />
-
         <div style="margin-top:10px;">
           <button onclick="saveGameEdit()">Save</button>
           <button onclick="cancelGameEdit()">Cancel</button>
@@ -297,7 +313,11 @@ function editGameBtn(id) {
     </td>
   `;
 
-  table.querySelector('tbody').prepend(row);
+  if (targetRow) {
+    targetRow.insertAdjacentElement('afterend', row);
+  } else {
+    document.querySelector('#games-table tbody').prepend(row);
+  }
 }
 
 async function saveGameEdit() {
