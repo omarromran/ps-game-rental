@@ -127,121 +127,67 @@
 
             </section>
 
-            <!-- PROFILE -->
-            <section id="profile" class="dashboard-section" style="display:none;">
+         <!-- PROFILE -->
+<section id="profile" class="dashboard-section" style="display:none;">
 
-                <h2 class="page-title">
-                    Profile
-                </h2>
+    <h2 class="page-title">Profile</h2>
 
-                <div class="profile-container compact">
+    <div class="profile-container compact">
 
-                    <!-- TOP PROFILE -->
-                    <div class="profile-top">
+        <!-- TOP PROFILE -->
+        <div class="profile-top">
+            <div class="profile-avatar" id="profileAvatar">?</div>
+            <div class="profile-info">
+                <h3 id="nameText">User Name</h3>
+                <input id="nameInput" type="text" placeholder="Full Name" style="display:none;" />
+                <p id="emailText">user@email.com</p>
+                <input id="emailInput" type="email" placeholder="Email" style="display:none;" />
+            </div>
+        </div>
 
-                        
+        <!-- USERNAME -->
+        <div class="profile-item">
+            <span class="profile-key">Username</span>
+            <span class="profile-val" id="usernameText">username</span>
+            <input id="usernameInput" type="text" style="display:none;" />
+        </div>
 
-                        <div class="profile-info">
+        <!-- PHONE -->
+        <div class="profile-item">
+            <span class="profile-key">Phone</span>
+            <span class="profile-val" id="phoneText">N/A</span>
+            <div id="phoneEditContainer" class="phone-edit-container" style="display:none;">
+                <span class="phone-prefix">+20</span>
+                <input id="phoneInput" type="text" maxlength="11" placeholder="01XXXXXXXXX" />
+                <small id="phoneError" style="color:red; display:none;">Please enter a valid Egyptian phone number.</small>
+            </div>
+        </div>
 
-                            <h3 id="nameText">
-                                User Name
-                            </h3>
+        <!-- MEMBER SINCE -->
+        <div class="profile-item">
+            <span class="profile-key">Member Since</span>
+            <span class="profile-val" id="memberSince">-</span>
+        </div>
 
-                            <input id="nameInput" type="text" style="display:none;" />
+        <!-- TOTAL RENTALS -->
+        <div class="profile-item">
+            <span class="profile-key">Total Rentals</span>
+            <span class="profile-val" id="totalRentals">0 Games</span>
+        </div>
 
-                            <p id="emailText">
-                                user@email.com
-                            </p>
+        <!-- ACTION BUTTONS -->
+        <div class="profile-actions">
+            <button onclick="editProfile()" id="editBtn" class="profile-btn edit-btn">
+                <i class="fas fa-pen"></i> Edit Profile
+            </button>
+            <button onclick="saveProfile()" id="saveBtn" class="profile-btn save-btn" style="display:none;">
+                <i class="fas fa-save"></i> Save
+            </button>
+        </div>
 
-                            <input id="emailInput" type="email" style="display:none;" />
-
-                        </div>
-
-                    </div>
-
-                    <!-- USERNAME -->
-                    <div class="profile-item">
-
-                        <span class="profile-key">
-                            Username
-                        </span>
-
-                        <span class="profile-val" id="usernameText">
-                            username
-                        </span>
-
-                        <input id="usernameInput" type="text" style="display:none;" />
-
-                    </div> 
-
-                    <!-- PHONE -->
-                   <div class="profile-item">
-
-    <span class="profile-key">
-        Phone
-    </span>
-
-    <span class="profile-val" id="phoneText">
-        N/A
-    </span>
-
-    <div id="phoneEditContainer" style="display:none;">
-        <span>+20</span>
-        <input
-            id="phoneInput"
-            type="text"
-            maxlength="11"
-            placeholder="01XXXXXXXXX"
-        />
-        <small id="phoneError" style="color:red; display:none;">
-            Please enter a valid Egyptian phone number.
-        </small>
     </div>
 
-</div>
-
-                    <!-- MEMBER SINCE -->
-                    <div class="profile-item">
-
-                        <span class="profile-key">
-                            Member Since
-                        </span>
-
-                        <span class="profile-val" id="memberSince">
-                            -
-                        </span>
-
-                    </div>
-
-                    <!-- TOTAL RENTALS -->
-                    <div class="profile-item">
-
-                        <span class="profile-key">
-                            Total Rentals
-                        </span>
-
-                        <span class="profile-val" id="totalRentals">
-                            0 Games
-                        </span>
-
-                    </div>
-
-                    <!-- ACTION BUTTONS -->
-                    <div style="margin-top:15px;">
-
-                        <button onclick="editProfile()" id="editBtn">
-                            Edit Profile
-                        </button>
-
-                        <button onclick="saveProfile()" id="saveBtn" style="display:none;">
-                            Save
-                        </button>
-
-                    </div>
-
-                </div>
-
-            </section>
+</section>
 
         </main>
 

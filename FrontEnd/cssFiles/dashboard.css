@@ -925,4 +925,116 @@ main {
         flex-shrink: 0;
     }
 }
+/* =========================
+   PROFILE REDESIGN
+========================= */
+
+.profile-top {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    margin-bottom: 10px;
+}
+
+.profile-info h3 {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--white-color);
+    margin-bottom: 4px;
+}
+
+.profile-info p {
+    font-size: 0.85rem;
+    color: var(--muted-color);
+    margin: 0;
+}
+
+.profile-info input {
+    width: 100%;
+    margin-bottom: 8px;
+    padding: 8px 12px;
+    font-size: 0.9rem;
+}
+
+.profile-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    gap: 12px;
+}
+
+.profile-item input {
+    width: 220px;
+    max-width: 100%;
+    padding: 8px 12px;
+    font-size: 0.9rem;
+    text-align: right;
+}
+
+.phone-edit-container {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    justify-content: flex-end;
+    flex-wrap: nowrap;
+}
+
+.phone-prefix {
+    background: rgba(0, 67, 156, 0.2);
+    border: 1px solid rgba(0, 67, 156, 0.4);
+    padding: 8px 12px;
+    border-radius: 10px;
+    font-size: 0.9rem;
+    color: var(--white-color);
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.phone-edit-container input {
+    width: 160px;
+    flex-shrink: 0;
+}
+.profile-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 20px;
+}
+
+.profile-btn {
+    padding: 10px 24px;
+    border-radius: 50px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    transition: 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.edit-btn {
+    background: rgba(0, 67, 156, 0.2);
+    color: var(--white-color);
+    border: 1px solid rgba(0, 67, 156, 0.4);
+}
+
+.edit-btn:hover {
+    background: var(--secondary-color);
+}
+
+.save-btn {
+    background: rgba(40, 167, 69, 0.2);
+    color: #28a745;
+    border: 1px solid rgba(40, 167, 69, 0.4);
+}
+
+.save-btn:hover {
+    background: var(--accent-green);
+    color: var(--white-color);
+}
 }
