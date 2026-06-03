@@ -29,14 +29,31 @@ router.get(
 router.get(
   '/:id',
   protect,
-  restrictTo('Admin'),
+  (req, res, next) => {
+    if (req.user.role === 'Admin' || req.user._id.toString() === req.params.id) {
+      return next();
+    }
+    return res.status(403).json({ message: 'You do not have permission to perform this action.' });
+  },
   getUser
 );
 
+
+// USER CAN UPDATE THEIR OWN PROFILE, ADMIN CAN UPDATE ANYONE
 router.put(
   '/:id',
   protect,
-  restrictTo('Admin'),
+  (req, res, next) => {
+    const currentUser = req.user;
+    const targetId = req.params.id;
+
+    // Allow if admin OR if user is updating their own profile
+    if (currentUser.role === 'Admin' || currentUser._id.toString() === targetId) {
+      return next();
+    }
+
+    return res.status(403).json({ error: 'You do not have permission to perform this action.' });
+  },
   updateUser
 );
 

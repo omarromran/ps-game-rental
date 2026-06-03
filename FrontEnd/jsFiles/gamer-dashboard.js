@@ -384,12 +384,18 @@ function renderProfile() {
   const user = getCurrentUser();
   if (!user) return;
 
-    const displayName = user.name || user.username || "Gamer";
-   
-    document.getElementById("nameText").innerText = displayName;
-    document.getElementById("emailText").innerText = user.email || "No Email";
-    document.getElementById("usernameText").innerText = user.username || "Unknown";
-    document.getElementById("phoneText").innerText = user.phone || "N/A";
+  const displayName = user.name || user.username || "Gamer";
+
+  document.getElementById("nameText").innerText = displayName;
+  document.getElementById("emailText").innerText = user.email || "No Email";
+  document.getElementById("usernameText").innerText = user.username || "Unknown";
+  document.getElementById("phoneText").innerText = user.phone || "N/A";
+
+  // Avatar initials
+  const avatarEl = document.getElementById('profileAvatar');
+  if (avatarEl) {
+    avatarEl.innerText = (user.username || user.name || '?').charAt(0).toUpperCase();
+  }
 
   const activeCount = rentals.filter(r => r.status === 'active').length;
   const completedCount = rentals.filter(r => r.status !== 'active').length;
@@ -400,7 +406,10 @@ function renderProfile() {
   if (profileSummary) {
     profileSummary.innerText = `${activeCount} active rental${activeCount === 1 ? '' : 's'} • ${wishlistIds.length} wishlist item${wishlistIds.length === 1 ? '' : 's'}`;
   }
-}
+
+  // Always reset to view mode
+  toggleEdit(false);
+} 
 
 function editProfile() {
   toggleEdit(true);
