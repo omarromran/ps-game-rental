@@ -129,17 +129,164 @@ p a:hover {
   text-decoration: underline;
 }
 
-@media (max-width: 450px) {
+/* Tablet (768px - 1024px) */
+@media (max-width: 1024px) {
+  body {
+    display: grid;
+    place-items: center;
+    min-height: 100vh;
+    padding: 1rem;
+  }
+
   .wrapper {
+    max-width: 400px;
+    width: 100%;
+    padding: 2rem;
+  }
+}
+
+/* Mobile (max 768px) */
+@media (max-width: 768px) {
+  body {
+    padding: 0.5rem;
+  }
+
+  .wrapper {
+    max-width: 100%;
+    width: 100%;
     padding: 2rem 1.5rem;
+    border-radius: 10px;
+  }
+
+  h1 {
+    font-size: 1.3rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .input-group {
+    margin-bottom: 1rem;
   }
 
   .input-group input {
-    padding-left: 38px;
+    padding: 11px 11px 11px 38px;
+    font-size: 0.95rem;
   }
 
   .account-type {
     flex-direction: column;
     gap: 10px;
+    margin: 1.2rem 0;
+  }
+
+  .account-type label {
+    padding: 8px;
+    font-size: 0.9rem;
+  }
+
+  button {
+    padding: 12px;
+    font-size: 0.95rem;
+    margin-bottom: 0.75rem;
+  }
+
+  form p {
+    font-size: 0.85rem;
+  }
+}
+
+/* Extra small phones (max 480px) */
+@media (max-width: 480px) {
+  body {
+    padding: 0.25rem;
+  }
+
+  .wrapper {
+    padding: 1.5rem 1.25rem;
+    border-radius: 8px;
+    margin: 0.5rem;
+  }
+
+  h1 {
+    font-size: 1.1rem;
+    margin-bottom: 1.2rem;
+  }
+
+  .input-group {
+    margin-bottom: 0.9rem;
+  }
+
+  .input-group i {
+    font-size: 14px;
+    left: 10px;
+  }
+
+  .input-group input {
+    padding: 10px 10px 10px 36px;
+    font-size: 0.9rem;
+    padding-left: 38px;
+  }
+
+  .account-type {
+    margin: 1rem 0;
+    gap: 8px;
+  }
+
+  .account-type label {
+    font-size: 0.85rem;
+    gap: 5px;
+  }
+
+  button {
+    padding: 11px;
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+  }
+
+  form p {
+    font-size: 0.8rem;
+    margin-top: 0.75rem;
+  }
+
+  p a {
+    font-weight: 600;
+  }
+}
+
+/* iPhone SE and extra small (max 375px) */
+@media (max-width: 375px) {
+  .wrapper {
+    padding: 1.25rem 1rem;
+    max-width: calc(100% - 1rem);
+  }
+
+  h1 {
+    font-size: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  .input-group {
+    margin-bottom: 0.75rem;
+  }
+
+  .input-group input {
+    padding: 9px 9px 9px 34px;
+    font-size: 0.85rem;
+  }
+
+  .account-type {
+    margin: 0.9rem 0;
+  }
+
+  .account-type label {
+    font-size: 0.8rem;
+  }
+
+  button {
+    padding: 10px;
+    font-size: 0.85rem;
+  }
+
+  form p {
+    font-size: 0.75rem;
   }
 }

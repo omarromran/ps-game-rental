@@ -21,12 +21,15 @@ body {
     position: sticky;
     top: 0;
     z-index: 1000;
+    flex-wrap: wrap;
+    gap: 10px;
 }
 
 .logo {
     font-size: 1.5rem;
     font-weight: bold;
     letter-spacing: 2px;
+    min-width: fit-content;
 }
 
 .logo span {
@@ -37,6 +40,7 @@ body {
     display: flex;
     align-items: center;
     gap: 30px;
+    flex-wrap: wrap;
 }
 
 .cart-icon {
@@ -83,6 +87,7 @@ body {
     align-items: center;
     gap: 20px;
     border-bottom: 1px solid #222;
+    flex-wrap: wrap;
 }
 
 .search-container input,
@@ -101,6 +106,8 @@ body {
 
 .search-container input {
     width: 220px;
+    min-width: 150px;
+    flex: 1;
 }
 
 .price-inputs {
@@ -165,6 +172,7 @@ body {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
     gap: 25px;
+    width: 100%;
 }
 
 .game-card {
@@ -291,6 +299,7 @@ body {
     border-left: 1px solid #333;
     display: flex;
     flex-direction: column;
+    max-width: 90vw;
 }
 
 .cart-sidebar.open {
@@ -468,4 +477,267 @@ input::-webkit-inner-spin-button {
 #logout-btn:hover {
     background: #ff4444;
     color: #ffffff;
+}
+
+/* Tablet (768px - 1024px) */
+@media (max-width: 1024px) {
+    .navbar {
+        padding: 12px 3%;
+    }
+
+    .logo {
+        font-size: 1.2rem;
+        letter-spacing: 1px;
+    }
+
+    .header-right {
+        gap: 20px;
+    }
+
+    .user-profile {
+        gap: 10px;
+    }
+
+    .toolbar {
+        padding: 12px 3%;
+        gap: 15px;
+    }
+
+    .search-container input {
+        width: 180px;
+    }
+
+    .price-inputs input {
+        width: 70px;
+    }
+
+    .store-container {
+        padding: 20px 3%;
+    }
+
+    .game-grid {
+        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+        gap: 15px;
+    }
+
+    .cart-sidebar {
+        width: 320px;
+        right: -320px;
+        padding: 20px;
+    }
+}
+
+/* Mobile (max 768px) */
+@media (max-width: 768px) {
+    body {
+        overflow-x: hidden;
+    }
+
+    .navbar {
+        padding: 10px 3%;
+        justify-content: space-between;
+    }
+
+    .logo {
+        font-size: 1rem;
+        letter-spacing: 1px;
+    }
+
+    .logo span {
+        display: none;
+    }
+
+    .header-right {
+        gap: 15px;
+        order: 3;
+        width: 100%;
+        margin-top: 10px;
+    }
+
+    .user-name {
+        display: none;
+    }
+
+    .user-profile {
+        gap: 8px;
+    }
+
+    .avatar {
+        width: 30px;
+        height: 30px;
+    }
+
+    .toolbar {
+        padding: 10px 3%;
+        gap: 10px;
+    }
+
+    .search-container input,
+    .price-inputs input,
+    .drop-btn,
+    .reset-btn {
+        height: 38px;
+        font-size: 0.85rem;
+        padding: 0 10px;
+    }
+
+    .search-container input {
+        width: 100%;
+        min-width: unset;
+        flex: 1 1 100%;
+    }
+
+    .price-inputs {
+        flex: 1 1 100%;
+    }
+
+    .price-inputs input {
+        width: 60px;
+        flex: 1;
+    }
+
+    .filter-group {
+        flex: 1 1 100%;
+        width: 100%;
+        gap: 10px;
+    }
+
+    .store-container {
+        padding: 15px 3%;
+    }
+
+    .game-grid {
+        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+        gap: 12px;
+    }
+
+    .game-card {
+        border-radius: 12px;
+    }
+
+    .wishlist-btn {
+        width: 30px;
+        height: 30px;
+        font-size: 1rem;
+    }
+
+    .cart-sidebar {
+        width: 100%;
+        right: -100%;
+        max-width: 100%;
+        padding: 15px;
+        border-left: none;
+        border-top: 1px solid #333;
+    }
+
+    .cart-sidebar.open {
+        right: 0;
+    }
+
+    #logout-btn {
+        font-size: 0.85rem;
+        padding: 8px 12px;
+        margin-left: 0;
+    }
+}
+
+/* Extra small phones (max 480px) */
+@media (max-width: 480px) {
+    .navbar {
+        padding: 8px 2%;
+    }
+
+    .logo {
+        font-size: 0.9rem;
+    }
+
+    .cart-icon {
+        font-size: 1.1rem;
+    }
+
+    .header-right {
+        gap: 10px;
+    }
+
+    .toolbar {
+        padding: 8px 2%;
+        gap: 8px;
+    }
+
+    .search-container input,
+    .price-inputs input,
+    .drop-btn,
+    .reset-btn {
+        height: 36px;
+        font-size: 0.8rem;
+    }
+
+    .store-container {
+        padding: 10px 2%;
+    }
+
+    .game-grid {
+        grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+        gap: 10px;
+    }
+
+    .game-card {
+        border-radius: 8px;
+    }
+
+    .game-info h3 {
+        font-size: 0.85rem;
+    }
+
+    .game-info p {
+        font-size: 0.7rem;
+    }
+
+    .add-btn {
+        padding: 8px;
+        font-size: 0.8rem;
+    }
+
+    .cart-item {
+        gap: 10px;
+        padding: 10px;
+    }
+
+    .cart-item img {
+        width: 40px;
+        height: 40px;
+    }
+
+    .checkout-btn {
+        padding: 14px;
+        font-size: 0.95rem;
+    }
+}
+
+/* iPhone SE and small devices (max 375px) */
+@media (max-width: 375px) {
+    .logo {
+        font-size: 0.8rem;
+        letter-spacing: 0.5px;
+    }
+
+    .game-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+    }
+
+    .toolbar {
+        flex-direction: column;
+    }
+
+    .search-container input,
+    .price-inputs input,
+    .drop-btn,
+    .reset-btn {
+        width: 100%;
+    }
+
+    .price-inputs {
+        width: 100%;
+    }
 }

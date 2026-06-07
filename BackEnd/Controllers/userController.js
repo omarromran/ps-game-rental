@@ -278,7 +278,6 @@ const createAdmin = async (req, res) => {
             password: hashedPassword,
             role: 'Admin',
             approved: true,
-            suspended: false
         });
 
         await newAdmin.save();
