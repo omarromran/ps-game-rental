@@ -31,11 +31,6 @@ function navigateToSection(sectionId, btn) {
   if (btn) btn.classList.add('active');
 }
 
-function showModTab(tabId) {
-  document.querySelectorAll('.tab-panel').forEach(p => p.style.display = 'none');
-  const tab = document.getElementById(tabId);
-  if (tab) tab.style.display = 'block';
-}
 
 // ==========================================
 // 📡 FETCH HELPER
@@ -76,7 +71,6 @@ function updateUI() {
   renderUsers();
   renderGames();
   if (typeof Chart !== 'undefined') renderChart();
-  renderModeration();
 }
 
 function updateDashboard() {
@@ -411,37 +405,6 @@ async function logout() {
 }
 
 
-function renderModeration() {
-  const table = document.getElementById('mod-games-table');
-  if (!table) return;
-
-  const reported = games.filter(g => g.status === 'Reported');
-
-  table.innerHTML = `
-    <thead>
-      <tr>
-        <th>Title</th>
-        <th>Store</th>
-        <th>Status</th>
-        <th>Action</th>
-      </tr>
-    </thead>
-    <tbody>
-      ${reported.length ? reported.map(g => `
-        <tr>
-          <td>${g.title}</td>
-          <td>${getVendor(g)}</td>
-          <td>${g.status}</td>
-          <td>
-            <button onclick="unreportGame('${g._id}')">Approve</button>
-          </td>
-        </tr>
-      `).join('') : `
-        <tr><td colspan="4">No reported games</td></tr>
-      `}
-    </tbody>
-  `;
-}
 // ==========================================
 // 🚀 INIT
 // ==========================================

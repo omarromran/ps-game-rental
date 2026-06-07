@@ -87,10 +87,6 @@ router.post(
   protect,
   restrictTo('Store', 'Admin'),
   upload.array('images', 5),
-  (req, res, next) => {
-    console.log('UPLOAD FILES:', req.files);
-    next();
-  },
   addGame
 );
 
@@ -111,11 +107,4 @@ router.delete(
   deleteGame
 );
 
-router.post('/:id/report', protect, (req, res) => {
-  // TEMP SIMPLE FIX (you can improve later)
-  Game.findByIdAndUpdate(req.params.id, { status: 'Reported' })
-    .then(() => res.json({ message: 'Reported' }))
-    .catch(err => res.status(500).json({ error: err.message }));
-});
-router.get('/:id', getOneGame);
 module.exports = router;

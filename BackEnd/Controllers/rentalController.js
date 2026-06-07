@@ -96,7 +96,7 @@ const checkout = async (req, res) => {
         });
 
     } catch (err) {
-        console.log(err);
+        console.error(err);
         res.status(500).json({ error: 'Checkout failed' });
     }
 };
@@ -113,7 +113,7 @@ const getMyRentals = async (req, res) => {
         res.json(rentals);
 
     } catch (err) {
-        console.log(err);
+        console.error(err);
         res.status(500).json({ error: 'Failed to fetch rentals' });
     }
 };
@@ -135,7 +135,7 @@ const getStoreRentals = async (req, res) => {
         res.json(rentals);
 
     } catch (err) {
-        console.log(err);
+        console.error(err);
         res.status(500).json({ error: 'Failed to fetch store rentals' });
     }
 };
@@ -174,7 +174,7 @@ const returnGame = async (req, res) => {
         res.json({ message: 'Game returned successfully', rental });
 
     } catch (err) {
-        console.log(err);
+        console.error(err);
         res.status(500).json({ error: 'Failed to return game' });
     }
 };
@@ -190,7 +190,7 @@ const getAllRentals = async (req, res) => {
         res.json(rentals);
 
     } catch (err) {
-        console.log(err);
+        console.error(err);
         res.status(500).json({ error: 'Failed to fetch rentals' });
     }
 };

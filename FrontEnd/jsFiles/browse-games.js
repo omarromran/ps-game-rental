@@ -1,8 +1,6 @@
 let inventory = [];
 let cart = [];
 let wishlist = [];
-let activeStoreFilter = null;
-
 // ==========================================
 // 🔑 AUTH HELPERS
 // ==========================================
@@ -145,9 +143,8 @@ function applyFilters() {
     const matchesPlatform = platforms.length === 0 || platforms.some(p => gamePlatforms.includes(p));
     const matchesCategory = categories.length === 0 || categories.includes(g.category);
     const matchesPrice = g.pricePerDay >= minP && g.pricePerDay <= maxP;
-    const matchesStore = !activeStoreFilter || g.storeID === activeStoreFilter;
     const isAvailable = g.status === 'available' || g.status === '';
-    return matchesSearch && matchesPlatform && matchesCategory && matchesPrice && matchesStore && isAvailable;
+    return matchesSearch && matchesPlatform && matchesCategory && matchesPrice && isAvailable;
   });
 
   const itemCount = document.getElementById('item-count');
@@ -319,8 +316,4 @@ document.addEventListener('DOMContentLoaded', () => {
   if (min) min.addEventListener('input', applyFilters);
   if (max) max.addEventListener('input', applyFilters);
 });
-
-function index() {
-  window.location.href = '/index';
-}
 

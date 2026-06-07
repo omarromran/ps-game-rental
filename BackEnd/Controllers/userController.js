@@ -1,5 +1,7 @@
 const User = require('../models/User');
 const bcrypt = require('bcryptjs');
+const Game = require('../models/Game');
+const Rental = require('../models/Rental');
 
 // Email format checker
 const isValidEmail = (email) => {
@@ -12,7 +14,7 @@ const getAllUsers = async (req, res) => {
         const users = await User.find().select('-password');
         res.json(users);
     } catch (err) {
-        console.log(err);
+        console.error(err);
         res.status(500).json({ error: 'Failed to fetch users' });
     }
 };
@@ -27,7 +29,7 @@ const getUser = async (req, res) => {
         if (!user) return res.status(404).json({ error: 'User not found' });
         res.json(user);
     } catch (err) {
-        console.log(err);
+        console.error(err);
         res.status(500).json({ error: 'Failed to fetch user' });
     }
 };
@@ -145,14 +147,10 @@ const updateUser = async (req, res) => {
         res.json({ message: 'Profile updated', user });
 
     } catch (err) {
-        console.log(err);
+        console.error(err);
         res.status(500).json({ error: 'Failed to update user' });
     }
 };
-
-// Delete user (admin)
-const Game = require('../models/Game');
-const Rental = require('../models/Rental');
 
 // Delete user (admin) with transaction-safe cascade
 const deleteUser = async (req, res) => {
@@ -195,7 +193,7 @@ const deleteUser = async (req, res) => {
 
         res.json({ message: 'User deleted successfully' });
     } catch (err) {
-        console.log(err);
+        console.error(err);
         if (err && err.status === 404) return res.status(404).json({ error: err.message });
         res.status(500).json({ error: 'Failed to delete user' });
     } finally {
@@ -230,7 +228,7 @@ const approveStore = async (req, res) => {
         res.json({ message: 'Store owner approved', user: updatedUser });
 
     } catch (err) {
-        console.log(err);
+        console.error(err);
         res.status(500).json({ error: 'Failed to approve store owner' });
     }
 };
@@ -258,7 +256,7 @@ const suspendUser = async (req, res) => {
         res.json({ message: 'User suspended', user: updatedUser });
 
     } catch (err) {
-        console.log(err);
+        console.error(err);
         res.status(500).json({ error: 'Failed to suspend user' });
     }
 };

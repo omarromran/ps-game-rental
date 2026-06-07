@@ -131,7 +131,6 @@ function renderGamePage() {
       </div>
       <h1 class="desc-title">${title}</h1>
       <div class="desc-meta">
-        <span class="report-game" onclick="reportGame()" title="Report inappropriate content">🚩 Report</span>
       </div>
       <p class="desc-text">${currentGame.description || 'No description available.'}</p>
       <div class="info-grid">
@@ -282,9 +281,6 @@ function renderReviews() {
       <div class="review-top">
         <span class="reviewer-name">${review.reviewer}</span>
         <span class="review-stars">${'★'.repeat(review.rating)}${'☆'.repeat(5 - review.rating)}</span>
-        <button class="btn-report-review ${review.flagged ? 'flagged' : ''}" onclick="reportReview(${index})" title="Report this review">
-          ${review.flagged ? 'Flagged' : '🚩'}
-        </button>
       </div>
       <p class="review-comment">${review.comment}</p>
       ${review.date ? `<p class="review-date">${review.date}</p>` : ''}
@@ -292,29 +288,9 @@ function renderReviews() {
   `).join('');
 }
 
-async function reportGame() {
-  const ok = await showConfirm('Report this game as inappropriate?');
-  if (!ok) return;
 
-  localStorage.setItem(`reported_games_${currentGame._id || gameId}`, 'true');
 
-  showToast('Game reported to admin.', 'success');
-}
 
-function reportReview(index) {
-  if (!showConfirm('Report this review?')) return;
-  const reviewKey = `reviews_${currentGame._id || gameId}`;
-  const reviews = JSON.parse(localStorage.getItem(reviewKey) || '[]');
-  if (!reviews[index]) return;
-  reviews[index].flagged = true;
-  localStorage.setItem(reviewKey, JSON.stringify(reviews));
-  renderReviews();
-  showToast('Review reported.', 'success');
-}
-
-function index() {
-  window.location.href = '/index';
-}
 
 // ==========================================
 // 🚀 INIT

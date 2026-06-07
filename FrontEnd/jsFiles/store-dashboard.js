@@ -114,12 +114,6 @@ async function fetchActivityLog() {
 // ==========================================
 // 🖼️ IMAGE HANDLING
 // ==========================================
-function setSelectedImages(files) {
-  selectedImages = Array.from(files);
-  updateImageInputFiles();
-  updateImagePreview();
-}
-
 // Helper to resolve form image arrays safely
 function updateImageInputFiles() {
   const imageInput = document.getElementById('images');
