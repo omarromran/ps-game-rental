@@ -1,4 +1,5 @@
 const Game = require('../models/Game');
+const mongoose = require('mongoose');
 
 // ─── GET ALL GAMES ───────────────────────────────────────────────
 const getAllGames = async (req, res) => {
@@ -17,11 +18,10 @@ const getAllGames = async (req, res) => {
     res.json(games);
 
   } catch (err) {
-    console.log(err);
+    console.error(err);
     res.status(500).json({ error: 'Failed to fetch games' });
   }
 };
-const mongoose = require('mongoose');
 
 // ─── GET ONE GAME ────────────────────────────────────────────────
 const getOneGame = async (req, res) => {
@@ -40,7 +40,7 @@ const getOneGame = async (req, res) => {
     if (!game) return res.status(404).json({ error: 'Game not found' });
     return res.json(game);
   } catch (err) {
-    console.log(err);
+    console.error(err);
     res.status(500).json({ error: 'Failed to fetch game' });
   }
 };
@@ -335,7 +335,7 @@ const deleteGame = async (req, res) => {
     await Game.findByIdAndDelete(req.params.id);
     res.json({ message: 'Game deleted successfully' });
   } catch (err) {
-    console.log('DELETE GAME ERROR:', err);
+    console.error('DELETE GAME ERROR:', err);
     res.status(500).json({ error: err.message || 'Failed to delete game' });
   }
 };
