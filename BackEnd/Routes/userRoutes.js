@@ -7,7 +7,7 @@ const {
   updateUser,
   deleteUser,
   approveStore,
-  suspendUser
+  createAdmin
 } = require('../Controllers/userController');
 
 const {
@@ -24,6 +24,13 @@ router.get(
   protect,
   restrictTo('Admin'),
   getAllUsers
+);
+
+router.post(
+  '/admin',
+  protect,
+  restrictTo('Admin'),
+  createAdmin
 );
 
 router.get(
@@ -69,13 +76,6 @@ router.patch(
   protect,
   restrictTo('Admin'),
   approveStore
-);
-
-router.patch(
-  '/:id/suspend',
-  protect,
-  restrictTo('Admin'),
-  suspendUser
 );
 
 module.exports = router;

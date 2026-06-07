@@ -374,13 +374,13 @@ async function handleAdmin(e) {
   }
 
   try {
-    const res = await fetch('/api/auth/register', {
+    const res = await fetch('/api/users/admin', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ username: data.username, email: data.email, password: data.password, role: 'Admin' })
+      headers: getHeaders(true),
+      body: JSON.stringify({ username: data.username, email: data.email, password: data.password })
     });
     const result = await res.json();
-    if (!res.ok) throw new Error(result.message || result.error);
+    if (!res.ok) throw new Error(result.error || result.message);
     showToast('Admin created', 'success');
     e.target.reset();
     await loadData();

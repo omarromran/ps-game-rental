@@ -1,5 +1,7 @@
 const User = require('../models/User');
 const bcrypt = require('bcryptjs');
+const Game = require('../models/Game');
+const Rental = require('../models/Rental');
 
 // Email format checker
 const isValidEmail = (email) => {
@@ -150,10 +152,6 @@ const updateUser = async (req, res) => {
     }
 };
 
-// Delete user (admin)
-const Game = require('../models/Game');
-const Rental = require('../models/Rental');
-
 // Delete user (admin) with transaction-safe cascade
 const deleteUser = async (req, res) => {
     let session = null;
@@ -235,32 +233,70 @@ const approveStore = async (req, res) => {
     }
 };
 
-// Suspend user (admin)
-const suspendUser = async (req, res) => {
+// Create new admin (admin only)
+const createAdmin = async (req, res) => {
     try {
-        if (!req.params.id) {
-            return res.status(400).json({ error: 'User ID is required' });
+        const { username, email, password } = req.body;
+
+        if (!username || username.trim() === '') {
+            return res.status(400).json({ error: 'Username is required' });
+        }
+        if (username.trim().length < 3) {
+            return res.status(400).json({ error: 'Username must be at least 3 characters' });
+        }
+        if (!email || email.trim() === '') {
+            return res.status(400).json({ error: 'Email is required' });
+        }
+        if (!isValidEmail(email)) {
+            return res.status(400).json({ error: 'Please enter a valid email address' });
+        }
+        if (!password || password.trim() === '') {
+            return res.status(400).json({ error: 'Password is required' });
+        }
+        if (password.length < 6) {
+            return res.status(400).json({ error: 'Password must be at least 6 characters' });
         }
 
-        const user = await User.findById(req.params.id);
-        if (!user) return res.status(404).json({ error: 'User not found' });
-
-        if (user.suspended) {
-            return res.status(400).json({ error: 'User is already suspended' });
+        const normalizedEmail = email.trim().toLowerCase();
+        const emailExists = await User.findOne({ email: normalizedEmail });
+        if (emailExists) {
+            return res.status(400).json({ error: 'Email is already registered' });
         }
 
-        const updatedUser = await User.findByIdAndUpdate(
-            req.params.id,
-            { suspended: true },
-            { new: true }
-        ).select('-password');
+        const normalizedUsername = username.trim();
+        const usernameExists = await User.findOne({ username: normalizedUsername });
+        if (usernameExists) {
+            return res.status(400).json({ error: 'Username is already taken' });
+        }
 
-        res.json({ message: 'User suspended', user: updatedUser });
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(password, salt);
+
+        const newAdmin = new User({
+            username: normalizedUsername,
+            email: normalizedEmail,
+            password: hashedPassword,
+            role: 'Admin',
+            approved: true,
+            suspended: false
+        });
+
+        await newAdmin.save();
+
+        res.status(201).json({
+            message: 'Admin created successfully',
+            user: {
+                _id: newAdmin._id,
+                username: newAdmin.username,
+                email: newAdmin.email,
+                role: newAdmin.role
+            }
+        });
 
     } catch (err) {
-        console.log(err);
-        res.status(500).json({ error: 'Failed to suspend user' });
+        console.error('Error creating admin:', err);
+        res.status(500).json({ error: 'Server error during admin creation', details: err.message });
     }
 };
 
-module.exports = { getAllUsers, getUser, updateUser, deleteUser, approveStore, suspendUser };
+module.exports = { getAllUsers, getUser, updateUser, deleteUser, approveStore, createAdmin };
