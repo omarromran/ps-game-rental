@@ -13,12 +13,10 @@ const userSchema = new mongoose.Schema({
   storeID: { type: String, unique: true, sparse: true, trim: true },
   phone: { type: String, trim: true, default: '' },
   approved: { type: Boolean, default: false },
-  suspended: { type: Boolean, default: false },
   wishlist: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Game'
 }],
-  balance: { type: Number, default: 0, min: 0 }
 }, {
   timestamps: true,
   collection: 'Users'

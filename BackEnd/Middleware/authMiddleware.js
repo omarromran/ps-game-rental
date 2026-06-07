@@ -21,11 +21,7 @@ exports.protect = async (req, res, next) => {
     if (!user) {
       return res.status(401).json({ message: 'User no longer exists.' });
     }
-
-    if (user.suspended) {
-      return res.status(403).json({ message: 'Your account has been suspended.' });
-    }
-
+    
     req.user = user;
     next();
 

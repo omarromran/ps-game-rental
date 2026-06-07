@@ -12,9 +12,6 @@ const gameSchema = new mongoose.Schema({
   category: { type: String, required: true },
   img: { type: String, required: true },
   images: { type: [String], default: [] },   // ← Cloudinary uploaded images
-  developer: { type: String },
-  releaseYear: { type: Number },
-  pegi: { type: Number },
  description: { type: String },
   wishlist: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User', default: [] }]
 }, { timestamps: true, collection: 'Games' });
