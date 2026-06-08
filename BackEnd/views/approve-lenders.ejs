@@ -6,12 +6,31 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Approve Stores</title>
     <link rel="stylesheet" href="/cssFiles/approveLenders.css">
+    <link rel="stylesheet"href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="icon" href="/photos/favicon.png">
     <script src="/jsFiles/toast.js"></script>
     <script type="module" src="/jsFiles/logout.js"></script>
 </head>
 
 <body>
+     <div class="dashboard-wrapper">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h2>Admin</h2>
+            </div>
+
+            <nav>
+                <button onclick="window.location.href='/admin-dashboard'">
+                    <i class="fas fa-arrow-left"></i> Back to Dashboard
+                </button>
+            </nav>
+
+            <button class="logout" onclick="logout()">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </button>
+
+        </aside>
+
     <div class="table-container">
         <h2>Pending Store Approvals</h2>
 
