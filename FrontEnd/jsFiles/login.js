@@ -26,8 +26,8 @@ document.getElementById("login-form").addEventListener("submit", async e => {
         return;
     }
 
-    if (password.length < 6) {
-        errorMsg.textContent = "Password must be at least 6 characters.";
+    if (password.length < 6 || password.length > 20) {
+        errorMsg.textContent = "Password is incorrect.";
         errorMsg.style.display = "block";
         return;
     }
@@ -48,21 +48,21 @@ document.getElementById("login-form").addEventListener("submit", async e => {
             return;
         }
 
-        // Save user to localStorage
         localStorage.setItem("currentUser", JSON.stringify(data.user));
         localStorage.setItem("token", data.token);
         document.cookie = `token=${data.token}; path=/; max-age=86400`;
 
-        // Show toast then redirect after 1.5s
         showToast(`Welcome back, ${data.user.username}!`, 'success');
 
         const role = data.user.role;
-        if (role === "Admin") {
-            setTimeout(() => window.location.href = "/admin-dashboard", 1500);
-        } else if (role === "Store") {
-            setTimeout(() => window.location.href = "/store-dashboard", 1500);
-        } else if (role === "Gamer") {
-            setTimeout(() => window.location.href = "/browse-games", 1500);
+        const redirectMap = {
+            "Admin": "/admin-dashboard",
+            "Store": "/store-dashboard",
+            "Gamer": "/browse-games"
+        };
+
+        if (redirectMap[role]) {
+            setTimeout(() => window.location.href = redirectMap[role], 1500);
         } else {
             errorMsg.textContent = "User role not recognized.";
             errorMsg.style.display = "block";

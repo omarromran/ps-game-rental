@@ -1,12 +1,7 @@
-// dashboard.js (Admin) — token-only auth
-
 let users = [];
 let games = [];
 let chartObj = null;
 
-// ==========================================
-// 🔑 AUTH HELPERS
-// ==========================================
 const getToken = () => localStorage.getItem('token');
 
 const getHeaders = (json = false) => {
@@ -31,9 +26,6 @@ function navigateToSection(sectionId, btn) {
   if (btn) btn.classList.add('active');
 }
 
-// ==========================================
-// 📡 FETCH HELPER
-// ==========================================
 async function fetchData(endpoint) {
   try {
     const res = await fetch(endpoint, { headers: getHeaders() });
@@ -49,9 +41,6 @@ async function fetchData(endpoint) {
   }
 }
 
-// ==========================================
-// 📦 LOAD DATA
-// ==========================================
 async function loadData() {
   try {
     users = await fetchData('/api/users');
@@ -62,9 +51,6 @@ async function loadData() {
   }
 }
 
-// ==========================================
-// 🖥️ UI
-// ==========================================
 function updateUI() {
   updateDashboard();
   renderUsers();
@@ -110,9 +96,6 @@ function renderChart() {
   });
 }
 
-// ==========================================
-// 👥 USERS
-// ==========================================
 function renderUsers() {
   const table = document.getElementById('users-table');
   if (!table) return;

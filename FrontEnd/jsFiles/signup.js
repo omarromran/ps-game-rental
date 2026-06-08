@@ -1,5 +1,3 @@
-
-
 document.getElementById("signup-form").addEventListener("submit", async e => {
     e.preventDefault();
 
@@ -13,49 +11,31 @@ document.getElementById("signup-form").addEventListener("submit", async e => {
     errorMsg.style.display = "none";
     errorMsg.textContent = "";
 
-    // Frontend validation
-    if (!username) {
-        errorMsg.textContent = "Username is required.";
+
+    if (!/^[a-zA-Z][a-zA-Z0-9]{2,19}$/.test(username)) {
+        errorMsg.textContent = "Username must be 3-20 characters long, start with a letter, and contain no spaces.";
         errorMsg.style.display = "block";
         return;
     }
-    if (username.length < 3) {
-        errorMsg.textContent = "Username must be at least 3 characters.";
-        errorMsg.style.display = "block";
-        return;
-    }
-    if (!/^\S+$/.test(username)) {
-        errorMsg.textContent = "Username must not contain spaces.";
-        errorMsg.style.display = "block";
-        return;
-    }
-    if (!email) {
-        errorMsg.textContent = "Email is required.";
-        errorMsg.style.display = "block";
-        return;
-    }
+
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
         errorMsg.textContent = "Please enter a valid email address.";
         errorMsg.style.display = "block";
         return;
     }
-    if (!password) {
-        errorMsg.textContent = "Password is required.";
+
+    if (password.length < 6 || password.length > 20) {
+        errorMsg.textContent = "Password must be between 6 and 20 characters.";
         errorMsg.style.display = "block";
         return;
     }
-    if (password.length < 6) {
-        errorMsg.textContent = "Password must be at least 6 characters.";
-        errorMsg.style.display = "block";
-        return;
-    }
+
     if (password !== confirmPassword) {
         errorMsg.textContent = "Passwords do not match.";
         errorMsg.style.display = "block";
         return;
     }
-    // no client-side requirement for storeID; server creates it automatically
-
+    
     try {
         const res = await fetch("/api/auth/register", {
             method: "POST",
@@ -71,8 +51,8 @@ document.getElementById("signup-form").addEventListener("submit", async e => {
             return;
         }
 
-      showToast("Account created successfully! Redirecting to login...", 'success');
-      setTimeout(() => window.location.href = "/login", 1500);
+        showToast("Account created successfully! Redirecting to login...", 'success');
+        setTimeout(() => window.location.href = "/login", 1500);
 
     } catch (err) {
         errorMsg.textContent = "Cannot connect to server. Make sure the backend is running.";
