@@ -218,9 +218,6 @@ if (!confirmed) return;
   }
 }
 
-// ==========================================
-// 🎮 GAMES
-// ==========================================
 function getVendor(game) {
   const store = users.find(u => String(u.storeID) === String(game.storeID));
   return store ? store.username : 'Unknown';
@@ -340,9 +337,6 @@ async function deleteGame(id) {
   }
 }
 
-// ==========================================
-// 👤 CREATE ADMIN
-// ==========================================
 async function handleAdmin(e) {
   e.preventDefault();
   const formData = new FormData(e.target);
@@ -368,9 +362,6 @@ async function handleAdmin(e) {
   }
 }
 
-// ==========================================
-// 🚪 LOGOUT
-// ==========================================
 async function logout() {
   const confirmed = await showConfirm('Are you sure you want to log out?');
   if (!confirmed) return;
@@ -391,9 +382,6 @@ async function logout() {
 }
 
 
-// ==========================================
-// 🚀 INIT
-// ==========================================
 document.addEventListener('DOMContentLoaded', () => {
   const token = getToken();
   if (!token) {
