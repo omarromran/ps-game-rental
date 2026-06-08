@@ -3,12 +3,10 @@ const bcrypt = require('bcryptjs');
 const Game = require('../models/Game');
 const Rental = require('../models/Rental');
 
-// Email format checker
 const isValidEmail = (email) => {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 };
 
-// Get all users (admin)
 const getAllUsers = async (req, res) => {
     try {
         const users = await User.find().select('-password');
@@ -19,7 +17,6 @@ const getAllUsers = async (req, res) => {
     }
 };
 
-// Get one user profile
 const getUser = async (req, res) => {
     try {
         if (!req.params.id) {
@@ -34,7 +31,6 @@ const getUser = async (req, res) => {
     }
 };
 
-// Edit profile
 const updateUser = async (req, res) => {
     try {
         const { username, email, password, role } = req.body;
@@ -152,7 +148,6 @@ const updateUser = async (req, res) => {
     }
 };
 
-// Delete user (admin) with transaction-safe cascade
 const deleteUser = async (req, res) => {
     let session = null;
     try {
@@ -201,7 +196,6 @@ const deleteUser = async (req, res) => {
     }
 };
 
-// Approve store owner (admin)
 const approveStore = async (req, res) => {
     try {
         if (!req.params.id) {
@@ -233,7 +227,6 @@ const approveStore = async (req, res) => {
     }
 };
 
-// Create new admin (admin only)
 const createAdmin = async (req, res) => {
     try {
         const { username, email, password } = req.body;

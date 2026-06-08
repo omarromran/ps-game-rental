@@ -1,4 +1,4 @@
-// account type selection remains for role assignment; storeID will be generated server-side for Store accounts
+
 
 document.getElementById("signup-form").addEventListener("submit", async e => {
     e.preventDefault();
@@ -57,7 +57,7 @@ document.getElementById("signup-form").addEventListener("submit", async e => {
     // no client-side requirement for storeID; server creates it automatically
 
     try {
-        const res = await fetch("http://localhost:8080/api/auth/register", {
+        const res = await fetch("/api/auth/register", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ username, email, password, role })

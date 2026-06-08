@@ -29,7 +29,6 @@ router.get(
 
 router.get('/:id', getOneGame);
 
-// Add a game with image upload
 router.post(
   '/',
   protect,

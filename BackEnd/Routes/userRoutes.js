@@ -15,10 +15,6 @@ const {
   restrictTo
 } = require('../Middleware/authMiddleware');
 
-// =========================
-// ADMIN ONLY ROUTES
-// =========================
-
 router.get(
   '/',
   protect,
@@ -45,8 +41,6 @@ router.get(
   getUser
 );
 
-
-// USER CAN UPDATE THEIR OWN PROFILE, ADMIN CAN UPDATE ANYONE
 router.put(
   '/:id',
   protect,
@@ -54,7 +48,6 @@ router.put(
     const currentUser = req.user;
     const targetId = req.params.id;
 
-    // Allow if admin OR if user is updating their own profile
     if (currentUser.role === 'Admin' || currentUser._id.toString() === targetId) {
       return next();
     }

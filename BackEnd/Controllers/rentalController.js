@@ -101,7 +101,6 @@ const checkout = async (req, res) => {
     }
 };
 
-// Get my rentals
 const getMyRentals = async (req, res) => {
     try {
         const currentUser = req.user;
@@ -140,7 +139,6 @@ const getStoreRentals = async (req, res) => {
     }
 };
 
-// Return a game
 const returnGame = async (req, res) => {
     try {
         const currentUser = req.user;
@@ -179,7 +177,6 @@ const returnGame = async (req, res) => {
     }
 };
 
-// Admin — get all rentals
 const getAllRentals = async (req, res) => {
     try {
         const rentals = await Rental.find()

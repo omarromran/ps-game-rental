@@ -1,6 +1,5 @@
 const Game = require('../models/Game');
 
-// ─── GET ALL GAMES ───────────────────────────────────────────────
 const getAllGames = async (req, res) => {
   try {
     // By default, only return games that are available for browsing.
@@ -23,7 +22,6 @@ const getAllGames = async (req, res) => {
 };
 const mongoose = require('mongoose');
 
-// ─── GET ONE GAME ────────────────────────────────────────────────
 const getOneGame = async (req, res) => {
   try {
     const id = req.params.id;
@@ -44,7 +42,7 @@ const getOneGame = async (req, res) => {
     res.status(500).json({ error: 'Failed to fetch game' });
   }
 };
-// ─── ADD GAME ────────────────────────────────────────────────────
+
 const addGame = async (req, res) => {
   try {
 
@@ -54,7 +52,7 @@ const addGame = async (req, res) => {
       });
     }
 
-    if (req.user.role !== 'Store' && req.user.role !== 'Admin') {
+    if (req.user.role !== 'Store' ) {
       return res.status(403).json({
         error: 'Only stores can add games'
       });
@@ -118,32 +116,6 @@ const addGame = async (req, res) => {
       });
     }
 
-    if (
-      releaseYear &&
-      (
-        isNaN(releaseYear) ||
-        releaseYear < 1970 ||
-        releaseYear > new Date().getFullYear() + 1
-      )
-    ) {
-      return res.status(400).json({
-        error: 'Invalid release year'
-      });
-    }
-
-    if (
-      pegi &&
-      (
-        isNaN(pegi) ||
-        pegi < 3 ||
-        pegi > 18
-      )
-    ) {
-      return res.status(400).json({
-        error: 'Invalid PEGI rating'
-      });
-    }
-
     if (!req.files || req.files.length === 0) {
       return res.status(400).json({
         error: 'At least one image is required'
@@ -191,7 +163,7 @@ const addGame = async (req, res) => {
 
   }
 };
-// ─── EDIT GAME ───────────────────────────────────────────────────
+
 const editGame = async (req, res) => {
   try {
 
@@ -318,7 +290,7 @@ const editGame = async (req, res) => {
 
   }
 };
-// ─── DELETE GAME ─────────────────────────────────────────────────
+
 const deleteGame = async (req, res) => {
   try {
     const game = await Game.findById(req.params.id);
@@ -339,7 +311,6 @@ const deleteGame = async (req, res) => {
     res.status(500).json({ error: err.message || 'Failed to delete game' });
   }
 };
-// ─── GET MY GAMES ────────────────────────────────────────────────
 
 const getMyGames = async (req, res) => {
   try {

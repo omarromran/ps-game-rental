@@ -2,7 +2,7 @@ const User = require('../models/User');
 const Game = require('../models/Game');
 const mongoose = require('mongoose');
 
-// GET /api/wishlist
+
 exports.getWishlist = async (req, res) => {
 try {
 
@@ -28,7 +28,6 @@ try {
 
 };
 
-// POST /api/wishlist/:gameId
 exports.addToWishlist = async (req, res) => {
 try {
 
@@ -57,7 +56,6 @@ try {
         });
     }
 
-    // Use game._id for consistency in wishlist
     const mongoId = game._id.toString();
 
     const alreadyExists = user.wishlist.some(
@@ -89,7 +87,6 @@ try {
 
 };
 
-// DELETE /api/wishlist/:gameId
 exports.removeFromWishlist = async (req, res) => {
 try {
 
@@ -103,7 +100,6 @@ try {
         });
     }
 
-    // ✅ FIXED: match by MongoDB _id OR custom gameID
     let mongoId = gameId;
     if (!mongoose.Types.ObjectId.isValid(gameId)) {
         const game = await Game.findOne({ gameID: gameId });

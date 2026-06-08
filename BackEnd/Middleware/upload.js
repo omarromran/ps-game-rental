@@ -2,14 +2,12 @@ const multer = require('multer');
 const { CloudinaryStorage } = require('multer-storage-cloudinary');
 const cloudinary = require('cloudinary').v2;
 
-// Configure Cloudinary directly here using your .env credentials
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
   api_key: process.env.CLOUDINARY_API_KEY,
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-// Tell Multer to upload files to Cloudinary instead of your server disk
 const storage = new CloudinaryStorage({
   cloudinary: cloudinary,
   params: {
@@ -21,7 +19,6 @@ const storage = new CloudinaryStorage({
   },
 });
 
-// Reject any file that is not an image
 const fileFilter = (req, file, cb) => {
   const allowedTypes = ['image/jpeg', 'image/png', 'image/webp'];
 
@@ -35,7 +32,6 @@ const fileFilter = (req, file, cb) => {
   }
 };
 
-// Create the final upload instance
 const upload = multer({
   storage: storage,
   fileFilter: fileFilter,

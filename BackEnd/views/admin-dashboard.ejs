@@ -11,7 +11,6 @@
     <script src="/jsFiles/toast.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script defer src="/jsFiles/dashboard.js"></script>
-    <script src="/jsFiles/authGuard.js"></script>
     <script type="module" src="/jsFiles/logout.js"></script>
 </head>
 
@@ -27,15 +26,23 @@
                 <button onclick="navigateToSection('dashboard', this)" class="active">
                     <i class="fas fa-tachometer-alt"></i> Dashboard
                 </button>
-                <button onclick="navigateToSection('games', this)">
-                    <i class="fas fa-gamepad"></i> Games
-                </button>
+
                 <button onclick="navigateToSection('users', this)">
                     <i class="fas fa-users"></i> Users
                 </button>
+
+                <button onclick="navigateToSection('games', this)">
+                    <i class="fas fa-gamepad"></i> Games
+                </button>
+
                 <button onclick="navigateToSection('addAdmin', this)">
                     <i class="fas fa-user-plus"></i> Add Admin
                 </button>
+
+                <button onclick="window.location.href='/approve-lenders'">
+                    <i class="fas fa-user-check"></i> Pending Stores
+                </button>
+
             </nav>
 
             <button class="logout" onclick="logout()">
