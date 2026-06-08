@@ -33,117 +33,131 @@ const getUser = async (req, res) => {
 
 const updateUser = async (req, res) => {
     try {
-        const { username, email, password, role } = req.body;
+        const { username, email, phone, role } = req.body;
+
+        const requester = req.user; // logged-in user
+        const targetUserId = req.params.id;
+
+        const isAdmin = requester.role === 'Admin';
+        const isOwner = requester._id.toString() === targetUserId;
+
+        if (!isAdmin && !isOwner) {
+            return res.status(403).json({ error: 'Not authorized' });
+        }
+
         const updateData = {};
-
-        if (
-  req.user.role !== 'Admin' &&
-  req.user._id.toString() !== req.params.id
-) {
-  return res.status(403).json({
-    error: 'Not authorized'
-  });
-}
-
-        // Validation
+        
         if (username !== undefined) {
-            if (username.trim() === '') {
+            const trimmed = username.trim();
+
+            if (!trimmed) {
                 return res.status(400).json({ error: 'Username cannot be empty' });
             }
-            if (username.trim().length < 3) {
+
+            if (trimmed.length < 3) {
                 return res.status(400).json({ error: 'Username must be at least 3 characters' });
             }
-            // Check duplicate username
-            const existingUser = await User.findOne({
-                username: username.trim(),
-                _id: { $ne: req.params.id }
+
+            const existing = await User.findOne({
+                username: trimmed,
+                _id: { $ne: targetUserId }
             });
-            if (existingUser) {
+
+            if (existing) {
                 return res.status(400).json({ error: 'Username is already taken' });
             }
-            updateData.username = username.trim();
+
+            updateData.username = trimmed;
         }
 
         if (email !== undefined) {
-            if (email.trim() === '') {
+            const cleaned = email.trim().toLowerCase();
+
+            if (!cleaned) {
                 return res.status(400).json({ error: 'Email cannot be empty' });
             }
-            if (!isValidEmail(email)) {
-                return res.status(400).json({ error: 'Please enter a valid email address' });
+
+            if (!isValidEmail(cleaned)) {
+                return res.status(400).json({ error: 'Invalid email address' });
             }
-            // Check duplicate email
-            const existingEmail = await User.findOne({
-                email: email.trim().toLowerCase(),
-                _id: { $ne: req.params.id }
+
+            const existing = await User.findOne({
+                email: cleaned,
+                _id: { $ne: targetUserId }
             });
-            if (existingEmail) {
-                return res.status(400).json({ error: 'Email is already in use' });
+
+            if (existing) {
+                return res.status(400).json({ error: 'Email already in use' });
             }
-            updateData.email = email.trim().toLowerCase();
+
+            updateData.email = cleaned;
         }
 
-        if (password !== undefined) {
-            if (password.trim() === '') {
-                return res.status(400).json({ error: 'Password cannot be empty' });
+        if (phone !== undefined) {
+            if (!isOwner && !isAdmin) {
+                return res.status(403).json({
+                    error: 'Not authorized to update phone'
+                });
             }
-            if (password.length < 6) {
-                return res.status(400).json({ error: 'Password must be at least 6 characters' });
+
+            const cleanedPhone = String(phone).trim();
+
+            const egyptPhoneRegex = /^01[0125][0-9]{8}$/;
+
+            if (cleanedPhone && !egyptPhoneRegex.test(cleanedPhone)) {
+                return res.status(400).json({
+                    error: 'Invalid Egyptian phone number'
+                });
             }
-            updateData.password = await bcrypt.hash(password, 10);
+
+            updateData.phone = cleanedPhone;
         }
 
-        // Allow updating phone number
-        if (req.body.phone !== undefined) {
-
-    const phone = String(req.body.phone || '').trim();
-
-    const egyptPhoneRegex = /^01[0125][0-9]{8}$/;
-
-    if (
-        phone &&
-        !egyptPhoneRegex.test(phone)
-    ) {
-        return res.status(400).json({
-            error: 'Invalid Egyptian phone number'
-        });
-    }
-
-    updateData.phone = phone;
-}
-
+        
         if (role !== undefined) {
+            if (!isAdmin) {
+                return res.status(403).json({
+                    error: 'Only admins can change roles'
+                });
+            }
 
-    if (req.user.role !== 'Admin') {
-        return res.status(403).json({
-            error: 'Only admins can change roles'
-        });
-    }
+            if (!['Gamer', 'Store', 'Admin'].includes(role)) {
+                return res.status(400).json({
+                    error: 'Invalid role'
+                });
+            }
 
-    if (!['Gamer', 'Store', 'Admin'].includes(role)) {
-        return res.status(400).json({
-            error: 'Role must be Gamer, Store, or Admin'
-        });
-    }
+            updateData.role = role;
+        }
 
-    updateData.role = role;
-}
-
+        
         if (Object.keys(updateData).length === 0) {
-            return res.status(400).json({ error: 'No valid fields provided to update' });
+            return res.status(400).json({
+                error: 'No valid fields provided to update'
+            });
         }
 
         const user = await User.findByIdAndUpdate(
-            req.params.id,
+            targetUserId,
             updateData,
-            { new: true }
+            {
+                new: true,
+                runValidators: true
+            }
         ).select('-password');
 
-        if (!user) return res.status(404).json({ error: 'User not found' });
+        if (!user) {
+            return res.status(404).json({ error: 'User not found' });
+        }
 
-        res.json({ message: 'Profile updated', user });
+        
+        res.json({
+            message: 'Profile updated successfully',
+            user
+        });
 
     } catch (err) {
-        console.log(err);
+        console.error('updateUser error:', err);
         res.status(500).json({ error: 'Failed to update user' });
     }
 };

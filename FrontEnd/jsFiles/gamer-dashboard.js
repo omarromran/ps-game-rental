@@ -392,77 +392,12 @@ function toggleEdit(editing) {
   document.getElementById('saveBtn').style.display = editing ? 'block' : 'none';
 }
 
-// ==========================================
-// 🎮 NAV HELPERS
-// ==========================================
+
 function goToGameDescription(gameID) {
   window.location.href = `/game-description?id=${gameID}`;
 }
 
-// ==========================================
-// 🍞 TOAST
-// ==========================================
-function showToast(message) {
-  const existing = document.getElementById('toast-popup-overlay');
-  if (existing) existing.remove();
 
-  const overlay = document.createElement('div');
-  overlay.id = 'toast-popup-overlay';
-  overlay.style.cssText = `
-    position: fixed; inset: 0;
-    background: rgba(0, 0, 0, 0.7);
-    display: flex; align-items: center; justify-content: center;
-    z-index: 9999;
-    backdrop-filter: blur(4px);
-  `;
-
-  overlay.innerHTML = `
-    <div style="
-      background: #111111;
-      border: 1px solid rgba(0, 67, 156, 0.4);
-      border-radius: 20px;
-      padding: 36px 32px;
-      max-width: 380px;
-      width: 90%;
-      text-align: center;
-      box-shadow: 0 10px 30px rgba(0, 67, 156, 0.3);
-    ">
-      <p style="
-        font-size: 1.05rem;
-        margin-bottom: 28px;
-        color: #ffffff;
-        font-family: 'Segoe UI', sans-serif;
-        line-height: 1.5;
-      ">${message}</p>
-      <button id="toast-ok-btn" style="
-        padding: 10px 40px;
-        background: rgba(0, 67, 156, 0.2);
-        color: #ffffff;
-        border: 1px solid rgba(0, 67, 156, 0.4);
-        border-radius: 50px;
-        font-size: 0.95rem;
-        font-family: 'Segoe UI', sans-serif;
-        font-weight: 600;
-        cursor: pointer;
-      "
-      onmouseover="this.style.background='#00439c'"
-      onmouseout="this.style.background='rgba(0,67,156,0.2)'"
-      >OK</button>
-    </div>
-  `;
-
-  document.body.appendChild(overlay);
-
-  document.getElementById('toast-ok-btn').onclick = () => overlay.remove();
-
-  overlay.addEventListener('click', (e) => {
-    if (e.target === overlay) overlay.remove();
-  });
-}
-
-// ==========================================
-// 🚀 INIT
-// ==========================================
 document.addEventListener('DOMContentLoaded', async () => {
   const token = getToken();
   if (!token) {

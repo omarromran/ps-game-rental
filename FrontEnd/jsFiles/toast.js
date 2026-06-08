@@ -1,9 +1,8 @@
 (function () {
 
-  // ─── Inject CSS once ───────────────────────────────────────────────────────
-  if (!document.getElementById('pshub-toast-style')) {
+  if (!document.getElementById('pshub-ui-style')) {
     const style = document.createElement('style');
-    style.id = 'pshub-toast-style';
+    style.id = 'pshub-ui-style';
     style.textContent = `
       #pshub-toast-container {
         position: fixed;
@@ -33,7 +32,7 @@
         border: 1px solid #333;
         box-shadow: 0 8px 32px rgba(0,0,0,0.5);
         pointer-events: all;
-        animation: pshub-slide-in 0.3s cubic-bezier(0.25,0.46,0.45,0.94) forwards;
+        animation: pshub-slide-in 0.3s ease forwards;
         position: relative;
         overflow: hidden;
       }
@@ -46,32 +45,25 @@
         border-radius: 14px 0 0 14px;
       }
 
-      .pshub-toast.info::before    { background: #00439c; }
+      .pshub-toast.info::before { background: #00439c; }
       .pshub-toast.success::before { background: #28a745; }
-      .pshub-toast.error::before   { background: #ff4444; }
+      .pshub-toast.error::before { background: #ff4444; }
       .pshub-toast.warning::before { background: #f59e0b; }
 
       .pshub-toast-icon {
         font-size: 1.2rem;
-        flex-shrink: 0;
       }
 
       .pshub-toast-msg {
         flex: 1;
-        line-height: 1.4;
       }
 
       .pshub-toast-close {
         background: none;
         border: none;
         color: #888;
-        font-size: 1.1rem;
         cursor: pointer;
-        padding: 0 0 0 8px;
-        line-height: 1;
-        transition: color 0.2s;
       }
-      .pshub-toast-close:hover { color: #fff; }
 
       .pshub-toast.hiding {
         animation: pshub-slide-out 0.3s ease forwards;
@@ -79,113 +71,72 @@
 
       @keyframes pshub-slide-in {
         from { opacity: 0; transform: translateX(40px); }
-        to   { opacity: 1; transform: translateX(0); }
-      }
-      @keyframes pshub-slide-out {
-        from { opacity: 1; transform: translateX(0); }
-        to   { opacity: 0; transform: translateX(40px); }
+        to { opacity: 1; transform: translateX(0); }
       }
 
-      /* ── Confirm Dialog ── */
+      @keyframes pshub-slide-out {
+        from { opacity: 1; }
+        to { opacity: 0; transform: translateX(40px); }
+      }
+
+      /* CONFIRM */
       #pshub-confirm-overlay {
         position: fixed;
         inset: 0;
         background: rgba(0,0,0,0.7);
-        backdrop-filter: blur(4px);
-        z-index: 100000;
         display: flex;
         align-items: center;
         justify-content: center;
-        animation: pshub-fade-in 0.2s ease;
-      }
-
-      @keyframes pshub-fade-in {
-        from { opacity: 0; }
-        to   { opacity: 1; }
+        z-index: 100000;
       }
 
       #pshub-confirm-box {
         background: #111;
         border: 1px solid #333;
         border-radius: 18px;
-        padding: 32px 28px 24px;
-        max-width: 360px;
+        padding: 28px;
         width: 90%;
-        box-shadow: 0 20px 60px rgba(0,0,0,0.7);
+        max-width: 360px;
         text-align: center;
-        font-family: 'Segoe UI', sans-serif;
-        color: #fff;
-        animation: pshub-pop-in 0.25s cubic-bezier(0.25,0.46,0.45,0.94);
-      }
-
-      @keyframes pshub-pop-in {
-        from { opacity: 0; transform: scale(0.9); }
-        to   { opacity: 1; transform: scale(1); }
-      }
-
-      #pshub-confirm-box .confirm-icon {
-        font-size: 2.2rem;
-        margin-bottom: 14px;
+        color: white;
       }
 
       #pshub-confirm-box p {
-        font-size: 1rem;
-        color: #ccc;
-        line-height: 1.5;
-        margin-bottom: 24px;
-      }
-
-      #pshub-confirm-box .confirm-btns {
-        display: flex;
-        gap: 12px;
-        justify-content: center;
+        margin-bottom: 20px;
       }
 
       #pshub-confirm-box button {
-        padding: 11px 28px;
-        border-radius: 12px;
-        font-size: 0.95rem;
-        font-weight: 600;
-        cursor: pointer;
+        margin: 5px;
+        padding: 10px 20px;
+        border-radius: 10px;
         border: none;
-        font-family: 'Segoe UI', sans-serif;
-        transition: 0.2s;
+        cursor: pointer;
       }
 
-      #pshub-confirm-box .btn-cancel {
-        background: #1a1a1a;
-        color: #aaa;
-        border: 1px solid #333;
-      }
-      #pshub-confirm-box .btn-cancel:hover {
+      .btn-cancel {
         background: #222;
-        color: #fff;
+        color: #aaa;
       }
 
-      #pshub-confirm-box .btn-confirm {
-        background: rgba(255,68,68,0.15);
-        color: #ff4444;
-        border: 1px solid rgba(255,68,68,0.3);
-      }
-      #pshub-confirm-box .btn-confirm:hover {
+      .btn-confirm {
         background: #ff4444;
-        color: #fff;
+        color: white;
       }
 
-      #pshub-confirm-box .btn-confirm.safe {
-        background: rgba(0,67,156,0.15);
-        color: #4d8fff;
-        border: 1px solid rgba(0,67,156,0.3);
-      }
-      #pshub-confirm-box .btn-confirm.safe:hover {
+      .btn-confirm.safe {
         background: #00439c;
-        color: #fff;
       }
     `;
     document.head.appendChild(style);
   }
 
-  // ─── Toast container ───────────────────────────────────────────────────────
+  const icons = {
+    info: 'ℹ️',
+    success: '✅',
+    error: '❌',
+    warning: '⚠️'
+  };
+
   function getContainer() {
     let c = document.getElementById('pshub-toast-container');
     if (!c) {
@@ -196,33 +147,29 @@
     return c;
   }
 
-  // ─── showToast ─────────────────────────────────────────────────────────────
-  const icons = { info: 'ℹ️', success: '✅', error: '❌', warning: '⚠️' };
-
   window.showToast = function (message, type = 'info', duration = 3500) {
     const container = getContainer();
 
     const toast = document.createElement('div');
     toast.className = `pshub-toast ${type}`;
+
     toast.innerHTML = `
       <span class="pshub-toast-icon">${icons[type] || icons.info}</span>
       <span class="pshub-toast-msg">${message}</span>
-      <button class="pshub-toast-close" aria-label="Close">✕</button>
+      <button class="pshub-toast-close">✕</button>
     `;
 
-    const close = toast.querySelector('.pshub-toast-close');
     const dismiss = () => {
       toast.classList.add('hiding');
       toast.addEventListener('animationend', () => toast.remove(), { once: true });
     };
 
-    close.addEventListener('click', dismiss);
-    container.appendChild(toast);
+    toast.querySelector('.pshub-toast-close').onclick = dismiss;
 
+    container.appendChild(toast);
     setTimeout(dismiss, duration);
   };
 
-  // ─── showConfirm ───────────────────────────────────────────────────────────
   window.showConfirm = function (message, { dangerous = true } = {}) {
     return new Promise((resolve) => {
       const overlay = document.createElement('div');
@@ -230,24 +177,21 @@
 
       overlay.innerHTML = `
         <div id="pshub-confirm-box">
-          <div class="confirm-icon">${dangerous ? '⚠️' : '💬'}</div>
           <p>${message}</p>
-          <div class="confirm-btns">
-            <button class="btn-cancel">Cancel</button>
-            <button class="btn-confirm ${dangerous ? '' : 'safe'}">Confirm</button>
-          </div>
+          <button class="btn-cancel">Cancel</button>
+          <button class="btn-confirm ${dangerous ? '' : 'safe'}">Confirm</button>
         </div>
       `;
 
-      overlay.querySelector('.btn-cancel').addEventListener('click', () => {
+      overlay.querySelector('.btn-cancel').onclick = () => {
         overlay.remove();
         resolve(false);
-      });
+      };
 
-      overlay.querySelector('.btn-confirm').addEventListener('click', () => {
+      overlay.querySelector('.btn-confirm').onclick = () => {
         overlay.remove();
         resolve(true);
-      });
+      };
 
       document.body.appendChild(overlay);
     });
