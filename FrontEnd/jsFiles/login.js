@@ -14,7 +14,7 @@ document.getElementById("login-form").addEventListener("submit", async e => {
         return;
     }
 
-    if (!/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(email)) {
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
         errorMsg.textContent = "Please enter a valid email address.";
         errorMsg.style.display = "block";
         return;
