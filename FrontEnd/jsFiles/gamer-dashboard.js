@@ -267,27 +267,28 @@ function renderRentals() {
 }
 
 async function returnGame(rentalId) {
-  showConfirm('Are you sure you want to return this game?', async () => {
-    try {
-      const res = await fetch(`/api/rentals/${rentalId}/return`, {
-        method: 'PATCH',
-        headers: authHeaders()
-      });
+  const confirmed = await showConfirm('Are you sure you want to return this game?');
+  if (!confirmed) return;
 
-      const data = await res.json();
-      if (!res.ok) {
-        showToast(data.error || data.message || 'Failed to return game.', 'error');
-        return;
-      }
+  try {
+    const res = await fetch(`/api/rentals/${rentalId}/return`, {
+      method: 'PATCH',
+      headers: authHeaders()
+    });
 
-      await loadRentals();
-      await refreshUI();
-      showToast('Game returned successfully!', 'success');
-    } catch (err) {
-      console.error('Return failed:', err);
-      showToast('Failed to return game.', 'error');
+    const data = await res.json();
+    if (!res.ok) {
+      showToast(data.error || data.message || 'Failed to return game.', 'error');
+      return;
     }
-  });
+
+    await loadRentals();
+    await refreshUI();
+    showToast('Game returned successfully!', 'success');
+  } catch (err) {
+    console.error('Return failed:', err);
+    showToast('Failed to return game.', 'error');
+  }
 }
 
 // ==========================================

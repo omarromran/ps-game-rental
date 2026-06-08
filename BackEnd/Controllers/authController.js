@@ -104,6 +104,8 @@ exports.login = async (req, res) => {
       process.env.JWT_SECRET || 'fallback_super_secret_key',
       { expiresIn: '1d' }
     );
+    // Set token cookie (24h expiration)
+    res.cookie('token', token, { httpOnly: true, maxAge: 24 * 60 * 60 * 1000, sameSite: 'Strict' });
 
     // ✅ Token-only — no session
     res.status(200).json({
@@ -126,6 +128,8 @@ exports.login = async (req, res) => {
 
 // ✅ Stateless logout — token lives in localStorage, client removes it
 exports.logout = (req, res) => {
+  // Clear authentication cookie (24h token) on logout
+  res.clearCookie('token', { httpOnly: true, sameSite: 'Strict' });
   res.status(200).json({
     message: 'Logged out successfully. Please remove your token from storage.'
   });
