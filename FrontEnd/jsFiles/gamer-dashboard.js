@@ -416,7 +416,6 @@ function editProfile() {
 }
 
 function saveProfile() {
-  const name = document.getElementById('nameInput').value;
   const email = document.getElementById('emailInput').value;
   const username = document.getElementById('usernameInput').value;
   const phone = document.getElementById('phoneInput').value;
@@ -460,14 +459,13 @@ function saveProfile() {
 function toggleEdit(editing) {
   const user = getCurrentUser();
   if (editing && user) {
-    document.getElementById('nameInput').value = user.name || '';
     document.getElementById('emailInput').value = user.email || '';
     document.getElementById('usernameInput').value = user.username || '';
     document.getElementById('phoneInput').value = user.phone || '';
   }
 
-  // handle name, email, username normally
-  ['name', 'email', 'username'].forEach(id => {
+  // handle email and username normally
+  ['email', 'username'].forEach(id => {
     document.getElementById(id + 'Text').style.display = editing ? 'none' : 'block';
     document.getElementById(id + 'Input').style.display = editing ? 'block' : 'none';
   });
