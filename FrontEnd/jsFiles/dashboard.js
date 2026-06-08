@@ -342,7 +342,8 @@ function cancelGameEdit() {
 }
 
 async function deleteGame(id) {
-  if (!showConfirm('Delete game?')) return;
+  const confirmed = await showConfirm('Delete game?');
+  if (!confirmed) return;
   try {
     const res = await fetch(`/api/games/${id}`, { method: 'DELETE', headers: getHeaders() });
     const data = await res.json();
