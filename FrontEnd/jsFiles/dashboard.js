@@ -385,6 +385,7 @@ async function logout() {
   localStorage.removeItem('token');
   localStorage.removeItem('currentUser');
   localStorage.removeItem('pshub_wishlist');
+  
 
   window.location.href = '/login';
 }
