@@ -1,18 +1,3 @@
-/**
- * PSHUB Toast Notification System
- * Replaces all browser alert() calls with styled in-page toasts.
- * 
- * Usage:
- *   showToast('Message here')               → default (blue)
- *   showToast('Done!', 'success')           → green
- *   showToast('Something failed', 'error')  → red
- *   showToast('Heads up', 'warning')        → orange
- *
- * For confirm() replacements:
- *   const confirmed = await showConfirm('Are you sure?')
- *   if (confirmed) { ... }
- */
-
 (function () {
 
   // ─── Inject CSS once ───────────────────────────────────────────────────────
