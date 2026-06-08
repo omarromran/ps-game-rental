@@ -85,7 +85,9 @@ mongoose.connect(process.env.MONGO_URI)
 // 🚀 API ROUTES
 // ==========================================
 app.get('/', (req, res) => {
-  res.json({ message: 'Welcome to the PlayStation Rental Hub API!' });
+ res.render('index', {
+   user: res.locals.user
+ });
 });
 
 app.get('/api/test/admin-dashboard', protect, restrictTo('Admin'), (req, res) => {
