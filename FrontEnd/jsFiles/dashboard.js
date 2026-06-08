@@ -221,7 +221,9 @@ function cancelUserEdit() {
 }
 
 async function deleteUser(id) {
-  if (!showConfirm('Delete user?')) return;
+  const confirmed = await showConfirm('Delete user?');
+
+if (!confirmed) return;
   try {
     const res = await fetch(`/api/users/${id}`, { method: 'DELETE', headers: getHeaders() });
     const data = await res.json();
