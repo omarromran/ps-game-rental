@@ -24,7 +24,7 @@ document.getElementById("signup-form").addEventListener("submit", async e => {
         errorMsg.style.display = "block";
         return;
     }
-    if (!/^\\S+$/.test(username)) {
+    if (!/^\S+$/.test(username)) {
         errorMsg.textContent = "Username must not contain spaces.";
         errorMsg.style.display = "block";
         return;
@@ -34,7 +34,7 @@ document.getElementById("signup-form").addEventListener("submit", async e => {
         errorMsg.style.display = "block";
         return;
     }
-    if (!/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(email)) {
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
         errorMsg.textContent = "Please enter a valid email address.";
         errorMsg.style.display = "block";
         return;
