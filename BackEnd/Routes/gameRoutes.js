@@ -16,7 +16,6 @@ const upload = require('../Middleware/upload');
 
 const Game = require('../models/Game');
 
-// ─── PUBLIC ROUTES ──────────────────────────────────────────────
 
 
 router.get('/', getAllGames);
@@ -43,7 +42,7 @@ router.post(
   addGame
 );
 
-// Edit a game
+
 router.put(
   '/:id',
   protect,
@@ -52,7 +51,6 @@ router.put(
   editGame
 );
 
-// Delete a game
 router.delete(
   '/:id',
   protect,
