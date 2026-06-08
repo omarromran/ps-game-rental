@@ -9,11 +9,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <link rel="stylesheet" href="/cssFiles/browse-games.css">
     <link rel="icon" href="/photos/images.png">
-    
+
     <script src="/jsFiles/toast.js"></script>
-    <script>
-        window.serverGames = " JSON.stringify(games || [])";
-    </script>
     <script src="/jsFiles/browse-games.js" defer></script>
 </head>
 
@@ -38,34 +35,24 @@
 
                 <% if (user) { %>
 
-                    <a 
-                        id="user-name-link"
-                        class="user-name"
+                    <a id="user-name-link" class="user-name"
                         href="<%= user.role === 'Admin' ? '/admin-dashboard' : user.role === 'Store' ? '/store-dashboard' : '/gamer-dashboard' %>"
-                        style="text-decoration:none; color:inherit;"
-                    >
+                        style="text-decoration:none; color:inherit;">
                         <%= user.username %>
                     </a>
 
-                   <button 
-    id="logout-btn"
-    onclick="logout()"
-    class="logout"
->
-    <i class="fas fa-sign-out-alt"></i>
-    Logout
-</button>
+                    <button id="logout-btn" onclick="logout()" class="logout">
+                        <i class="fas fa-sign-out-alt"></i>
+                        Logout
+                    </button>
 
-                <% } else { %>
+                    <% } else { %>
 
-                    <a 
-                        href="/login"
-                        class="login-btn"
-                    >
-                        Login
-                    </a>
+                        <a href="/login" class="login-btn">
+                            Login
+                        </a>
 
-                <% } %>
+                        <% } %>
 
             </div>
         </div>
@@ -77,11 +64,7 @@
     <div class="toolbar">
 
         <div class="search-container">
-            <input 
-                type="text"
-                id="mainSearch"
-                placeholder="Search title or ID..."
-            >
+            <input type="text" id="mainSearch" placeholder="Search title or ID...">
         </div>
 
         <div class="filter-group">
@@ -101,20 +84,12 @@
                 <div class="dropdown-content" id="platform-filters">
 
                     <label>
-                        <input 
-                            type="checkbox"
-                            value="PS5"
-                            onchange="applyFilters()"
-                        >
+                        <input type="checkbox" value="PS5" onchange="applyFilters()">
                         PS5
                     </label>
 
                     <label>
-                        <input 
-                            type="checkbox"
-                            value="PS4"
-                            onchange="applyFilters()"
-                        >
+                        <input type="checkbox" value="PS4" onchange="applyFilters()">
                         PS4
                     </label>
 
@@ -131,38 +106,22 @@
                 <div class="dropdown-content" id="category-filters">
 
                     <label>
-                        <input 
-                            type="checkbox"
-                            value="Action"
-                            onchange="applyFilters()"
-                        >
+                        <input type="checkbox" value="Action" onchange="applyFilters()">
                         Action
                     </label>
 
                     <label>
-                        <input 
-                            type="checkbox"
-                            value="FPS"
-                            onchange="applyFilters()"
-                        >
+                        <input type="checkbox" value="FPS" onchange="applyFilters()">
                         FPS
                     </label>
 
                     <label>
-                        <input 
-                            type="checkbox"
-                            value="Telltale"
-                            onchange="applyFilters()"
-                        >
+                        <input type="checkbox" value="Telltale" onchange="applyFilters()">
                         Telltale
                     </label>
 
                     <label>
-                        <input 
-                            type="checkbox"
-                            value="Platform"
-                            onchange="applyFilters()"
-                        >
+                        <input type="checkbox" value="Platform" onchange="applyFilters()">
                         Platform
                     </label>
 
@@ -194,28 +153,19 @@
         <!-- ========================= -->
         <div class="game-grid" id="game-grid">
 
-            <% if (games && games.length > 0) { %>
+            <% if (games && games.length> 0) { %>
 
-                <% games.forEach(game => { %>
+                <% games.forEach(game=> { %>
 
-                    <div 
-                        class="game-card"
-                        onclick="window.location.href='/game-description?id=<%= game._id %>'"
-                        style="cursor:pointer;"
-                    >
+                    <div class="game-card" onclick="window.location.href='/game-description?id=<%= game._id %>'"
+                        style="cursor:pointer;">
 
                         <!-- GAME IMAGE -->
-                        <img
-                            src="<%= game.img || game.image || '/photos/placeholder.png' %>"
-                            alt="<%= game.title %>"
-                            class="game-image"
-                        >
+                        <img src="<%= game.img || game.image || '/photos/placeholder.png' %>" alt="<%= game.title %>"
+                            class="game-image">
 
                         <!-- WISHLIST -->
-                        <div
-                            class="wishlist-btn"
-                            onclick="event.stopPropagation(); toggleWishlist('<%= game._id %>')"
-                        >
+                        <div class="wishlist-btn" onclick="event.stopPropagation(); toggleWishlist('<%= game._id %>')">
                             🤍
                         </div>
 
@@ -227,41 +177,41 @@
                             </h3>
 
                             <% if (game.store) { %>
-                                <p class="store-text">Store: <%= game.store.username || game.store.storeName || 'Store' %></p>
-                            <% } %>
+                                <p class="store-text">Store: <%= game.store.username || game.store.storeName || 'Store'
+                                        %>
+                                </p>
+                                <% } %>
 
-                            <p class="platform-text">
-                                <%= game.platform %>
-                            </p>
+                                    <p class="platform-text">
+                                        <%= game.platform %>
+                                    </p>
 
-                            <p class="category-text">
-                                <%= game.category %>
-                            </p>
+                                    <p class="category-text">
+                                        <%= game.category %>
+                                    </p>
 
-                            <div class="price">
-                                <%= game.pricePerDay || game.price || 0 %> EGP/day
-                            </div>
+                                    <div class="price">
+                                        <%= game.pricePerDay || game.price || 0 %> EGP/day
+                                    </div>
 
-                            <!-- ADD TO CART -->
-                            <button
-                                class="add-btn"
-                                onclick="event.stopPropagation(); addToCart('<%= game._id %>')"
-                            >
-                                Add to Cart
-                            </button>
+                                    <!-- ADD TO CART -->
+                                    <button class="add-btn"
+                                        onclick="event.stopPropagation(); addToCart('<%= game._id %>')">
+                                        Add to Cart
+                                    </button>
 
                         </div>
                     </div>
 
-                <% }) %>
+                    <% }) %>
 
-            <% } else { %>
+                        <% } else { %>
 
-                <div class="no-games">
-                    No games available
-                </div>
+                            <div class="no-games">
+                                No games available
+                            </div>
 
-            <% } %>
+                            <% } %>
 
         </div>
     </main>
@@ -275,10 +225,7 @@
 
             <h2>Your Cart</h2>
 
-            <button
-                class="close-btn"
-                onclick="toggleCart(false)"
-            >
+            <button class="close-btn" onclick="toggleCart(false)">
                 ×
             </button>
 
@@ -294,19 +241,15 @@
                 EGP
             </div>
 
-            <button
-                class="checkout-btn"
-                onclick="checkout()"
-            >
+            <button class="checkout-btn" onclick="checkout()">
                 Checkout
             </button>
 
         </div>
     </div>
 
-   
-    
+
+
 </body>
 
 </html>
-
