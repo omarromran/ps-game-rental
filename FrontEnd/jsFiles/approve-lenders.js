@@ -1,10 +1,6 @@
 let users = [];
 
-// =========================================================================
-// 🔑 AUTH HELPER: GENERATE JWT HEADERS
-// This function retrieves the login token from localStorage and configures
-// the Authorization header required by the backend to verify you are an Admin.
-// =========================================================================
+
 const getAuthHeaders = (json = false) => {
     const headers = {};
     const token = localStorage.getItem('token');
@@ -21,9 +17,6 @@ const triggerNotification = (msg, type) => {
     }
 };
 
-// 📡 API FETCH: FETCH USERS FROM BACKEND
-// Contacts the '/api/users' endpoint with your Admin credentials to grab 
-// the latest list of registered accounts from the database.
 async function loadPendingStores() {
     try {
         const res = await fetch('/api/users', {
@@ -43,9 +36,6 @@ async function loadPendingStores() {
     }
 }
 
-// 🖥️ UI RENDER: FILTER AND DRAW STORES TABLE
-// Filters through all system users to pull out only accounts with the role 
-// "Store" that haven't been approved yet, then builds and displays their HTML rows.
 function renderTable() {
     const tableBody = document.getElementById('lender-table-body');
     tableBody.innerHTML = "";
@@ -81,9 +71,6 @@ function renderTable() {
     });
 }
 
-// ⚡ ACTION HANDLER: APPROVE OR DECLINE STORE APPLICATIONS
-// Sends requests to the backend server. 'approve' fires a PATCH request to 
-// flip the user's status to true, while 'decline' sends a DELETE request.
 async function handleApproval(id, action) {
 
 const confirmed = await showConfirm(
@@ -132,9 +119,6 @@ triggerNotification(err.message || 'Operation failed. Please try again.', 'error
 }
 }
 
-// 🚀 INITIALIZATION: PAGE LOAD GATEKEEPER
-// Runs automatically the moment the browser builds the webpage. Confirms 
-// an active Admin token exists before kicking off the first data fetch.
 document.addEventListener("DOMContentLoaded", () => {
     const token = localStorage.getItem('token');
     if (!token) {
@@ -143,3 +127,10 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     loadPendingStores();
 });
+
+function logout(){
+    localStorage.removeItem('token');
+    localStorage.removeItem('currentUser');
+    localStorage.removeItem('pshub_wishlist');
+    window.location.href = '/login';
+}
