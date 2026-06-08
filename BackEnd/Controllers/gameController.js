@@ -267,7 +267,9 @@ const editGame = async (req, res) => {
 
       }
     }
-
+    delete req.body.storeID;
+    delete req.body.gameID;
+    
     const updatedGame =
       await Game.findByIdAndUpdate(
         req.params.id,
