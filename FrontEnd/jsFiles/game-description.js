@@ -279,11 +279,28 @@ function renderReviews() {
       <div class="review-top">
         <span class="reviewer-name">${review.reviewer}</span>
         <span class="review-stars">${'★'.repeat(review.rating)}${'☆'.repeat(5 - review.rating)}</span>
+        <button class="delete-review-btn" onclick="deleteReview(${index})" title="Delete review">🗑️</button>
       </div>
       <p class="review-comment">${review.comment}</p>
       ${review.date ? `<p class="review-date">${review.date}</p>` : ''}
     </div>
   `).join('');
+}
+
+function deleteReview(index) {
+  showConfirm('Are you sure you want to delete this review?', { dangerous: true }).then((confirmed) => {
+    if (!confirmed) return;
+    
+    const reviewKey = `reviews_${currentGame._id || gameId}`;
+    const reviews = JSON.parse(localStorage.getItem(reviewKey) || '[]');
+    
+    if (index >= 0 && index < reviews.length) {
+      reviews.splice(index, 1);
+      localStorage.setItem(reviewKey, JSON.stringify(reviews));
+      renderReviews();
+      showToast('Review deleted successfully!', 'success');
+    }
+  });
 }
 
 function index() {
