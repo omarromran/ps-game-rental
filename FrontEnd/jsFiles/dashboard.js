@@ -342,6 +342,21 @@ async function handleAdmin(e) {
   const formData = new FormData(e.target);
   const data = Object.fromEntries(formData);
 
+  // Username validation
+  if (!/^[a-zA-Z][a-zA-Z0-9]{2,19}$/.test(data.username)) {
+    return showToast('Username must be 3-20 characters long, start with a letter, and contain only letters and numbers.', 'error');
+  }
+
+  // Email validation
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email)) {
+    return showToast('Please enter a valid email address.', 'error');
+  }
+
+  // Password length validation
+  if (data.password.length < 6 || data.password.length > 20) {
+    return showToast('Password must be between 6 and 20 characters.', 'error');
+  }
+
   if (data.password !== data.confirmPassword) {
     return showToast('Passwords do not match', 'error');
   }

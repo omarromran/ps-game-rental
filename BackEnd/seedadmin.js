@@ -22,10 +22,8 @@ const createAdmin = async () => {
             process.exit();
         }
 
-        // Hash password
         const hashedPassword = await bcrypt.hash('omar123', 10);
 
-        // Create admin
         const admin = new User({
             username: 'omarromran',
             email: 'omar@gmail.com',
@@ -33,8 +31,6 @@ const createAdmin = async () => {
             role: 'Admin',
 
             approved: true,
-            suspended: false,
-            balance: 0
         });
 
         await admin.save();
