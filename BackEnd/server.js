@@ -74,6 +74,9 @@ const wishlistRoutes = require('./Routes/wishlistRoutes');
 const errorMiddleware = require('./Middleware/errorMiddleware');
 const { protect, restrictTo } = require('./Middleware/authMiddleware');
 
+// 📘 Swagger / OpenAPI documentation setup
+const { mountSwagger } = require('./swagger');
+
 // ==========================================
 // ☁️ DATABASE CONNECTION
 // ==========================================
@@ -102,6 +105,12 @@ app.use('/api/games', gameRoutes);
 app.use('/api/rentals', rentalRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/wishlist', wishlistRoutes);
+
+// ==========================================
+// 📘 API DOCUMENTATION (Swagger UI + OpenAPI)
+// Interactive docs at /api-docs, raw spec at /api-docs.json
+// ==========================================
+mountSwagger(app);
 
 // ==========================================
 // 🖥️ EJS PAGE ROUTES

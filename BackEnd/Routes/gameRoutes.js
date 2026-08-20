@@ -57,5 +57,4 @@ router.delete(
   deleteGame
 );
 
-router.get('/:id', getOneGame);
 module.exports = router;

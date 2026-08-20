@@ -5,9 +5,16 @@ const getAllGames = async (req, res) => {
     // By default, only return games that are available for browsing.
     // If ?status=all is explicitly provided, return every game.
     const filter = {};
-    if (req.query.status && req.query.status.toLowerCase() !== 'all') {
-      filter.status = req.query.status;
-    } else if (!req.query.status) {
+    // Coerce the status param to a plain string. This defeats NoSQL operator
+    // injection (e.g. ?status[$ne]=Available) and avoids a crash when the param
+    // arrives as an array (?status=a&status=b) — .toLowerCase() on a non-string.
+    let status = req.query.status;
+    if (Array.isArray(status)) status = status[0];
+    if (status !== undefined && status !== null) status = String(status);
+
+    if (status && status.toLowerCase() !== 'all') {
+      filter.status = status;
+    } else if (!status) {
       filter.status = 'Available';
     }
 
@@ -135,6 +142,22 @@ const addGame = async (req, res) => {
     const gameID =
       `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
 
+    // Optional metadata: coerce blank form fields to undefined so an empty
+    // string doesn't reach Mongoose casting. releaseYear is a Number, so ''
+    // (or any non-numeric value) would otherwise throw a CastError → 500.
+    const developerValue = typeof developer === 'string' ? developer.trim() : undefined;
+    const pegiValue = typeof pegi === 'string' ? pegi.trim() : undefined;
+
+    let releaseYearValue;
+    if (releaseYear !== undefined && releaseYear !== null && String(releaseYear).trim() !== '') {
+      releaseYearValue = Number(releaseYear);
+      if (!Number.isInteger(releaseYearValue) || releaseYearValue < 1970 || releaseYearValue > 2100) {
+        return res.status(400).json({
+          error: 'Release year must be a whole number between 1970 and 2100'
+        });
+      }
+    }
+
     const game = await Game.create({
       gameID,
       storeID: req.user.storeID,
@@ -145,9 +168,9 @@ const addGame = async (req, res) => {
       pricePerDay: Number(pricePerDay),
       img: imageUrls[0],
       images: imageUrls,
-      developer,
-      releaseYear,
-      pegi,
+      developer: developerValue,
+      releaseYear: releaseYearValue,
+      pegi: pegiValue,
       type: type || 'Game'
     });
 

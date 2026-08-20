@@ -24,9 +24,9 @@ const checkout = async (req, res) => {
             days: Number(item.days || item.duration || 1)
         }));
 
-        const badItem = normalizedItems.find(item => !item.gameId || isNaN(item.days) || item.days < 1 || item.days > 30);
+        const badItem = normalizedItems.find(item => !item.gameId || isNaN(item.days) || !Number.isInteger(item.days) || item.days < 1 || item.days > 30);
         if (badItem) {
-            return res.status(400).json({ error: 'Each rental item must include a valid gameId and days between 1 and 30' });
+            return res.status(400).json({ error: 'Each rental item must include a valid gameId and a whole number of days between 1 and 30' });
         }
 
         const gameIds = normalizedItems.map(item => item.gameId);
@@ -81,14 +81,26 @@ const checkout = async (req, res) => {
 
             updates.push({
                 updateOne: {
-                    filter: { _id: game._id },
+                    // Atomically claim the game only if it is STILL Available.
+                    // Guards the read-then-write (TOCTOU) window so two customers
+                    // can't rent the same physical copy simultaneously.
+                    filter: { _id: game._id, status: 'Available' },
                     update: { status: 'Rented', customerID: currentUser._id }
                 }
             });
         }
 
         const rentals = await Rental.insertMany(rentalDocs);
-        await Game.bulkWrite(updates);
+        const bulkResult = await Game.bulkWrite(updates);
+
+        // If we failed to claim every game (someone rented one first), undo the
+        // rentals we just created and report a conflict instead of double-booking.
+        if (bulkResult.modifiedCount !== rentalDocs.length) {
+            await Rental.deleteMany({ _id: { $in: rentals.map(r => r._id) } });
+            return res.status(409).json({
+                error: 'One or more games were just rented by someone else. Please try again.'
+            });
+        }
 
         res.status(201).json({
             message: 'Rental confirmed!',

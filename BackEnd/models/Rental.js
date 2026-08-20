@@ -12,4 +12,9 @@ const rentalSchema = new mongoose.Schema({
     status:      { type: String, enum: ['active', 'returned', 'overdue'], default: 'active' }
 }, { timestamps: true });
 
+// Indexes for the rental query paths: "my rentals" / active-rental dup check
+// (customer + status) and store rentals (game).
+rentalSchema.index({ customer: 1, status: 1 });
+rentalSchema.index({ game: 1 });
+
 module.exports = mongoose.model('Rental', rentalSchema);

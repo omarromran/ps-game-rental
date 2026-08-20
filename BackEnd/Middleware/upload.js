@@ -25,10 +25,12 @@ const fileFilter = (req, file, cb) => {
   if (allowedTypes.includes(file.mimetype)) {
     cb(null, true);
   } else {
-    return cb(
-      new Error('Only JPG, PNG, and WEBP images are allowed'),
-      false
-    );
+    // Flag this as a client-side upload error so the global error handler
+    // returns HTTP 400 (with this message) instead of a generic 500.
+    const uploadError = new Error('Only JPG, PNG, and WEBP images are allowed');
+    uploadError.isUploadError = true;
+    uploadError.statusCode = 400;
+    return cb(uploadError, false);
   }
 };
 
